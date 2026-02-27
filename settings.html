@@ -3,32 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Settings</title>
+    <title>Settings Page</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Account Management</h1>
+        <h1>Settings</h1>
     </header>
     <main>
-        <section>
+        <section id="profile-settings">
             <h2>Profile Settings</h2>
             <form>
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
-                <br>
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
-                <br>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                <br>
-                <button type="submit">Update</button>
+                <button type="submit">Update Profile</button>
+            </form>
+        </section>
+        <section id="password-settings">
+            <h2>Password Settings</h2>
+            <form>
+                <label for="current-password">Current Password:</label>
+                <input type="password" id="current-password" name="current-password" required>
+                <label for="new-password">New Password:</label>
+                <input type="password" id="new-password" name="new-password" required>
+                <button type="submit">Change Password</button>
+            </form>
+        </section>
+        <section id="notification-settings">
+            <h2>Notification Settings</h2>
+            <form>
+                <label for="email-notifications">Email Notifications:</label>
+                <input type="checkbox" id="email-notifications" name="email-notifications">
+                <button type="submit">Save Notifications</button>
             </form>
         </section>
     </main>
-    <footer>
-        <p>&copy; 2026 CS Pro Platform</p>
-    </footer>
 </body>
 </html>
