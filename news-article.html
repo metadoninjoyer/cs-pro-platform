@@ -270,22 +270,42 @@
             }
         };
 
-        const post = new URLSearchParams(window.location.search).get('post') || 'winter-cup-2023';
-        const article = articleMap[post] || articleMap['winter-cup-2023'];
+        function renderArticle(article) {
+            document.getElementById('articleCategory').textContent = article.category || 'Новость';
+            document.getElementById('articleTitle').textContent = article.title || 'Новость CSFamily';
 
-        document.getElementById('articleCategory').textContent = article.category;
-        document.getElementById('articleTitle').textContent = article.title;
-        document.getElementById('articleMeta').textContent = `${article.date} • ${article.views} просмотров`;
+            const viewsText = Number(article.views || 0).toLocaleString('ru-RU');
+            document.getElementById('articleMeta').textContent = `${article.date || ''} • ${viewsText} просмотров`;
 
-        const imageElement = document.getElementById('articleImage');
-        imageElement.src = article.image;
-        imageElement.alt = article.title;
+            const imageElement = document.getElementById('articleImage');
+            imageElement.src = article.image || '';
+            imageElement.alt = article.title || 'Новость CSFamily';
 
-        document.getElementById('articleText').innerHTML = article.body
-            .map((paragraph) => `<p>${paragraph}</p>`)
-            .join('');
+            const bodyParagraphs = Array.isArray(article.body)
+                ? article.body
+                : [article.excerpt || 'Подробности скоро будут опубликованы.'];
 
-        document.title = `${article.title} | CSFamily`;
+            document.getElementById('articleText').innerHTML = bodyParagraphs
+                .map((paragraph) => `<p>${paragraph}</p>`)
+                .join('');
+
+            document.title = `${article.title || 'Новость'} | CSFamily`;
+        }
+
+        async function hydrateArticle() {
+            const post = new URLSearchParams(window.location.search).get('post') || 'winter-cup-2023';
+
+            try {
+                const articleFromApi = await window.CSAuth.apiRequest(`/news/${post}`);
+                renderArticle(articleFromApi);
+                return;
+            } catch {
+                const fallbackArticle = articleMap[post] || articleMap['winter-cup-2023'];
+                renderArticle(fallbackArticle);
+            }
+        }
+
+        hydrateArticle();
     </script>
 </body>
 </html>

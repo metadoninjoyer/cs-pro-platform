@@ -552,7 +552,7 @@
                             <span>или</span>
                         </div>
                         
-                        <button type="button" class="steam-login">
+                        <button type="button" class="steam-login" id="steamLoginBtn">
                             <i class="fab fa-steam"></i>
                             Войти через Steam
                         </button>
@@ -594,7 +594,7 @@
                             <span>или</span>
                         </div>
                         
-                        <button type="button" class="steam-login">
+                        <button type="button" class="steam-login" id="steamRegisterBtn">
                             <i class="fab fa-steam"></i>
                             Зарегистрироваться через Steam
                         </button>
@@ -696,23 +696,42 @@
             // Прокрутка к формам
             document.getElementById('formsSection').scrollIntoView({ behavior: 'smooth' });
         });
+
+        const steamLoginButton = document.getElementById('steamLoginBtn');
+        const steamRegisterButton = document.getElementById('steamRegisterBtn');
+
+        if (steamLoginButton) {
+            steamLoginButton.addEventListener('click', function() {
+                window.CSAuth.loginWithSteam('Вход');
+            });
+        }
+
+        if (steamRegisterButton) {
+            steamRegisterButton.addEventListener('click', function() {
+                window.CSAuth.loginWithSteam('Регистрация');
+            });
+        }
         
         // Обработка формы входа
-        document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+        document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            
-            // В реальном приложении здесь был бы запрос к серверу
-            alert(`Вход выполнен!\nEmail/Никнейм: ${email}\nПеренаправляем в личный кабинет...`);
-            
-            // Сброс формы
-            this.reset();
+
+            try {
+                const user = await window.CSAuth.loginWithPassword(email, password);
+                alert(`Вход выполнен!\nПользователь: ${user.nickname}\nПеренаправляем в личный кабинет...`);
+
+                this.reset();
+                window.location.href = 'profile.html';
+            } catch (error) {
+                alert(`Ошибка входа: ${error.message}\n\nЕсли backend не запущен, войдите через Steam-демо кнопку.`);
+            }
         });
         
         // Обработка формы регистрации
-        document.getElementById('registerFormElement').addEventListener('submit', function(e) {
+        document.getElementById('registerFormElement').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const nickname = document.getElementById('registerNickname').value;
@@ -725,15 +744,15 @@
                 return;
             }
             
-            // В реальном приложении здесь был бы запрос к серверу
-            alert(`Регистрация успешна!\nДобро пожаловать в CSFamily, ${nickname}!\nНа вашу почту ${email} отправлено письмо с подтверждением.`);
-            
-            // Сброс формы
-            this.reset();
-            
-            // Переключение на форму входа
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
+            try {
+                const user = await window.CSAuth.registerWithPassword(nickname, email, password);
+                alert(`Регистрация успешна!\nДобро пожаловать в CSFamily, ${user.nickname}!`);
+
+                this.reset();
+                window.location.href = 'profile.html';
+            } catch (error) {
+                alert(`Ошибка регистрации: ${error.message}`);
+            }
         });
         
         // Анимация появления элементов при скролле

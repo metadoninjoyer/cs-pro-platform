@@ -17,6 +17,29 @@
    http://localhost:5500/index.html
    ```
 
+## Backend (MVP API)
+
+В проект добавлен backend в папке `backend` с реальной авторизацией:
+
+1. Установи зависимости backend:
+   ```bash
+   cd backend
+   npm install
+   ```
+2. Запусти API:
+   ```bash
+   npm run dev
+   ```
+3. API будет доступен по адресу:
+   ```text
+   http://localhost:4000/api
+   ```
+
+Чтобы фронт + backend работали вместе локально:
+- Терминал 1: `cd backend && npm run dev`
+- Терминал 2 (в корне): `python -m http.server 5500`
+- Открой: `http://localhost:5500/index.html`
+
 ## Деплой на GitHub Pages
 
 В репозитории уже добавлен workflow:

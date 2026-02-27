@@ -740,6 +740,118 @@
         const nextLink = document.querySelector('.page-link.next');
         prevLink.setAttribute('href', `news.html?page=${Math.max(currentPage - 1, 1)}`);
         nextLink.setAttribute('href', `news.html?page=${Math.min(currentPage + 1, 5)}`);
+
+        function getCategoryClass(category) {
+            const normalized = String(category || '').toLowerCase();
+
+            if (normalized.includes('турнир')) {
+                return 'tournament';
+            }
+
+            if (normalized.includes('обнов')) {
+                return 'update';
+            }
+
+            return 'event';
+        }
+
+        function updateNewsCards(newsItems) {
+            const cards = document.querySelectorAll('.news-card');
+
+            cards.forEach((card, index) => {
+                const item = newsItems[index];
+                if (!item) {
+                    return;
+                }
+
+                const imageElement = card.querySelector('.news-image img');
+                const categoryElement = card.querySelector('.news-category');
+                const titleElement = card.querySelector('.news-title');
+                const dateElement = card.querySelector('.news-date');
+                const viewsElement = card.querySelector('.news-views');
+                const excerptElement = card.querySelector('.news-excerpt');
+                const readMoreElement = card.querySelector('.read-more');
+
+                if (imageElement && item.image) {
+                    imageElement.src = item.image;
+                    imageElement.alt = item.title || 'Новость CSFamily';
+                }
+
+                if (categoryElement) {
+                    categoryElement.className = `news-category ${getCategoryClass(item.category)}`;
+                    categoryElement.textContent = item.category || 'Новость';
+                }
+
+                if (titleElement) {
+                    titleElement.textContent = item.title || titleElement.textContent;
+                }
+
+                if (dateElement) {
+                    dateElement.innerHTML = `<i class="far fa-calendar"></i> ${item.date || ''}`;
+                }
+
+                if (viewsElement) {
+                    const views = Number(item.views || 0).toLocaleString('ru-RU');
+                    viewsElement.innerHTML = `<i class="far fa-eye"></i> ${views}`;
+                }
+
+                if (excerptElement) {
+                    excerptElement.textContent = item.excerpt || excerptElement.textContent;
+                }
+
+                if (readMoreElement && item.slug) {
+                    readMoreElement.href = `news-article.html?post=${item.slug}`;
+                }
+            });
+        }
+
+        function updatePopularCards(newsItems) {
+            const cards = document.querySelectorAll('.popular-card');
+            const topItems = [...newsItems]
+                .sort((first, second) => Number(second.views || 0) - Number(first.views || 0))
+                .slice(0, cards.length);
+
+            cards.forEach((card, index) => {
+                const item = topItems[index];
+                if (!item) {
+                    return;
+                }
+
+                const title = card.querySelector('h4');
+                const metaValues = card.querySelectorAll('.popular-meta span');
+
+                card.href = `news-article.html?post=${item.slug}`;
+
+                if (title) {
+                    title.textContent = item.title;
+                }
+
+                if (metaValues[0]) {
+                    metaValues[0].innerHTML = `<i class="far fa-calendar"></i> ${item.date}`;
+                }
+
+                if (metaValues[1]) {
+                    const views = Number(item.views || 0).toLocaleString('ru-RU');
+                    metaValues[1].innerHTML = `<i class="far fa-eye"></i> ${views}`;
+                }
+            });
+        }
+
+        async function hydrateNewsFromApi() {
+            try {
+                const newsItems = await window.CSAuth.apiRequest('/news');
+                if (!Array.isArray(newsItems) || newsItems.length === 0) {
+                    return;
+                }
+
+                updateNewsCards(newsItems);
+                updatePopularCards(newsItems);
+            } catch {
+                // Если backend недоступен, оставляем встроенные данные страницы
+            }
+        }
+
+        hydrateNewsFromApi();
         
     </script>
 </body>

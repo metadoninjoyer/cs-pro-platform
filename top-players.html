@@ -77,15 +77,24 @@ body{
 .header-main-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 16px;
-    margin: -10px 0 14px;
+    margin: 0 0 20px;
+}
+
+.header-main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
 }
 
 .header-main-nav a {
-    color: var(--muted);
+    color: var(--light);
     text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: color 0.3s;
 }
 
 .header-main-nav a:hover,
@@ -1126,6 +1135,7 @@ body{
             </button>
         </div>
     </div>
+    <nav class="header-main-nav" data-shared-nav="list"></nav>
 
     <!-- ОСНОВНАЯ ТАБЛИЦА ТОП ИГРОКОВ -->
     <div class="top-players-section">
@@ -1452,52 +1462,109 @@ body{
             </div>
             
             <div class="pagination">
-                <button class="pagination-btn" disabled>
+                <button class="pagination-btn" data-page-role="prev" disabled>
                     <i class="ri-arrow-left-s-line"></i>
                 </button>
-                <button class="pagination-btn active">1</button>
-                <button class="pagination-btn">2</button>
-                <button class="pagination-btn">3</button>
-                <button class="pagination-btn">4</button>
-                <button class="pagination-btn">5</button>
-                <button class="pagination-btn">
+                <button class="pagination-btn active" data-page-number="1">1</button>
+                <button class="pagination-btn" data-page-number="2">2</button>
+                <button class="pagination-btn" data-page-number="3">3</button>
+                <button class="pagination-btn" data-page-number="4">4</button>
+                <button class="pagination-btn" data-page-number="5">5</button>
+                <button class="pagination-btn" data-page-role="next">
                     <i class="ri-arrow-right-s-line"></i>
                 </button>
             </div>
         </div>
     </div>
-    <nav class="header-main-nav" data-shared-nav="inline"></nav>
 </div>
 
 <script>
+let topPlayersCache = [];
+let filteredPlayers = [];
+let currentPage = 1;
+const pageSize = 5;
+
+function getSafeNumber(value, fallback = 0) {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+}
+
+function updatePaginationControls(totalPages) {
+    const previousButton = document.querySelector('.pagination-btn[data-page-role="prev"]');
+    const nextButton = document.querySelector('.pagination-btn[data-page-role="next"]');
+    const pageButtons = document.querySelectorAll('.pagination-btn[data-page-number]');
+
+    pageButtons.forEach((button, index) => {
+        const pageNumber = index + 1;
+        button.textContent = String(pageNumber);
+        button.style.display = pageNumber <= Math.max(totalPages, 1) ? '' : 'none';
+        button.classList.toggle('active', pageNumber === currentPage);
+    });
+
+    if (previousButton) {
+        previousButton.disabled = currentPage <= 1;
+    }
+
+    if (nextButton) {
+        nextButton.disabled = currentPage >= totalPages;
+    }
+}
+
+function renderCurrentPage() {
+    const total = filteredPlayers.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const pagePlayers = filteredPlayers.slice(startIndex, startIndex + pageSize);
+
+    applyTopPlayersData(pagePlayers, {
+        totalCount: total,
+        startIndex,
+        currentPage,
+        totalPages
+    });
+
+    updatePaginationControls(totalPages);
+}
+
+function applyFilters(searchTerm = '', minRating = null, minWinrate = null) {
+    const normalizedSearch = String(searchTerm).trim().toLowerCase();
+
+    filteredPlayers = topPlayersCache.filter((player) => {
+        const nickname = String(player.nickname || '').toLowerCase();
+        const id = String(player.id || '');
+
+        const matchesSearch =
+            normalizedSearch.length === 0 ||
+            nickname.includes(normalizedSearch) ||
+            id.includes(normalizedSearch);
+
+        const matchesRating = minRating === null || getSafeNumber(player.rating) >= minRating;
+        const matchesWinrate = minWinrate === null || getSafeNumber(player.winrate) >= minWinrate;
+
+        return matchesSearch && matchesRating && matchesWinrate;
+    });
+
+    currentPage = 1;
+    renderCurrentPage();
+}
+
 // Поиск игрока
 function searchPlayer() {
     const searchInput = document.getElementById('playerSearch');
     const searchTerm = searchInput.value.trim().toLowerCase();
-    
-    if (!searchTerm) {
-        alert('Введите никнейм или ID для поиска');
-        return;
-    }
-    
-    console.log(`Поиск игрока: ${searchTerm}`);
-    
+
     const searchBtn = document.querySelector('.search-btn');
     const originalHtml = searchBtn.innerHTML;
     searchBtn.innerHTML = '<i class="ri-loader-4-line"></i> Поиск...';
     searchBtn.disabled = true;
-    
-    setTimeout(() => {
-        searchBtn.innerHTML = originalHtml;
-        searchBtn.disabled = false;
-        
-        alert(`Поиск игрока "${searchTerm}"\n(В реальном приложении здесь будут результаты поиска)`);
-        
-        const countElement = document.getElementById('foundCount');
-        countElement.textContent = Math.floor(Math.random() * 100) + 1;
-        
-        updateTime();
-    }, 1000);
+
+    applyFilters(searchTerm);
+    updateTime();
+
+    searchBtn.innerHTML = originalHtml;
+    searchBtn.disabled = false;
 }
 
 // Быстрый поиск по нажатию Enter
@@ -1510,93 +1577,202 @@ document.getElementById('playerSearch').addEventListener('keypress', function(e)
 // Функция для перехода в профиль игрока
 function viewPlayerProfile(playerName, playerId) {
     console.log(`Переход в профиль игрока: ${playerName} (ID: ${playerId})`);
-    
-    alert(`Открыть профиль игрока:\n${playerName}\nID: ${playerId}\n\n(В реальном приложении будет переход на страницу профиля)`);
+
+    sessionStorage.setItem('selectedPlayer', JSON.stringify({
+        nickname: playerName,
+        id: playerId
+    }));
+
+    window.location.href = `profile.html?playerId=${playerId}`;
     
     return false;
 }
 
 // Кнопки управления
-function refreshTop() {
+async function refreshTop() {
     console.log('Обновление топа...');
     
     const refreshBtn = document.querySelector('.control-btn.active');
     const originalHtml = refreshBtn.innerHTML;
     refreshBtn.innerHTML = '<i class="ri-loader-4-line"></i> Обновление...';
     refreshBtn.disabled = true;
-    
-    setTimeout(() => {
-        refreshBtn.innerHTML = originalHtml;
-        refreshBtn.disabled = false;
-        
+
+    try {
+        await hydrateTopPlayersFromApi();
         updateTime();
         console.log('Топ обновлен');
-    }, 1500);
+    } finally {
+        refreshBtn.innerHTML = originalHtml;
+        refreshBtn.disabled = false;
+    }
 }
 
 function exportTop() {
-    alert('Экспорт данных топа в CSV');
+    const playersToExport = filteredPlayers.length ? filteredPlayers : topPlayersCache;
+    const header = ['id', 'nickname', 'rating', 'winrate', 'kd'];
+    const rows = playersToExport.map((player) => [
+        player.id,
+        player.nickname,
+        getSafeNumber(player.rating),
+        getSafeNumber(player.winrate),
+        getSafeNumber(player.kd)
+    ]);
+
+    const csv = [header, ...rows]
+        .map((columns) => columns.map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'top-players.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
 }
 
 function showFilters() {
-    alert('Открыть панель фильтров');
+    const ratingValue = prompt('Минимальный рейтинг (пусто = без фильтра):', '');
+    const winrateValue = prompt('Минимальный % побед (пусто = без фильтра):', '');
+
+    const parsedRating = ratingValue === null || ratingValue.trim() === '' ? null : getSafeNumber(ratingValue, NaN);
+    const parsedWinrate = winrateValue === null || winrateValue.trim() === '' ? null : getSafeNumber(winrateValue, NaN);
+
+    if ((parsedRating !== null && Number.isNaN(parsedRating)) || (parsedWinrate !== null && Number.isNaN(parsedWinrate))) {
+        alert('Введите корректные числовые значения для фильтров.');
+        return;
+    }
+
+    applyFilters(document.getElementById('playerSearch').value, parsedRating, parsedWinrate);
+}
+
+function formatKdProgress(kdValue) {
+    const numericKd = Number(kdValue || 0);
+    return Math.max(0, Math.min(100, Math.round(numericKd * 50)));
+}
+
+function applyTopPlayersData(players, meta = {}) {
+    const { totalCount = players.length, startIndex = 0 } = meta;
+    const rows = document.querySelectorAll('#playersTableBody tr');
+
+    rows.forEach((row, index) => {
+        const player = players[index];
+        if (!player) {
+            row.style.display = 'none';
+            return;
+        }
+
+        row.style.display = '';
+
+        const nameLink = row.querySelector('.player-name a');
+        const ratingValue = row.querySelector('td:nth-child(3) .stat-value');
+        const winrateValue = row.querySelector('td:nth-child(4) .stat-value');
+        const kdValue = row.querySelector('td:nth-child(5) .stat-value');
+        const circles = row.querySelectorAll('.circular-progress-bar');
+        const rankBadge = row.querySelector('.rank-badge');
+
+        if (rankBadge) {
+            rankBadge.textContent = String(startIndex + index + 1);
+        }
+
+        if (nameLink) {
+            const nickname = player.nickname || `Player ${index + 1}`;
+            const playerId = Number(player.id || 0);
+            nameLink.textContent = nickname;
+            nameLink.setAttribute('onclick', `return viewPlayerProfile('${nickname.replace(/'/g, "\\'")}', ${playerId});`);
+        }
+
+        if (ratingValue) {
+            ratingValue.textContent = Number(player.rating || 0).toLocaleString('ru-RU');
+        }
+
+        if (winrateValue) {
+            winrateValue.textContent = `${Number(player.winrate || 0)}%`;
+        }
+
+        if (kdValue) {
+            kdValue.textContent = Number(player.kd || 0).toFixed(2);
+        }
+
+        if (circles[0]) {
+            circles[0].style.setProperty('--percentage', Number(player.winrate || 0));
+        }
+
+        if (circles[1]) {
+            circles[1].style.setProperty('--percentage', formatKdProgress(player.kd));
+        }
+    });
+
+    const foundCount = document.getElementById('foundCount');
+    if (foundCount) {
+        foundCount.textContent = Number(totalCount || 0).toLocaleString('ru-RU');
+    }
+
+    const totalPlayers = document.querySelector('.total-players');
+    if (totalPlayers) {
+        if (players.length > 0) {
+            const from = startIndex + 1;
+            const to = startIndex + players.length;
+            totalPlayers.textContent = `Показано ${from}-${to} из ${totalCount} игроков`;
+        } else {
+            totalPlayers.textContent = 'Ничего не найдено';
+        }
+    }
+
+    updateProgressBars();
+}
+
+async function hydrateTopPlayersFromApi() {
+    try {
+        const players = await window.CSAuth.apiRequest('/players/top');
+        if (!Array.isArray(players) || players.length === 0) {
+            return;
+        }
+
+        topPlayersCache = players;
+        filteredPlayers = [...topPlayersCache];
+        renderCurrentPage();
+    } catch {
+        // Если API недоступен, оставляем встроенный список игроков
+        topPlayersCache = Array.from(document.querySelectorAll('#playersTableBody tr')).map((row) => {
+            const nickname = row.querySelector('.player-name a')?.textContent?.trim() || '';
+            const rating = Number((row.querySelector('td:nth-child(3) .stat-value')?.textContent || '0').replace(/[^\d]/g, ''));
+            const winrate = Number((row.querySelector('td:nth-child(4) .stat-value')?.textContent || '0').replace(/[^\d]/g, ''));
+            const kd = Number((row.querySelector('td:nth-child(5) .stat-value')?.textContent || '0').replace(',', '.'));
+            const idMatch = row.querySelector('.player-name a')?.getAttribute('onclick')?.match(/,\s*(\d+)\)/);
+            const id = idMatch ? Number(idMatch[1]) : 0;
+
+            return { id, nickname, rating, winrate, kd };
+        });
+
+        filteredPlayers = [...topPlayersCache];
+        renderCurrentPage();
+    }
 }
 
 // Пагинация
 document.querySelectorAll('.pagination-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         if (this.disabled) return;
-        
-        if (this.querySelector('i')) {
-            const isNext = this.querySelector('.ri-arrow-right-s-line');
-            if (isNext) {
-                const activePage = document.querySelector('.pagination-btn.active');
-                const nextPage = parseInt(activePage.textContent) + 1;
-                if (nextPage <= 5) {
-                    document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.pagination-btn')[nextPage].classList.add('active');
-                    loadPage(nextPage);
-                }
-            } else {
-                const activePage = document.querySelector('.pagination-btn.active');
-                const prevPage = parseInt(activePage.textContent) - 1;
-                if (prevPage >= 1) {
-                    document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.pagination-btn')[prevPage].classList.add('active');
-                    loadPage(prevPage);
-                }
-            }
-        } else {
-            const pageNum = parseInt(this.textContent);
-            document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            loadPage(pageNum);
+
+        const pageRole = this.dataset.pageRole;
+        const pageNumber = Number(this.dataset.pageNumber || 0);
+
+        if (pageRole === 'prev') {
+            currentPage = Math.max(1, currentPage - 1);
+        } else if (pageRole === 'next') {
+            const totalPages = Math.max(1, Math.ceil(filteredPlayers.length / pageSize));
+            currentPage = Math.min(totalPages, currentPage + 1);
+        } else if (pageNumber > 0) {
+            currentPage = pageNumber;
         }
+
+        renderCurrentPage();
+        updateTime();
     });
 });
-
-// Загрузка страницы (имитация)
-function loadPage(pageNum) {
-    console.log(`Загрузка страницы ${pageNum}`);
-    
-    const rows = document.querySelectorAll('#playersTableBody tr');
-    rows.forEach(row => {
-        row.style.opacity = '0.5';
-    });
-    
-    setTimeout(() => {
-        rows.forEach(row => {
-            row.style.opacity = '1';
-        });
-        
-        const startPlayer = (pageNum - 1) * 5 + 1;
-        const endPlayer = pageNum * 5;
-        const totalPlayers = document.querySelector('.total-players');
-        totalPlayers.textContent = `Показано ${startPlayer}-${endPlayer} из 100 игроков`;
-        
-        updateTime();
-    }, 300);
-}
 
 // Функция обновления времени
 function updateTime() {
@@ -1607,10 +1783,10 @@ function updateTime() {
 }
 
 // Автоматическое обновление каждые 60 секунд
-setInterval(() => {
+setInterval(async () => {
     const refreshBtn = document.querySelector('.control-btn.active');
     if (!refreshBtn.disabled) {
-        refreshTop();
+        await refreshTop();
     }
 }, 60000);
 
@@ -1618,6 +1794,7 @@ setInterval(() => {
 document.addEventListener('DOMContentLoaded', function() {
     updateTime();
     updateProgressBars();
+    hydrateTopPlayersFromApi();
     
     // Обработчик изменения размера окна
     window.addEventListener('resize', function() {

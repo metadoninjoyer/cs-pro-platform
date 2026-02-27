@@ -80,15 +80,24 @@ body::after{
 .header-main-nav{
     display:flex;
     flex-wrap:wrap;
-    gap:10px 16px;
-    margin:-6px 0 14px;
+    margin:0 0 20px;
+}
+
+.header-main-nav ul{
+    display:flex;
+    list-style:none;
+    gap:30px;
+    padding:0;
+    margin:0;
+    flex-wrap:wrap;
 }
 
 .header-main-nav a{
-    color:var(--muted);
+    color:var(--light);
     text-decoration:none;
-    font-weight:600;
-    font-size:14px;
+    font-weight:500;
+    font-size:16px;
+    transition:color 0.3s;
 }
 
 .header-main-nav a:hover,
@@ -1569,9 +1578,9 @@ body::after{
 <div class="container">
     <div class="header">
         <div class="logo">CSFamily PROFILE</div>
-        <button class="btn btn-primary">Выйти</button>
+        <button class="btn btn-primary" id="logoutBtn">Выйти</button>
     </div>
-    <nav class="header-main-nav" data-shared-nav="inline"></nav>
+    <nav class="header-main-nav" data-shared-nav="list"></nav>
 
     <!-- ОСНОВНОЙ КОНТЕЙНЕР ПРОФИЛЯ -->
     <div class="profile-container">
@@ -1595,7 +1604,7 @@ body::after{
             <div class="user-info-section">
                 <div class="user-identity">
                     <div class="username-row">
-                        <h1 class="username">BRRR^</h1>
+                        <h1 class="username" id="profileUsername">BRRR^</h1>
                         <!-- Значок верификации после логина -->
                         <i class="fas fa-check-circle verified-badge" title="Проверенный аккаунт"></i>
                     </div>
@@ -1611,7 +1620,7 @@ body::after{
                         <div class="info-h-content">
                             <div class="info-h-value">
                                 <span class="fi fi-ua"></span>
-                                <span>Украина</span>
+                                <span id="profileCountry">Украина</span>
                             </div>
                         </div>
                     </div>
@@ -1645,7 +1654,7 @@ body::after{
                             <i class="fas fa-id-card"></i>
                         </div>
                         <div class="info-h-content">
-                            <div class="info-h-value">ID: 784512</div>
+                            <div class="info-h-value" id="profileId">ID: 784512</div>
                         </div>
                     </div>
                 </div>
@@ -2095,9 +2104,9 @@ function goToFriends() {
 // Функция для просмотра профиля друга
 function viewFriendProfile(friendName) {
     event.preventDefault(); // Предотвращаем переход по ссылке
-    alert(`Переход к профилю друга: ${friendName}\n\nВ реальном приложении здесь будет переход на страницу профиля друга.`);
-    // В реальном приложении здесь будет:
-    // window.location.href = `/profile/${friendName}`;
+    sessionStorage.setItem('selectedFriend', JSON.stringify({ nickname: friendName }));
+    showProfileNotice(`Открыт профиль друга: ${friendName}`, 'success');
+    window.location.href = `profile.html?friend=${encodeURIComponent(friendName)}`;
 }
 
 // Открытие модального окна перевода
@@ -2113,10 +2122,13 @@ function closeTransferModal(){
 // Обработка формы перевода
 document.getElementById('transferForm').addEventListener('submit',function(e){
     e.preventDefault();
-    const amount=document.getElementById('amount').value;
-    const password=document.getElementById('password').value;
-    
-    alert(`Перевод на сумму ${amount}₴ выполнен!`);
+    const amount = Number(document.getElementById('amount').value || 0);
+    if (!amount || amount <= 0) {
+        showProfileNotice('Введите корректную сумму перевода', 'error');
+        return;
+    }
+
+    showProfileNotice(`Перевод на сумму ${amount.toFixed(2)}₴ выполнен`, 'success');
     closeTransferModal();
     
     document.getElementById('transferForm').reset();
@@ -2124,25 +2136,47 @@ document.getElementById('transferForm').addEventListener('submit',function(e){
 
 // Функции для кнопок выпадающего меню
 function sendMessage(){
-    alert('Открыть чат с пользователем BRRR^');
+    window.location.href = 'news.html';
 }
 
 function addFriend(){
-    if(confirm('Отправить запрос в друзья пользователю BRRR^?')){
-        alert('Запрос в друзья отправлен!');
-    }
+    showProfileNotice('Запрос в друзья отправлен', 'success');
 }
 
 function blockPlayer(){
-    if(confirm('Вы уверены, что хотите заблокировать этого игрока?')){
-        alert('Игрок заблокирован');
-    }
+    showProfileNotice('Игрок заблокирован', 'success');
 }
 
 function restrictMatchesAccess(){
-    if(confirm('Ограничить доступ к вашим матчам для этого игрока?')){
-        alert('Доступ к вашим матчам ограничен');
+    showProfileNotice('Доступ к вашим матчам ограничен', 'success');
+}
+
+function showProfileNotice(message, type = 'success') {
+    let notice = document.getElementById('profileNotice');
+    if (!notice) {
+        notice = document.createElement('div');
+        notice.id = 'profileNotice';
+        notice.style.position = 'fixed';
+        notice.style.right = '20px';
+        notice.style.bottom = '20px';
+        notice.style.padding = '12px 16px';
+        notice.style.borderRadius = '8px';
+        notice.style.color = '#fff';
+        notice.style.fontWeight = '600';
+        notice.style.zIndex = '9999';
+        notice.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)';
+        notice.style.transition = 'opacity 0.2s ease';
+        document.body.appendChild(notice);
     }
+
+    notice.style.background = type === 'error' ? '#ff4c4c' : '#2d9d5a';
+    notice.textContent = message;
+    notice.style.opacity = '1';
+
+    clearTimeout(showProfileNotice._timer);
+    showProfileNotice._timer = setTimeout(() => {
+        notice.style.opacity = '0';
+    }, 2200);
 }
 
 // Закрыть модальное окно при клике вне его
@@ -2229,6 +2263,63 @@ function updateLastActivity() {
 setInterval(updateLastActivity, 30000);
 </script>
 <script src="script.js"></script>
+<script>
+if (!window.CSAuth.isAuthenticated()) {
+    window.location.replace('index.html');
+}
+
+const logoutButton = document.getElementById('logoutBtn');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        window.CSAuth.clearAuthSession();
+        window.location.href = 'index.html';
+    });
+}
+
+function applyProfileUser(user) {
+    if (!user) {
+        return;
+    }
+
+    const usernameElement = document.getElementById('profileUsername');
+    const countryElement = document.getElementById('profileCountry');
+    const idElement = document.getElementById('profileId');
+    const recipientElement = document.getElementById('recipient');
+
+    if (usernameElement && user.nickname) {
+        usernameElement.textContent = user.nickname;
+    }
+
+    if (countryElement && user.country) {
+        countryElement.textContent = user.country;
+    }
+
+    if (idElement && user.id) {
+        idElement.textContent = `ID: ${user.id}`;
+    }
+
+    if (recipientElement && user.nickname) {
+        recipientElement.value = user.nickname;
+    }
+}
+
+async function hydrateProfileData() {
+    try {
+        const userFromApi = await window.CSAuth.apiRequest('/profile/me');
+        applyProfileUser(userFromApi);
+        localStorage.setItem('user', JSON.stringify({
+            ...(JSON.parse(localStorage.getItem('user') || '{}')),
+            ...userFromApi
+        }));
+        return;
+    } catch {
+        const userFromStorage = JSON.parse(localStorage.getItem('user') || '{}');
+        applyProfileUser(userFromStorage);
+    }
+}
+
+hydrateProfileData();
+</script>
 
 </body>
 </html>

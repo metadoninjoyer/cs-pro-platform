@@ -1,0 +1,64 @@
+{
+  "users": [],
+  "news": [
+    {
+      "slug": "winter-cup-2023",
+      "title": "Анонс турнира CSFamily Winter Cup 2023",
+      "category": "Турнир",
+      "date": "15 декабря 2023",
+      "views": 1245,
+      "excerpt": "Приглашаем всех участников на зимний кубок CSFamily с призовым фондом $10,000. Регистрация открыта до 25 декабря.",
+      "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "slug": "vac-plus-2",
+      "title": "Обновление античита VAC+ 2.0",
+      "category": "Обновление",
+      "date": "10 декабря 2023",
+      "views": 2187,
+      "excerpt": "Мы запустили обновлённую систему античита VAC+ 2.0, которая улучшает обнаружение читеров на 40% по сравнению с предыдущей версией.",
+      "image": "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "slug": "elo-2",
+      "title": "Новая система рангов ELO 2.0",
+      "category": "Обновление",
+      "date": "5 декабря 2023",
+      "views": 3042,
+      "excerpt": "Введена улучшенная система рангов, которая точнее определяет уровень игроков и подбирает более равные матчи.",
+      "image": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1171&q=80"
+    },
+    {
+      "slug": "dreamhack-2023",
+      "title": "CSFamily на DreamHack Winter 2023",
+      "category": "Событие",
+      "date": "30 ноября 2023",
+      "views": 1876,
+      "excerpt": "Наша команда приняла участие в крупнейшем киберспортивном фестивале Европы. Фотоотчёт и впечатления внутри.",
+      "image": "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1265&q=80"
+    },
+    {
+      "slug": "map-pool-update",
+      "title": "Добавлены новые карты в пул матчмейкинга",
+      "category": "Обновление",
+      "date": "25 ноября 2023",
+      "views": 2543,
+      "excerpt": "В ротацию матчмейкинга добавлены карты de_inferno_remake, de_mirage_ce и cs_office_2023 с улучшенной графикой.",
+      "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "slug": "razer-steelseries",
+      "title": "Партнёрство с Razer и SteelSeries",
+      "category": "Событие",
+      "date": "20 ноября 2023",
+      "views": 1987,
+      "excerpt": "Заключены партнёрские соглашения с ведущими производителями геймерского оборудования для турниров CSFamily.",
+      "image": "https://images.unsplash.com/photo-1600861194947-f8830c2bed49?auto=format&fit=crop&w=1169&q=80"
+    }
+  ],
+  "topPlayers": [
+    { "id": 784512, "nickname": "BRRR^", "rating": 3190, "kd": 1.78, "winrate": 74 },
+    { "id": 892345, "nickname": "AWP_Queen", "rating": 3015, "kd": 1.62, "winrate": 71 },
+    { "id": 671239, "nickname": "SniperPro", "rating": 2958, "kd": 1.54, "winrate": 69 }
+  ]
+}

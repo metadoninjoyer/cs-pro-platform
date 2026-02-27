@@ -70,6 +70,105 @@ if (document.readyState === 'loading') {
     renderSharedNavigation();
 }
 
+const authStorageKeys = [
+    'authToken',
+    'accessToken',
+    'refreshToken',
+    'user',
+    'userId',
+    'isLoggedIn'
+];
+
+const API_BASE_URL = localStorage.getItem('apiBaseUrl') || 'http://localhost:4000/api';
+
+function setAuthSession(user, token = null) {
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify(user));
+    if (token) {
+        localStorage.setItem('authToken', token);
+    }
+}
+
+function clearAuthSession() {
+    authStorageKeys.forEach((key) => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+    });
+}
+
+function isAuthenticated() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+    const hasToken = Boolean(localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
+    return isLoggedIn || hasToken;
+}
+
+function loginWithSteam(actionText = 'Вход') {
+    const steamUser = {
+        nickname: 'SteamPlayer',
+        email: 'steam@csfamily.local',
+        provider: 'steam'
+    };
+
+    setAuthSession(steamUser);
+    alert(`${actionText} выполнен через Steam!\nПеренаправляем в личный кабинет...`);
+    window.location.href = 'profile.html';
+}
+
+async function apiRequest(path, options = {}) {
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+    };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+        ...options,
+        headers
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.message || 'Ошибка API');
+    }
+
+    return data;
+}
+
+async function loginWithPassword(email, password) {
+    const data = await apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+    });
+
+    setAuthSession(data.user, data.token);
+    return data.user;
+}
+
+async function registerWithPassword(nickname, email, password) {
+    const data = await apiRequest('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ nickname, email, password })
+    });
+
+    setAuthSession(data.user, data.token);
+    return data.user;
+}
+
+window.CSAuth = {
+    setAuthSession,
+    clearAuthSession,
+    isAuthenticated,
+    loginWithSteam,
+    loginWithPassword,
+    registerWithPassword,
+    apiRequest,
+    API_BASE_URL
+};
+
 // Function to scroll to a specific section
 function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);

@@ -89,15 +89,24 @@ body::after {
 .header-main-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 16px;
-    margin: -6px 0 14px;
+    margin: 0 0 20px;
+}
+
+.header-main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
 }
 
 .header-main-nav a {
-    color: var(--muted);
+    color: var(--light);
     text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: color 0.3s;
 }
 
 .header-main-nav a:hover,
@@ -1575,7 +1584,7 @@ optgroup option {
             <i class="fas fa-arrow-left"></i> Назад в профиль
         </button>
     </div>
-    <nav class="header-main-nav" data-shared-nav="inline"></nav>
+    <nav class="header-main-nav" data-shared-nav="list"></nav>
     
     <!-- ОСНОВНОЙ КОНТЕЙНЕР НАСТРОЕК -->
     <div class="settings-container">
@@ -1662,7 +1671,7 @@ optgroup option {
                     <!-- НИКНЕЙМ -->
                     <div class="form-group">
                         <label><i class="ri-at-line"></i> Никнейм</label>
-                        <input type="text" class="form-control" value="BRRR^" placeholder="Введите ваш никнейм">
+                        <input type="text" class="form-control" id="profileNicknameInput" value="BRRR^" placeholder="Введите ваш никнейм">
                         <small style="color: var(--muted); margin-top: 5px; display: block;">
                             Имя, которое видят другие игроки
                         </small>
@@ -1671,26 +1680,26 @@ optgroup option {
                     <!-- ДАТА РОЖДЕНИЯ -->
                     <div class="form-group">
                         <label><i class="ri-calendar-line"></i> Дата рождения</label>
-                        <input type="date" class="form-control" value="1995-06-15">
+                        <input type="date" class="form-control" id="profileBirthDateInput" value="1995-06-15">
                     </div>
                     
                     <!-- ИМЯ -->
                     <div class="form-group">
                         <label><i class="ri-user-line"></i> Имя</label>
-                        <input type="text" class="form-control" value="Алексей" placeholder="Ваше настоящее имя">
+                        <input type="text" class="form-control" id="profileFirstNameInput" value="Алексей" placeholder="Ваше настоящее имя">
                     </div>
                     
                     <!-- ФАМИЛИЯ -->
                     <div class="form-group">
                         <label><i class="ri-user-line"></i> Фамилия</label>
-                        <input type="text" class="form-control" value="Иванов" placeholder="Ваша фамилия">
+                        <input type="text" class="form-control" id="profileLastNameInput" value="Иванов" placeholder="Ваша фамилия">
                     </div>
                     
                     <!-- ПОЛ -->
                     <div class="form-group">
                         <label><i class="ri-genderless-line"></i> Пол</label>
                         <div class="select-wrapper">
-                            <select class="form-control">
+                            <select class="form-control" id="profileGenderInput">
                                 <option value="male" selected>Мужской</option>
                                 <option value="female">Женский</option>
                                 <option value="other">Другой</option>
@@ -1702,7 +1711,7 @@ optgroup option {
                     <!-- ЭЛЕКТРОННАЯ ПОЧТА -->
                     <div class="form-group">
                         <label><i class="ri-mail-line"></i> Электронная почта</label>
-                        <input type="email" class="form-control" value="alexey@example.com" placeholder="your@email.com">
+                        <input type="email" class="form-control" id="profileEmailInput" value="alexey@example.com" placeholder="your@email.com">
                         <small style="color: var(--muted); margin-top: 5px; display: block;">
                             На эту почту приходят уведомления и сброс пароля
                         </small>
@@ -1710,7 +1719,7 @@ optgroup option {
                     
                     <!-- КНОПКИ СОХРАНЕНИЯ -->
                     <div style="display: flex; gap: 15px; margin-top: 30px;">
-                        <button class="btn btn-primary" onclick="saveProfileSettings()">
+                        <button class="btn btn-primary" onclick="saveProfileSettings(this)">
                             <i class="ri-save-line"></i> Сохранить изменения
                         </button>
                         <button class="btn btn-secondary" onclick="resetProfileSettings()">
@@ -2536,16 +2545,32 @@ function applyFinanceFilters() {
 
 // Экспорт финансового отчета
 function exportFinanceReport() {
-    const format = prompt('Выберите формат экспорта (CSV, PDF, Excel):', 'CSV');
-    
-    if (format) {
-        showNotification(`Финансовый отчет экспортирован в формате ${format}`, 'success');
-        
-        // Имитация загрузки
-        setTimeout(() => {
-            showNotification('Файл скачан успешно', 'success');
-        }, 1500);
-    }
+    const rows = Array.from(document.querySelectorAll('.transaction-row'));
+    const header = ['ID', 'Тип', 'Описание', 'Сумма', 'Дата', 'Статус'];
+    const data = rows.map((row) => [
+        row.querySelector('.transaction-id')?.textContent?.trim() || '',
+        row.querySelector('.transaction-type i')?.className || '',
+        row.querySelector('.transaction-description')?.textContent?.trim() || '',
+        row.querySelector('.transaction-amount')?.textContent?.trim() || '',
+        row.querySelector('.transaction-date')?.textContent?.trim() || '',
+        row.querySelector('.transaction-status')?.textContent?.trim() || ''
+    ]);
+
+    const csv = [header, ...data]
+        .map((columns) => columns.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'finance-report.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+
+    showNotification('Финансовый отчет экспортирован в CSV', 'success');
 }
 
 // Открытие модального окна пополнения
@@ -2594,45 +2619,109 @@ function openWithdrawalModal() {
         return;
     }
     
-    const amount = prompt(`Введите сумму для вывода (от ${minAmount} ₽ до ${currentBalance} ₽):`, minAmount.toString());
-    
-    if (amount && amount >= minAmount && amount <= currentBalance) {
-        showNotification(`Заявка на вывод ${amount} ₽ отправлена на рассмотрение`, 'success');
-    } else if (amount) {
-        showNotification(`Сумма должна быть от ${minAmount} до ${currentBalance} ₽`, 'error');
-    }
+    const amount = Math.min(currentBalance, minAmount);
+    showNotification(`Заявка на вывод ${amount.toFixed(2)} ₽ отправлена на рассмотрение`, 'success');
 }
 
 // ===== ОБЩИЕ ФУНКЦИИ =====
 
 // Сохранение настроек профиля
-function saveProfileSettings() {
-    showNotification('Настройки профиля успешно сохранены', 'success');
-    
-    // Имитация загрузки
-    const button = event.currentTarget;
+async function saveProfileSettings(buttonElement) {
+    const button = buttonElement || event.currentTarget;
     const originalHTML = button.innerHTML;
     button.innerHTML = '<span class="spinner"></span> Сохранение...';
     button.disabled = true;
-    
-    setTimeout(() => {
+
+    const nickname = document.getElementById('profileNicknameInput').value.trim();
+    const firstName = document.getElementById('profileFirstNameInput').value.trim();
+    const lastName = document.getElementById('profileLastNameInput').value.trim();
+    const email = document.getElementById('profileEmailInput').value.trim();
+    const gender = document.getElementById('profileGenderInput').value;
+
+    if (!nickname) {
+        showNotification('Никнейм не может быть пустым', 'error');
         button.innerHTML = originalHTML;
         button.disabled = false;
-    }, 1500);
+        return;
+    }
+
+    try {
+        const profile = await window.CSAuth.apiRequest('/profile/me', {
+            method: 'PATCH',
+            body: JSON.stringify({
+                nickname,
+                bio: [firstName, lastName].filter(Boolean).join(' ').trim(),
+                country: 'Украина'
+            })
+        });
+
+        const cachedUser = JSON.parse(localStorage.getItem('user') || '{}');
+        localStorage.setItem('user', JSON.stringify({
+            ...cachedUser,
+            ...profile,
+            email,
+            gender
+        }));
+
+        showNotification('Настройки профиля успешно сохранены', 'success');
+    } catch (error) {
+        showNotification(`Ошибка сохранения: ${error.message}`, 'error');
+    } finally {
+        button.innerHTML = originalHTML;
+        button.disabled = false;
+    }
+}
+
+function applyProfileSettingsData(user) {
+    if (!user) {
+        return;
+    }
+
+    const nicknameInput = document.getElementById('profileNicknameInput');
+    const emailInput = document.getElementById('profileEmailInput');
+    const firstNameInput = document.getElementById('profileFirstNameInput');
+    const lastNameInput = document.getElementById('profileLastNameInput');
+
+    if (nicknameInput && user.nickname) {
+        nicknameInput.value = user.nickname;
+    }
+
+    if (emailInput && user.email) {
+        emailInput.value = user.email;
+    }
+
+    if (firstNameInput || lastNameInput) {
+        const bioParts = String(user.bio || '').trim().split(/\s+/).filter(Boolean);
+        if (firstNameInput) {
+            firstNameInput.value = bioParts[0] || firstNameInput.value;
+        }
+        if (lastNameInput) {
+            lastNameInput.value = bioParts.slice(1).join(' ') || lastNameInput.value;
+        }
+    }
+}
+
+async function hydrateSettingsProfileData() {
+    try {
+        const userFromApi = await window.CSAuth.apiRequest('/profile/me');
+        applyProfileSettingsData(userFromApi);
+
+        const cachedUser = JSON.parse(localStorage.getItem('user') || '{}');
+        localStorage.setItem('user', JSON.stringify({
+            ...cachedUser,
+            ...userFromApi
+        }));
+        return;
+    } catch {
+        const userFromStorage = JSON.parse(localStorage.getItem('user') || '{}');
+        applyProfileSettingsData(userFromStorage);
+    }
 }
 
 // Сброс настроек профиля
 function resetProfileSettings() {
-    if (confirm('Вы уверены, что хотите сбросить все изменения?')) {
-        showNotification('Настройки сброшены', 'success');
-        
-        // Здесь будет код для сброса полей формы
-        document.querySelectorAll('.form-control').forEach(input => {
-            if (input.type === 'text' || input.type === 'email') {
-                input.value = '';
-            }
-        });
-    }
+    hydrateSettingsProfileData();
+    showNotification('Изменения отменены', 'success');
 }
 
 // Загрузка аватара
@@ -2657,10 +2746,8 @@ function uploadAvatar() {
 
 // Сброс аватара
 function resetAvatar() {
-    if (confirm('Вернуть аватар по умолчанию?')) {
-        document.querySelector('.current-avatar img').src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80';
-        showNotification('Аватар сброшен', 'success');
-    }
+    document.querySelector('.current-avatar img').src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80';
+    showNotification('Аватар сброшен', 'success');
 }
 
 // Сохранение настроек приватности
@@ -2670,15 +2757,11 @@ function savePrivacySettings() {
 
 // Применение рекомендуемых настройки приватности
 function applyDefaultPrivacy() {
-    if (confirm('Применить рекомендуемые настройки приватности?')) {
-        // Установка рекомендуемых значений
-        const selects = document.querySelectorAll('#privacy select');
-        selects.forEach(select => {
-            select.value = 'friends';
-        });
-        
-        showNotification('Рекомендуемые настройки применены', 'success');
-    }
+    const selects = document.querySelectorAll('#privacy select');
+    selects.forEach(select => {
+        select.value = 'friends';
+    });
+    showNotification('Рекомендуемые настройки применены', 'success');
 }
 
 // Добавление в чёрный список
@@ -2686,12 +2769,8 @@ function addToBlacklist() {
     const username = document.getElementById('blockUsername').value.trim();
     
     if (username) {
-        if (confirm(`Заблокировать пользователя ${username}?`)) {
-            showNotification(`Пользователь ${username} добавлен в чёрный список`, 'success');
-            document.getElementById('blockUsername').value = '';
-            
-            // Здесь будет код для добавления в чёрный список
-        }
+        showNotification(`Пользователь ${username} добавлен в чёрный список`, 'success');
+        document.getElementById('blockUsername').value = '';
     } else {
         showNotification('Введите никнейм пользователя', 'error');
     }
@@ -2699,17 +2778,12 @@ function addToBlacklist() {
 
 // Разблокировка пользователя
 function unblockUser(username) {
-    if (confirm(`Разблокировать пользователя ${username}?`)) {
-        showNotification(`Пользователь ${username} разблокирован`, 'success');
-        
-        // Здесь будет код для удаления из чёрного списка
-        const item = event.currentTarget.closest('.blacklist-item');
-        item.style.opacity = '0.5';
-        
-        setTimeout(() => {
-            item.remove();
-        }, 300);
-    }
+    showNotification(`Пользователь ${username} разблокирован`, 'success');
+    const item = event.currentTarget.closest('.blacklist-item');
+    item.style.opacity = '0.5';
+    setTimeout(() => {
+        item.remove();
+    }, 300);
 }
 
 // Сохранение настроек сессий
@@ -2722,18 +2796,14 @@ function saveSessionSettings() {
 
 // Завершение всех сессий
 function closeAllSessions() {
-    if (confirm('Завершить все сессии, кроме текущей? Вам потребуется войти заново на других устройствах.')) {
-        showNotification('Все сессии завершены', 'success');
-        
-        // Здесь будет код для завершения сессий
-        const sessions = document.querySelectorAll('.session-item:not(.session-current)');
-        sessions.forEach(session => {
-            session.style.opacity = '0.5';
-            setTimeout(() => {
-                session.remove();
-            }, 300);
-        });
-    }
+    showNotification('Все сессии завершены', 'success');
+    const sessions = document.querySelectorAll('.session-item:not(.session-current)');
+    sessions.forEach(session => {
+        session.style.opacity = '0.5';
+        setTimeout(() => {
+            session.remove();
+        }, 300);
+    });
 }
 
 // Начало верификации
@@ -2759,10 +2829,9 @@ function startVerification() {
 
 // Форма апелляции
 function showAppealForm() {
-    const reason = prompt('Пожалуйста, кратко опишите почему бан был несправедлив:');
-    if (reason) {
-        showNotification('Апелляция отправлена на рассмотрение', 'success');
-    }
+    const selectedBan = document.querySelector('.ban-item .ban-reason')?.textContent?.trim() || 'Нарушение';
+    const ticketId = `APL-${Date.now().toString().slice(-6)}`;
+    showNotification(`Апелляция по причине "${selectedBan}" отправлена. Тикет: ${ticketId}`, 'success');
 }
 
 // Инициализация при загрузке страницы
@@ -2940,6 +3009,13 @@ window.onclick = function(event) {
 };
 </script>
 <script src="script.js"></script>
+<script>
+if (!window.CSAuth.isAuthenticated()) {
+    window.location.replace('index.html');
+}
+
+hydrateSettingsProfileData();
+</script>
 
 </body>
 </html>
