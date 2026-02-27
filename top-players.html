@@ -1,19 +1,1640 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Players Ranking</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Топ игроков | CSFamily</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css">
+
+<style>
+:root{
+    --orange:#ff6a00;
+    --orange-light:#ff9a3c;
+    --orange-dark:#cc5500;
+    --bg:#0b0e13;
+    --panel:#141922;
+    --card:#151a24;
+    --border:#232c3a;
+    --text:#e6ecf5;
+    --muted:#9aa7bd;
+    --green:#4cff4c;
+    --red:#ff4c4c;
+    --yellow:#ffb45c;
+    --blue:#5c8dff;
+    
+    --neon:0 0 10px rgba(255,106,0,.6),0 0 30px rgba(255,106,0,.3);
+    --panel-glow:0 0 35px rgba(255,106,0,.15);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Oxanium',sans-serif;}
+
+body{
+    background:linear-gradient(160deg,#070a0f,#0c111a);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+.container{
+    max-width:1400px;
+    margin:auto;
+    padding:20px;
+    position:relative;
+    z-index:2;
+}
+
+/* ===== ШАПКА ===== */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-bottom:20px;
+    margin-bottom:30px;
+    border-bottom:1px solid rgba(255,106,0,0.2);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.logo{
+    color:var(--orange);
+    font-size:clamp(20px, 4vw, 28px);
+    font-weight:700;
+    letter-spacing:1.5px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-shrink: 0;
+}
+
+.logo i {
+    font-size: clamp(18px, 3.5vw, 24px);
+}
+
+.header-main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin: -10px 0 14px;
+}
+
+.header-main-nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.header-main-nav a:hover,
+.header-main-nav a[aria-current="page"] {
+    color: var(--orange);
+}
+
+/* СТАТИСТИКА В ШАПКЕ */
+.stats-summary {
+    display: flex;
+    align-items: center;
+    gap: clamp(15px, 2vw, 30px);
+    margin-top: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 0 auto;
+    min-width: 180px;
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255,106,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--orange);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.stat-value-sm {
+    font-size: clamp(16px, 1.8vw, 18px);
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.stat-label-sm {
+    font-size: clamp(11px, 1.2vw, 12px);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* Кнопки управления */
+.controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: clamp(13px, 1.3vw, 14px);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1 0 auto;
+    justify-content: center;
+    min-width: 120px;
+}
+
+.control-btn:hover {
+    background: rgba(255,106,0,0.08);
+    border-color: rgba(255,106,0,0.3);
+}
+
+.control-btn.active {
+    background: rgba(255,106,0,0.12);
+    color: var(--orange);
+    border-color: rgba(255,106,0,0.3);
+}
+
+/* ===== МИНИМАЛИСТИЧНАЯ ТАБЛИЦА ТОП ИГРОКОВ ===== */
+.top-players-section {
+    background: rgba(20, 25, 34, 0.8);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,106,0,0.1);
+    margin-bottom: 30px;
+}
+
+.top-players-header {
+    padding: clamp(15px, 2vw, 20px) clamp(15px, 2vw, 30px);
+    background: linear-gradient(90deg, rgba(20, 25, 38, 0.9), rgba(15, 20, 35, 0.9));
+    border-bottom: 1px solid rgba(255,106,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.top-players-title {
+    font-size: clamp(18px, 2.2vw, 22px);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.top-players-title i {
+    color: var(--orange);
+}
+
+/* ПОИСК ИГРОКА */
+.search-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.search-container {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    flex: 1 1 300px;
+    position: relative;
+    min-width: 0;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: clamp(14px, 1.4vw, 15px);
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: rgba(255,106,0,0.5);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 20px rgba(255,106,0,0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: clamp(16px, 1.6vw, 18px);
+}
+
+.search-btn {
+    padding: 12px clamp(15px, 2vw, 25px);
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: clamp(14px, 1.4vw, 15px);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255,106,0,0.3);
+}
+
+.search-info {
+    font-size: clamp(12px, 1.2vw, 13px);
+    color: var(--muted);
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ТАБЛИЦА */
+.top-players-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-container {
+    min-width: min(100%, 1000px);
+}
+
+.players-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.players-table thead {
+    background: rgba(15, 20, 30, 0.9);
+}
+
+.players-table th {
+    padding: clamp(12px, 1.5vw, 18px) clamp(10px, 1vw, 15px);
+    text-align: left;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: clamp(12px, 1.2vw, 14px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap;
+}
+
+/* ВЫРАВНИВАНИЕ ЗАГОЛОВКОВ */
+.players-table th.rank-header {
+    text-align: center;
+    width: clamp(60px, 8vw, 80px);
+}
+
+.players-table th.player-header {
+    text-align: left;
+    min-width: clamp(200px, 30vw, 300px);
+    width: auto;
+}
+
+.players-table th.rating-header,
+.players-table th.winrate-header,
+.players-table th.kd-header {
+    text-align: center;
+    min-width: clamp(100px, 12vw, 140px);
+    width: clamp(100px, 12vw, 140px);
+}
+
+.players-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: all 0.3s;
+    background: rgba(20, 25, 35, 0.5);
+}
+
+.players-table tbody tr:hover {
+    background: rgba(255,106,0,0.05);
+}
+
+.players-table tbody tr:nth-child(even) {
+    background: rgba(15, 20, 30, 0.5);
+}
+
+.players-table tbody tr:nth-child(even):hover {
+    background: rgba(255,106,0,0.05);
+}
+
+.players-table td {
+    padding: clamp(15px, 1.8vw, 20px) clamp(10px, 1vw, 15px);
+    vertical-align: middle;
+    height: clamp(70px, 10vw, 80px);
+}
+
+/* Колонка "Топ" */
+.rank-cell {
+    text-align: center;
+    width: clamp(60px, 8vw, 80px);
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(28px, 4vw, 36px);
+    height: clamp(28px, 4vw, 36px);
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: clamp(14px, 1.5vw, 16px);
+    color: var(--text);
+    background: rgba(255,255,255,0.05);
+    border: none;
+}
+
+.rank-1 { 
+    background: rgba(255, 215, 0, 0.15);
+    color: #FFD700;
+}
+.rank-2 { 
+    background: rgba(192, 192, 192, 0.15);
+    color: #C0C0C0;
+}
+.rank-3 { 
+    background: rgba(205, 127, 50, 0.15);
+    color: #CD7F32;
+}
+.rank-other { 
+    background: rgba(92, 141, 255, 0.1);
+    color: var(--text);
+}
+
+/* Колонка "Игрок" */
+.player-cell {
+    min-width: clamp(200px, 30vw, 300px);
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 1.5vw, 15px);
+}
+
+.player-avatar-container {
+    position: relative;
+    width: clamp(40px, 6vw, 50px);
+    height: clamp(40px, 6vw, 50px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.player-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.online-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: clamp(8px, 1vw, 10px);
+    height: clamp(8px, 1vw, 10px);
+    border-radius: 50%;
+    border: clamp(1.5px, 0.2vw, 2px) solid rgba(20, 25, 34, 0.9);
+    z-index: 4;
+    background: var(--green);
+    box-shadow: 0 0 6px rgba(76, 255, 76, 0.8);
+}
+
+.player-skill-badge {
+    position: absolute;
+    bottom: clamp(-4px, -0.5vw, -5px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(20px, 2.5vw, 25px);
+    height: clamp(12px, 1.4vw, 14px);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: clamp(8px, 0.9vw, 10px);
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    z-index: 3;
+    border: 1px solid rgba(255,255,255,0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+    line-height: 1;
+    padding: 0;
+}
+
+.player-skill-badge[data-skill="P"] {
+    background: linear-gradient(135deg, #ff3333, #cc0000);
+}
+
+.player-skill-badge[data-skill="H"] {
+    background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+}
+
+.player-skill-badge[data-skill="M"] {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+}
+
+.player-skill-badge[data-skill="L"] {
+    background: linear-gradient(135deg, #666666, #888888);
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2px, 0.4vw, 4px);
+    min-width: 0;
+    flex: 1;
+}
+
+.player-name {
+    font-size: clamp(14px, 1.6vw, 16px);
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 0.6vw, 6px);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    flex-wrap: wrap;
+}
+
+.player-name a {
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.player-name:hover a {
+    color: var(--orange);
+    text-shadow: 0 0 10px rgba(255,106,0,0.3);
+}
+
+.player-name:hover {
+    transform: translateX(3px);
+}
+
+.verified-badge-small {
+    color: #1DA1F2;
+    font-size: clamp(12px, 1.4vw, 14px);
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.verified-badge-small:hover {
+    transform: scale(1.1);
+    text-shadow: 0 0 10px rgba(29, 161, 242, 0.5);
+}
+
+.player-country {
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 0.6vw, 6px);
+    font-size: clamp(11px, 1.2vw, 13px);
+    color: var(--muted);
+    flex-wrap: wrap;
+}
+
+.player-country .fi {
+    width: clamp(16px, 2vw, 20px);
+    height: clamp(12px, 1.5vw, 15px);
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+/* СТИЛИ ДЛЯ КРУГОВЫХ ПРОГРЕСС-БАРОВ SVG */
+.stats-cell {
+    text-align: center;
+    min-width: clamp(100px, 12vw, 140px);
+    width: clamp(100px, 12vw, 140px);
+}
+
+.stat-value-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 1vw, 12px);
+    flex-wrap: nowrap;
+}
+
+.progress-indicator-circle {
+    position: relative;
+    width: clamp(20px, 2.4vw, 24px);
+    height: clamp(20px, 2.4vw, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.circular-progress {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.circular-bg {
+    fill: none;
+    stroke: rgba(15, 20, 30, 0.6);
+    stroke-width: clamp(2.5px, 0.3vw, 3px);
+}
+
+.circular-progress-bar {
+    fill: none;
+    stroke-width: clamp(2.5px, 0.3vw, 3px);
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: calc(100 - var(--percentage, 0));
+    transition: stroke-dashoffset 0.5s ease;
+    stroke: url(#gradient-orange-red);
+}
+
+.stat-value {
+    font-size: clamp(14px, 1.6vw, 18px);
+    font-weight: 700;
+    color: #ffffff;
+    min-width: clamp(35px, 4vw, 45px);
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* СТРЕЛОЧКА ИЗМЕНЕНИЯ РЕЙТИНГА */
+.rating-change {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: clamp(11px, 1.2vw, 13px);
+    font-weight: 800;
+    line-height: 1;
+}
+
+.rating-change.up {
+    color: var(--green);
+}
+
+.rating-change.down {
+    color: var(--red);
+}
+
+.rating-arrow {
+    font-size: clamp(12px, 1.4vw, 16px);
+    font-weight: 900;
+    line-height: 1;
+}
+
+/* Пагинация */
+.top-players-footer {
+    padding: clamp(15px, 1.8vw, 20px) clamp(15px, 2vw, 30px);
+    background: rgba(15, 20, 35, 0.9);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.pagination {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pagination-btn {
+    width: clamp(30px, 3.6vw, 36px);
+    height: clamp(30px, 3.6vw, 36px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: clamp(12px, 1.2vw, 14px);
+    flex-shrink: 0;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: rgba(255,106,0,0.08);
+    color: var(--text);
+}
+
+.pagination-btn.active {
+    background: rgba(255,106,0,0.12);
+    color: var(--orange);
+    border-color: rgba(255,106,0,0.3);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.total-players {
+    font-size: clamp(11px, 1.2vw, 13px);
+    color: var(--muted);
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* АДАПТИВНОСТЬ ДЛЯ РАЗНЫХ УСТРОЙСТВ */
+
+/* Большие мониторы (более 1600px) */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1500px;
+    }
+    
+    .stat-item {
+        min-width: 200px;
+    }
+}
+
+/* Планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .stats-summary {
+        justify-content: flex-start;
+    }
+    
+    .stat-item {
+        flex: 1 0 calc(50% - 15px);
+        min-width: 160px;
+    }
+    
+    .search-box {
+        flex: 1 1 100%;
+    }
+    
+    .search-btn {
+        flex: 1 1 auto;
+    }
+    
+    .players-table th.player-header {
+        min-width: 250px;
+    }
+    
+    .stats-cell {
+        min-width: 110px;
+    }
+}
+
+/* Мобильные устройства (480px - 768px) */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .logo {
+        justify-content: center;
+    }
+    
+    .controls {
+        justify-content: center;
+    }
+    
+    .control-btn {
+        min-width: 100px;
+        flex: 0 1 auto;
+    }
+    
+    .top-players-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container {
+        flex-direction: column;
+    }
+    
+    .search-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .players-table th,
+    .players-table td {
+        padding: 12px 8px;
+    }
+    
+    .player-info {
+        gap: 8px;
+    }
+    
+    .player-avatar-container {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .player-name {
+        font-size: 13px;
+    }
+    
+    .player-country {
+        font-size: 11px;
+    }
+    
+    .stats-cell {
+        min-width: 100px;
+    }
+    
+    .stat-value {
+        font-size: 14px;
+        min-width: 30px;
+    }
+    
+    .top-players-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pagination {
+        order: 2;
+    }
+    
+    .total-players {
+        order: 1;
+        width: 100%;
+    }
+}
+
+/* Маленькие мобильные (до 480px) */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .stats-summary {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .stat-item {
+        flex: 1 0 100%;
+        min-width: 100%;
+    }
+    
+    .controls {
+        flex-direction: column;
+    }
+    
+    .control-btn {
+        width: 100%;
+    }
+    
+    .players-table {
+        font-size: 12px;
+    }
+    
+    .players-table th {
+        font-size: 11px;
+        padding: 10px 6px;
+    }
+    
+    .players-table td {
+        padding: 10px 6px;
+    }
+    
+    .player-cell {
+        min-width: 180px;
+    }
+    
+    .player-info {
+        gap: 6px;
+    }
+    
+    .player-avatar-container {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .player-name {
+        font-size: 12px;
+    }
+    
+    .verified-badge-small {
+        font-size: 12px;
+    }
+    
+    .player-country {
+        font-size: 10px;
+    }
+    
+    .player-country .fi {
+        width: 14px;
+        height: 10px;
+    }
+    
+    .stats-cell {
+        min-width: 90px;
+    }
+    
+    .stat-value {
+        font-size: 13px;
+        min-width: 25px;
+    }
+    
+    .progress-indicator-circle {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .pagination-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+}
+
+/* Очень маленькие устройства (до 360px) */
+@media (max-width: 360px) {
+    .logo {
+        font-size: 18px;
+    }
+    
+    .logo i {
+        font-size: 16px;
+    }
+    
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .stat-value-sm {
+        font-size: 15px;
+    }
+    
+    .stat-label-sm {
+        font-size: 10px;
+    }
+    
+    .players-table th {
+        font-size: 10px;
+        padding: 8px 4px;
+    }
+    
+    .players-table td {
+        padding: 8px 4px;
+    }
+    
+    .player-cell {
+        min-width: 150px;
+    }
+    
+    .player-avatar-container {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .player-name {
+        font-size: 11px;
+    }
+    
+    .player-skill-badge {
+        width: 18px;
+        height: 10px;
+        font-size: 7px;
+        bottom: -2px;
+    }
+    
+    .stats-cell {
+        min-width: 80px;
+    }
+    
+    .stat-value {
+        font-size: 12px;
+    }
+    
+    .progress-indicator-circle {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Портретная ориентация */
+@media (max-height: 600px) and (orientation: portrait) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+    }
+    
+    .top-players-section {
+        margin-bottom: 15px;
+    }
+}
+
+/* Ландшафтная ориентация для мобильных */
+@media (max-width: 900px) and (orientation: landscape) {
+    .stats-summary {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .stat-item {
+        flex: 0 0 auto;
+    }
+    
+    .player-info {
+        flex-wrap: nowrap;
+    }
+    
+    .player-details {
+        min-width: 0;
+    }
+}
+
+/* Эффекты для таблицы */
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.players-table tbody tr {
+    animation: fadeInRow 0.3s ease forwards;
+}
+
+.players-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+.players-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+.players-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+.players-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+.players-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+</style>
 </head>
 <body>
-    <h1>Top Players Ranking</h1>
-    <p>Current Date and Time: 2026-02-27 19:18:30 (UTC)</p>
-    <ol>
-        <li>Player 1</li>
-        <li>Player 2</li>
-        <li>Player 3</li>
-        <li>Player 4</li>
-        <li>Player 5</li>
-    </ol>
+
+<!-- Скрытый SVG для градиента -->
+<svg width="0" height="0" style="position: absolute;">
+  <defs>
+    <linearGradient id="gradient-orange-red" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFA500" />
+      <stop offset="50%" stop-color="#FF4500" />
+      <stop offset="100%" stop-color="#FF0000" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="container">
+    <!-- Шапка с лого и статистикой -->
+    <div class="header">
+        <div class="logo">
+            <i class="ri-trophy-line"></i>
+            CSFamily ТОП ИГРОКОВ
+        </div>
+        
+        <div class="stats-summary">
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="ri-user-line"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value-sm">10,284</div>
+                    <div class="stat-label-sm">Игроков онлайн</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="ri-sword-line"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value-sm">2,847</div>
+                    <div class="stat-label-sm">Матчей сегодня</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="ri-flashlight-line"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value-sm">1.42</div>
+                    <div class="stat-label-sm">Средний K/D</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="ri-timer-line"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value-sm">15м 42с</div>
+                    <div class="stat-label-sm">Среднее время</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn active" onclick="refreshTop()">
+                <i class="ri-refresh-line"></i>
+                Обновить
+            </button>
+            <button class="control-btn" onclick="exportTop()">
+                <i class="ri-download-line"></i>
+                Экспорт
+            </button>
+            <button class="control-btn" onclick="showFilters()">
+                <i class="ri-filter-line"></i>
+                Фильтры
+            </button>
+        </div>
+    </div>
+
+    <!-- ОСНОВНАЯ ТАБЛИЦА ТОП ИГРОКОВ -->
+    <div class="top-players-section">
+        <div class="top-players-header">
+            <div class="top-players-title">
+                <i class="ri-medal-line"></i>
+                ТОП 100 ИГРОКОВ ПО РЕЙТИНГУ
+            </div>
+            
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Поиск игрока по никнейму или ID..." id="playerSearch">
+                        <i class="ri-search-line search-icon"></i>
+                    </div>
+                    <button class="search-btn" onclick="searchPlayer()">
+                        <i class="ri-search-line"></i>
+                        Поиск
+                    </button>
+                </div>
+                
+                <div class="search-info">
+                    <div>Найдено: <span id="foundCount">10,284</span> игроков</div>
+                    <div>Обновлено: <span id="updateTime">15:42</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="top-players-table">
+            <div class="table-container">
+                <table class="players-table">
+                    <thead>
+                        <tr>
+                            <th class="rank-header">ТОП</th>
+                            <th class="player-header">ИГРОК</th>
+                            <th class="rating-header">РЕЙТИНГ</th>
+                            <th class="winrate-header">% ПОБЕД</th>
+                            <th class="kd-header">K/D</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playersTableBody">
+                        <!-- Игрок 1 -->
+                        <tr>
+                            <td class="rank-cell">
+                                <div class="rank-badge rank-1">1</div>
+                            </td>
+                            <td class="player-cell">
+                                <div class="player-info">
+                                    <div class="player-avatar-container">
+                                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="SUBARU" class="player-avatar">
+                                        <div class="online-status"></div>
+                                        <div class="player-skill-badge" data-skill="H">H</div>
+                                    </div>
+                                    <div class="player-details">
+                                        <div class="player-name">
+                                            <a href="#" onclick="viewPlayerProfile('BRRR^', 784512)">SUBARU</a>
+                                            <i class="fas fa-check-circle verified-badge-small" onclick="viewPlayerProfile('BRRR^', 784512)" title="Перейти в профиль"></i>
+                                        </div>
+                                        <div class="player-country">
+                                            <span class="fi fi-ua"></span>
+                                            <span>Украина</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1650</div>
+                                    <div class="rating-change up">
+                                        <span class="rating-arrow">↑</span>24
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">69%</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 69;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1.55</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 78;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Игрок 2 -->
+                        <tr>
+                            <td class="rank-cell">
+                                <div class="rank-badge rank-2">2</div>
+                            </td>
+                            <td class="player-cell">
+                                <div class="player-info">
+                                    <div class="player-avatar-container">
+                                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=300&q=80" alt="AWP_Queen" class="player-avatar">
+                                        <div class="player-skill-badge" data-skill="P">P</div>
+                                    </div>
+                                    <div class="player-details">
+                                        <div class="player-name">
+                                            <a href="#" onclick="viewPlayerProfile('AWP_Queen', 892345)">AWP_Queen</a>
+                                        </div>
+                                        <div class="player-country">
+                                            <span class="fi fi-ru"></span>
+                                            <span>Россия</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1582</div>
+                                    <div class="rating-change down">
+                                        <span class="rating-arrow">↓</span>12
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">72%</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 72;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1.62</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 81;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Игрок 3 -->
+                        <tr>
+                            <td class="rank-cell">
+                                <div class="rank-badge rank-3">3</div>
+                            </td>
+                            <td class="player-cell">
+                                <div class="player-info">
+                                    <div class="player-avatar-container">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="SniperPro" class="player-avatar">
+                                        <div class="online-status"></div>
+                                        <div class="player-skill-badge" data-skill="M">M</div>
+                                    </div>
+                                    <div class="player-details">
+                                        <div class="player-name">
+                                            <a href="#" onclick="viewPlayerProfile('SniperPro', 671239)">SniperPro</a>
+                                            <i class="fas fa-check-circle verified-badge-small" onclick="viewPlayerProfile('SniperPro', 671239)" title="Перейти в профиль"></i>
+                                        </div>
+                                        <div class="player-country">
+                                            <span class="fi fi-pl"></span>
+                                            <span>Польша</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1524</div>
+                                    <div class="rating-change up">
+                                        <span class="rating-arrow">↑</span>8
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">65%</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 65;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1.48</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 74;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Игрок 4 -->
+                        <tr>
+                            <td class="rank-cell">
+                                <div class="rank-badge rank-other">4</div>
+                            </td>
+                            <td class="player-cell">
+                                <div class="player-info">
+                                    <div class="player-avatar-container">
+                                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" alt="ClutchMaster" class="player-avatar">
+                                        <div class="player-skill-badge" data-skill="L">L</div>
+                                    </div>
+                                    <div class="player-details">
+                                        <div class="player-name">
+                                            <a href="#" onclick="viewPlayerProfile('ClutchMaster', 934567)">ClutchMaster</a>
+                                        </div>
+                                        <div class="player-country">
+                                            <span class="fi fi-de"></span>
+                                            <span>Германия</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1498</div>
+                                    <div class="rating-change up">
+                                        <span class="rating-arrow">↑</span>5
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">68%</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 68;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1.51</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 76;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Игрок 5 -->
+                        <tr>
+                            <td class="rank-cell">
+                                <div class="rank-badge rank-other">5</div>
+                            </td>
+                            <td class="player-cell">
+                                <div class="player-info">
+                                    <div class="player-avatar-container">
+                                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="ShadowKiller" class="player-avatar">
+                                        <div class="online-status"></div>
+                                        <div class="player-skill-badge" data-skill="H">H</div>
+                                    </div>
+                                    <div class="player-details">
+                                        <div class="player-name">
+                                            <a href="#" onclick="viewPlayerProfile('ShadowKiller', 782341)">ShadowKiller</a>
+                                        </div>
+                                        <div class="player-country">
+                                            <span class="fi fi-us"></span>
+                                            <span>США</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1475</div>
+                                    <div class="rating-change down">
+                                        <span class="rating-arrow">↓</span>3
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">71%</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 71;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stat-value-container">
+                                    <div class="stat-value">1.43</div>
+                                    <div class="progress-indicator-circle">
+                                        <svg class="circular-progress" viewBox="0 0 36 36">
+                                            <circle class="circular-bg" cx="18" cy="18" r="15.915"></circle>
+                                            <circle class="circular-progress-bar" cx="18" cy="18" r="15.915" style="--percentage: 72;"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="top-players-footer">
+            <div class="total-players">
+                Показано 5 из 100 игроков
+            </div>
+            
+            <div class="pagination">
+                <button class="pagination-btn" disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">4</button>
+                <button class="pagination-btn">5</button>
+                <button class="pagination-btn">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <nav class="header-main-nav" data-shared-nav="inline"></nav>
+</div>
+
+<script>
+// Поиск игрока
+function searchPlayer() {
+    const searchInput = document.getElementById('playerSearch');
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    
+    if (!searchTerm) {
+        alert('Введите никнейм или ID для поиска');
+        return;
+    }
+    
+    console.log(`Поиск игрока: ${searchTerm}`);
+    
+    const searchBtn = document.querySelector('.search-btn');
+    const originalHtml = searchBtn.innerHTML;
+    searchBtn.innerHTML = '<i class="ri-loader-4-line"></i> Поиск...';
+    searchBtn.disabled = true;
+    
+    setTimeout(() => {
+        searchBtn.innerHTML = originalHtml;
+        searchBtn.disabled = false;
+        
+        alert(`Поиск игрока "${searchTerm}"\n(В реальном приложении здесь будут результаты поиска)`);
+        
+        const countElement = document.getElementById('foundCount');
+        countElement.textContent = Math.floor(Math.random() * 100) + 1;
+        
+        updateTime();
+    }, 1000);
+}
+
+// Быстрый поиск по нажатию Enter
+document.getElementById('playerSearch').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchPlayer();
+    }
+});
+
+// Функция для перехода в профиль игрока
+function viewPlayerProfile(playerName, playerId) {
+    console.log(`Переход в профиль игрока: ${playerName} (ID: ${playerId})`);
+    
+    alert(`Открыть профиль игрока:\n${playerName}\nID: ${playerId}\n\n(В реальном приложении будет переход на страницу профиля)`);
+    
+    return false;
+}
+
+// Кнопки управления
+function refreshTop() {
+    console.log('Обновление топа...');
+    
+    const refreshBtn = document.querySelector('.control-btn.active');
+    const originalHtml = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="ri-loader-4-line"></i> Обновление...';
+    refreshBtn.disabled = true;
+    
+    setTimeout(() => {
+        refreshBtn.innerHTML = originalHtml;
+        refreshBtn.disabled = false;
+        
+        updateTime();
+        console.log('Топ обновлен');
+    }, 1500);
+}
+
+function exportTop() {
+    alert('Экспорт данных топа в CSV');
+}
+
+function showFilters() {
+    alert('Открыть панель фильтров');
+}
+
+// Пагинация
+document.querySelectorAll('.pagination-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (this.disabled) return;
+        
+        if (this.querySelector('i')) {
+            const isNext = this.querySelector('.ri-arrow-right-s-line');
+            if (isNext) {
+                const activePage = document.querySelector('.pagination-btn.active');
+                const nextPage = parseInt(activePage.textContent) + 1;
+                if (nextPage <= 5) {
+                    document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.pagination-btn')[nextPage].classList.add('active');
+                    loadPage(nextPage);
+                }
+            } else {
+                const activePage = document.querySelector('.pagination-btn.active');
+                const prevPage = parseInt(activePage.textContent) - 1;
+                if (prevPage >= 1) {
+                    document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.pagination-btn')[prevPage].classList.add('active');
+                    loadPage(prevPage);
+                }
+            }
+        } else {
+            const pageNum = parseInt(this.textContent);
+            document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            loadPage(pageNum);
+        }
+    });
+});
+
+// Загрузка страницы (имитация)
+function loadPage(pageNum) {
+    console.log(`Загрузка страницы ${pageNum}`);
+    
+    const rows = document.querySelectorAll('#playersTableBody tr');
+    rows.forEach(row => {
+        row.style.opacity = '0.5';
+    });
+    
+    setTimeout(() => {
+        rows.forEach(row => {
+            row.style.opacity = '1';
+        });
+        
+        const startPlayer = (pageNum - 1) * 5 + 1;
+        const endPlayer = pageNum * 5;
+        const totalPlayers = document.querySelector('.total-players');
+        totalPlayers.textContent = `Показано ${startPlayer}-${endPlayer} из 100 игроков`;
+        
+        updateTime();
+    }, 300);
+}
+
+// Функция обновления времени
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const timeElement = document.getElementById('updateTime');
+    timeElement.textContent = timeString;
+}
+
+// Автоматическое обновление каждые 60 секунд
+setInterval(() => {
+    const refreshBtn = document.querySelector('.control-btn.active');
+    if (!refreshBtn.disabled) {
+        refreshTop();
+    }
+}, 60000);
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    updateTime();
+    updateProgressBars();
+    
+    // Обработчик изменения размера окна
+    window.addEventListener('resize', function() {
+        updateProgressBars();
+    });
+});
+
+// Функция для обновления прогресс-баров SVG
+function updateProgressBars() {
+    document.querySelectorAll('.circular-progress-bar').forEach(circle => {
+        const percentage = circle.style.getPropertyValue('--percentage') || 0;
+        const strokeDashoffset = 100 - percentage;
+        circle.style.strokeDashoffset = strokeDashoffset;
+    });
+}
+</script>
+<script src="script.js"></script>
+
 </body>
 </html>

@@ -1,31 +1,759 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Homepage</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>CSFamily - Матчмейкинг для CS 1.6</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #0d5bb5;
+            --secondary: #ff6b00;
+            --dark: #121a26;
+            --darker: #0c111b;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #28a745;
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+        header {
+            background-color: rgba(12, 17, 27, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        nav a[aria-current="page"] {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 15px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--light);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(26, 115, 232, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e05a00;
+        }
+
+        /* Герой секция */
+        .hero {
+            padding: 180px 0 100px;
+            background: radial-gradient(circle at top right, rgba(26, 115, 232, 0.15), transparent 50%),
+                        radial-gradient(circle at bottom left, rgba(255, 107, 0, 0.1), transparent 50%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(90deg, #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: #b0b7c3;
+            max-width: 700px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--gray);
+        }
+
+        /* Секция форм */
+        .forms-section {
+            padding: 80px 0;
+            background-color: var(--dark);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+            color: var(--light);
+        }
+
+        .section-title span {
+            color: var(--secondary);
+        }
+
+        .forms-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .form-box {
+            background-color: rgba(18, 26, 38, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .form-title {
+            font-size: 24px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: var(--light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #b0b7c3;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .steam-login {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background-color: #171a21;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .steam-login:hover {
+            background-color: #2a475e;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--gray);
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        /* Особенности */
+        .features {
+            padding: 80px 0;
+            background-color: var(--darker);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background-color: rgba(18, 26, 38, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+
+        .feature-card p {
+            color: #b0b7c3;
+        }
+
+        /* Футер */
+        footer {
+            background-color: #0a0e17;
+            padding: 50px 0 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--light);
+        }
+
+        .footer-logo span {
+            color: var(--secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: #b0b7c3;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .copyright {
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
+            width: 100%;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+            
+            .forms-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 150px 0 80px;
+            }
+            
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 25px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .header-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-box {
+                padding: 20px;
+            }
+            
+            .feature-card {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+    </style>
 </head>
 <body>
+    <!-- Шапка -->
     <header>
-        <h1>Welcome to CS Pro Platform</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-crosshairs"></i>
+                CS<span>Family</span>
+            </a>
+            
+            <nav data-shared-nav="list"></nav>
+            
+            <div class="header-buttons">
+                <button class="btn btn-outline" id="loginBtn">Войти</button>
+                <button class="btn btn-primary" id="registerBtn">Регистрация</button>
+            </div>
+        </div>
     </header>
-    <main>
-        <section>
-            <h2>About This Platform</h2>
-            <p>This platform provides resources and support for developers and tech enthusiasts.</p>
-        </section>
-    </main>
+
+    <!-- Герой секция -->
+    <section class="hero">
+        <div class="container hero-content fade-in">
+            <h1>СТРОЙ СВОЮ КИБЕРСПОРТИВНУЮ КАРЬЕРУ С CSFAMILY</h1>
+            <p>Присоединяйся к крупнейшему комьюнити Counter-Strike 1.6. Сражайся на честных матчах, прокачивай свой скилл и достигай новых высот вместе с нами. Твой путь к профессиональному киберспорту начинается здесь.</p>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number">50,000+</div>
+                    <div class="stat-label">Активных игроков</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">500,000+</div>
+                    <div class="stat-label">Сыгранных матчей</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">$100,000+</div>
+                    <div class="stat-label">Разыграно в турнирах</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция форм -->
+    <section class="forms-section" id="formsSection">
+        <div class="container">
+            <h2 class="section-title">Присоединяйся к <span>CSFamily</span></h2>
+            
+            <div class="forms-container">
+                <!-- Форма входа -->
+                <div class="form-box fade-in" id="loginForm">
+                    <h3 class="form-title">Вход в аккаунт</h3>
+                    
+                    <form id="loginFormElement">
+                        <div class="form-group">
+                            <label for="loginEmail">Email или никнейм</label>
+                            <input type="text" id="loginEmail" class="form-control" placeholder="Введите email или никнейм" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Пароль</label>
+                            <input type="password" id="loginPassword" class="form-control" placeholder="Введите пароль" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block" style="width: 100%;">Войти</button>
+                        
+                        <div class="divider">
+                            <span>или</span>
+                        </div>
+                        
+                        <button type="button" class="steam-login">
+                            <i class="fab fa-steam"></i>
+                            Войти через Steam
+                        </button>
+                        
+                        <div class="form-footer">
+                            Нет аккаунта? <a href="#" id="showRegister">Зарегистрироваться</a>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Форма регистрации -->
+                <div class="form-box fade-in" id="registerForm" style="display: none;">
+                    <h3 class="form-title">Регистрация</h3>
+                    
+                    <form id="registerFormElement">
+                        <div class="form-group">
+                            <label for="registerNickname">Никнейм</label>
+                            <input type="text" id="registerNickname" class="form-control" placeholder="Придумайте игровой никнейм" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerEmail">Email</label>
+                            <input type="email" id="registerEmail" class="form-control" placeholder="Введите ваш email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPassword">Пароль</label>
+                            <input type="password" id="registerPassword" class="form-control" placeholder="Создайте надежный пароль" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerConfirmPassword">Подтверждение пароля</label>
+                            <input type="password" id="registerConfirmPassword" class="form-control" placeholder="Повторите пароль" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-secondary btn-block" style="width: 100%;">Создать аккаунт</button>
+                        
+                        <div class="divider">
+                            <span>или</span>
+                        </div>
+                        
+                        <button type="button" class="steam-login">
+                            <i class="fab fa-steam"></i>
+                            Зарегистрироваться через Steam
+                        </button>
+                        
+                        <div class="form-footer">
+                            Уже есть аккаунт? <a href="#" id="showLogin">Войти</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Особенности платформы -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Почему <span>CSFamily</span>?</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Честные матчи</h3>
+                    <p>Продвинутая античит система и система репутации обеспечивают максимально честную игру без читеров и нарушителей.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Система рейтинга</h3>
+                    <p>Уникальная система ELO-рейтинга позволяет отслеживать ваш прогресс и подбирать соперников вашего уровня.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Турниры и призы</h3>
+                    <p>Регулярные турниры с денежными призами, киберспортивными девайсами и другими наградами для лучших игроков.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
     <footer>
-        <p>&copy; 2026 CS Pro Platform | All Rights Reserved</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    CS<span>Family</span>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html">О нас</a>
+                    <a href="news.html">Блог</a>
+                    <a href="top-players.html">Топ игроки</a>
+                    <a href="profile.html">Профиль</a>
+                    <a href="settings.html">Настройки</a>
+                    <a href="news.html">Новости</a>
+                </div>
+                
+                <div class="copyright">
+                    &copy; 2023 CSFamily. Все права защищены. Counter-Strike 1.6 является товарным знаком Valve Corporation.
+                </div>
+            </div>
+        </div>
     </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Переключение между формами входа и регистрации
+        document.getElementById('showRegister').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        });
+        
+        document.getElementById('showLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        });
+        
+        // Кнопки в шапке
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            
+            // Прокрутка к формам
+            document.getElementById('formsSection').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('registerBtn').addEventListener('click', function() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            
+            // Прокрутка к формам
+            document.getElementById('formsSection').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Обработка формы входа
+        document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // В реальном приложении здесь был бы запрос к серверу
+            alert(`Вход выполнен!\nEmail/Никнейм: ${email}\nПеренаправляем в личный кабинет...`);
+            
+            // Сброс формы
+            this.reset();
+        });
+        
+        // Обработка формы регистрации
+        document.getElementById('registerFormElement').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nickname = document.getElementById('registerNickname').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Пароли не совпадают!');
+                return;
+            }
+            
+            // В реальном приложении здесь был бы запрос к серверу
+            alert(`Регистрация успешна!\nДобро пожаловать в CSFamily, ${nickname}!\nНа вашу почту ${email} отправлено письмо с подтверждением.`);
+            
+            // Сброс формы
+            this.reset();
+            
+            // Переключение на форму входа
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        });
+        
+        // Анимация появления элементов при скролле
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+        
+        // Наблюдаем за всеми элементами с классом .feature-card
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
 </body>
 </html>

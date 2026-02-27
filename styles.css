@@ -33,6 +33,28 @@
     background-color: #0056b3;
 }
 
+nav a {
+    text-decoration: none;
+}
+
+nav a[aria-current="page"] {
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+nav[data-shared-nav="inline"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    nav[data-shared-nav="inline"] {
+        gap: 8px 10px;
+    }
+}
+
 form {
     display: flex;
     flex-direction: column;

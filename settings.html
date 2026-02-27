@@ -1,44 +1,2945 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings Page</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Настройки | CSFamily</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+
+<style>
+:root {
+    --orange: #ff6a00;
+    --orange-light: #ff9a3c;
+    --orange-dark: #cc5500;
+    --bg: #0b0e13;
+    --panel: #141922;
+    --card: #151a24;
+    --border: #232c3a;
+    --text: #e6ecf5;
+    --muted: #9aa7bd;
+    --green: #4cff4c;
+    --red: #ff4c4c;
+    --yellow: #ffb45c;
+    --blue: #5c8dff;
+    --purple: #b45cff;
+    --neon: 0 0 10px rgba(255,106,0,.6),0 0 30px rgba(255,106,0,.3);
+    --panel-glow: 0 0 35px rgba(255,106,0,.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Oxanium', sans-serif;
+}
+
+body {
+    background: linear-gradient(160deg, #070a0f, #0c111a);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,106,0,.08), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(60,180,255,.06), transparent 40%);
+    pointer-events: none;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("https://i.imgur.com/8KQxE.gif");
+    opacity: .035;
+    pointer-events: none;
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+.logo {
+    color: var(--orange);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.header-main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin: -6px 0 14px;
+}
+
+.header-main-nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.header-main-nav a:hover,
+.header-main-nav a[aria-current="page"] {
+    color: var(--orange);
+}
+
+.settings-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    background: linear-gradient(145deg, #141922, #0f131c);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--panel-glow);
+    min-height: 700px;
+}
+
+/* ===== БОКОВАЯ ПАНЕЛЬ НАВИГАЦИИ ===== */
+.settings-sidebar {
+    background: linear-gradient(145deg, #0f131c, #141922);
+    border-right: 1px solid var(--border);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    background: rgba(255,106,0,0.05);
+}
+
+.sidebar-header h3 {
+    color: var(--orange);
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.sidebar-header p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.sidebar-nav {
+    padding: 20px 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 25px;
+    color: var(--muted);
+    text-decoration: none;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 15px;
+}
+
+.nav-item:hover {
+    background: rgba(255,106,0,0.05);
+    color: var(--text);
+    border-left-color: rgba(255,106,0,0.3);
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, rgba(255,106,0,0.1), transparent);
+    color: var(--orange);
+    border-left-color: var(--orange);
+    font-weight: 600;
+}
+
+.nav-item i {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+}
+
+.nav-item span {
+    flex: 1;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+    text-align: center;
+}
+
+.version {
+    color: var(--muted);
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* ===== ОСНОВНОЙ КОНТЕНТ НАСТРОЕК ===== */
+.settings-content {
+    padding: 30px;
+    min-height: 600px;
+    overflow-y: auto;
+}
+
+.settings-section {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.settings-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+    font-size: 24px;
+    color: var(--orange);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ===== ФИНАНСЫ ===== */
+.finance-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.finance-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.finance-card:hover {
+    border-color: rgba(255,106,0,0.3);
+    background: rgba(255,106,0,0.02);
+}
+
+.finance-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,106,0,0.1);
+}
+
+.finance-card.balance::after {
+    background: rgba(76,255,76,0.3);
+}
+
+.finance-card.deposits::after {
+    background: rgba(92, 141, 255, 0.3);
+}
+
+.finance-card.withdrawals::after {
+    background: rgba(180, 92, 255, 0.3);
+}
+
+.finance-card.profit::after {
+    background: rgba(76, 255, 76, 0.3);
+}
+
+.finance-card.loss::after {
+    background: rgba(255, 76, 76, 0.3);
+}
+
+.finance-icon {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.finance-card.balance .finance-icon { color: var(--green); }
+.finance-card.deposits .finance-icon { color: var(--blue); }
+.finance-card.withdrawals .finance-icon { color: var(--purple); }
+.finance-card.profit .finance-icon { color: var(--green); }
+.finance-card.loss .finance-icon { color: var(--red); }
+
+.finance-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    opacity: 0.8;
+}
+
+.finance-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+}
+
+.finance-change {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.finance-change.positive {
+    color: var(--green);
+}
+
+.finance-change.negative {
+    color: var(--red);
+}
+
+/* ===== ФИЛЬТРЫ ФИНАНСОВ ===== */
+.finance-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 10px 15px;
+    background: rgba(10, 15, 25, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff6a00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+    padding-right: 35px;
+}
+
+.filter-select option {
+    background: #151a24;
+    color: var(--text);
+    padding: 8px;
+}
+
+.date-range {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.date-input {
+    padding: 10px 12px;
+    background: rgba(10, 15, 25, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+    flex: 1;
+    min-width: 140px;
+}
+
+/* ===== ТАБЛИЦА ТРАНЗАКЦИЙ ===== */
+.transactions-table {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 80px 80px 1fr 120px 140px 100px;
+    padding: 15px 20px;
+    background: rgba(255,106,0,0.05);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--orange);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    align-items: center;
+}
+
+.table-header > div {
+    text-align: center;
+    padding: 0 5px;
+}
+
+.table-header > div:first-child {
+    text-align: left;
+}
+
+.table-header > div:nth-child(2) {
+    text-align: left;
+}
+
+.table-header > div:nth-child(6) {
+    text-align: center;
+}
+
+.transaction-row {
+    display: grid;
+    grid-template-columns: 80px 80px 1fr 120px 140px 100px;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.transaction-row:hover {
+    background: rgba(255,106,0,0.05);
+}
+
+.transaction-row:last-child {
+    border-bottom: none;
+}
+
+.transaction-id {
+    font-family: monospace;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: left;
+}
+
+.transaction-type-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transaction-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.type-deposit {
+    background: rgba(92, 141, 255, 0.15);
+    color: var(--blue);
+    border: 1px solid rgba(92, 141, 255, 0.3);
+}
+
+.type-withdrawal {
+    background: rgba(180, 92, 255, 0.15);
+    color: var(--purple);
+    border: 1px solid rgba(180, 92, 255, 0.3);
+}
+
+.type-win {
+    background: rgba(76, 255, 76, 0.15);
+    color: var(--green);
+    border: 1px solid rgba(76, 255, 76, 0.3);
+}
+
+.type-loss {
+    background: rgba(255, 76, 76, 0.15);
+    color: var(--red);
+    border: 1px solid rgba(255, 76, 76, 0.3);
+}
+
+.type-bonus {
+    background: rgba(255, 180, 92, 0.15);
+    color: var(--yellow);
+    border: 1px solid rgba(255, 180, 92, 0.3);
+}
+
+.transaction-description {
+    color: var(--text);
+    font-size: 14px;
+    text-align: left;
+    padding-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.transaction-amount {
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+}
+
+.amount-positive {
+    color: var(--green);
+}
+
+.amount-negative {
+    color: var(--red);
+}
+
+.transaction-balance {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+}
+
+.transaction-date {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.transaction-status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.status-completed {
+    background: rgba(76, 255, 76, 0.1);
+    color: var(--green);
+    border: 1px solid rgba(76, 255, 76, 0.2);
+}
+
+.status-pending {
+    background: rgba(255, 180, 92, 0.1);
+    color: var(--yellow);
+    border: 1px solid rgba(255, 180, 92, 0.2);
+}
+
+.status-failed {
+    background: rgba(255, 76, 76, 0.1);
+    color: var(--red);
+    border: 1px solid rgba(255, 76, 76, 0.2);
+}
+
+/* ===== КНОПКИ УПРАВЛЕНИЯ ФИНАНСАМИ ===== */
+.finance-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+/* ===== ФИНАНСОВАЯ СТАТИСТИКА ===== */
+.finance-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255,106,0,0.03);
+    border: 1px solid rgba(255,106,0,0.1);
+    border-radius: 10px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.stat-value.positive {
+    color: var(--green);
+}
+
+.stat-value.negative {
+    color: var(--red);
+}
+
+/* ===== ФОРМЫ И НАСТРОЙКИ ===== */
+.settings-form {
+    max-width: 800px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.form-group:hover {
+    border-color: rgba(255,106,0,0.3);
+    background: rgba(255,106,0,0.02);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(10, 15, 25, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 15px rgba(255,106,0,.3);
+}
+
+/* ===== ИСПРАВЛЕНИЕ ДЛЯ ВЫПАДАЮЩИХ СПИСКОВ ===== */
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper select {
+    appearance: none;
+    padding-right: 40px;
+    cursor: pointer;
+    background-color: rgba(10, 15, 25, 0.9) !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff6a00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+    background-size: 16px !important;
+}
+
+.select-wrapper select option {
+    background-color: #151a24 !important;
+    color: var(--text) !important;
+    padding: 12px !important;
+    border: none !important;
+}
+
+.select-wrapper select option:hover,
+.select-wrapper select option:focus,
+.select-wrapper select option:checked {
+    background-color: rgba(255,106,0,0.3) !important;
+    color: white !important;
+}
+
+.select-wrapper select:focus {
+    background-color: rgba(10, 15, 25, 0.95) !important;
+}
+
+/* ===== АВАТАР ===== */
+.avatar-upload {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.current-avatar {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.current-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--orange);
+    box-shadow: var(--neon);
+}
+
+.avatar-controls {
+    flex: 1;
+}
+
+.avatar-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+    margin-right: 15px;
+}
+
+/* ===== РАДИО И ЧЕКБОКСЫ ===== */
+.radio-group, .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.radio-item, .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    transition: all 0.3s;
+}
+
+.radio-item:hover, .checkbox-item:hover {
+    background: rgba(255,106,0,0.05);
+}
+
+.radio-item input, .checkbox-item input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--orange);
+    cursor: pointer;
+}
+
+/* ===== КНОПКИ ===== */
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    color: white;
+    box-shadow: 0 4px 12px rgba(255,106,0,0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,106,0,0.5);
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.3);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--green), #7fff7f);
+    color: white;
+    box-shadow: 0 4px 12px rgba(76,255,76,0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76,255,76,0.5);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--red), #ff6b6b);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255,76,76,0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,76,76,0.5);
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+/* ===== ЧЕРНЫЙ СПИСОК ===== */
+.blacklist-container {
+    background: rgba(255,76,76,0.05);
+    border: 1px solid rgba(255,76,76,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.blacklist-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--red);
+}
+
+.blacklist-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.blacklist-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.blacklist-info {
+    flex: 1;
+}
+
+.blacklist-name {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.blacklist-reason {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+/* ===== СЕССИИ ===== */
+.sessions-container {
+    margin-top: 20px;
+}
+
+.session-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: center;
+}
+
+.session-current {
+    border-color: var(--green);
+    background: rgba(76,255,76,0.05);
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.session-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.session-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.session-ip {
+    font-family: monospace;
+    background: rgba(0,0,0,0.3);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.session-status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-open {
+    background: rgba(76,255,76,0.15);
+    color: var(--green);
+    border: 1px solid rgba(76,255,76,0.3);
+}
+
+.status-closed {
+    background: rgba(255,76,76,0.15);
+    color: var(--red);
+    border: 1px solid rgba(255,76,76,0.3);
+}
+
+/* ===== ИСТОРИЯ БАНОВ ===== */
+.bans-history {
+    margin-top: 20px;
+}
+
+.ban-item {
+    background: rgba(255,76,76,0.05);
+    border: 1px solid rgba(255,76,76,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    border-left: 4px solid var(--red);
+}
+
+.ban-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.ban-date {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.ban-duration {
+    padding: 5px 12px;
+    background: var(--red);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ban-reason {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.ban-description {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.ban-active {
+    animation: pulseRed 2s infinite;
+}
+
+@keyframes pulseRed {
+    0% { border-left-color: var(--red); }
+    50% { border-left-color: #ff9999; }
+    100% { border-left-color: var(--red); }
+}
+
+/* ===== ВЕРИФИКАЦИЯ ===== */
+.verification-section {
+    text-align: center;
+    padding: 50px 20px;
+    background: rgba(29,161,242,0.05);
+    border: 2px dashed rgba(29,161,242,0.3);
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+.verification-icon {
+    font-size: 80px;
+    color: #1DA1F2;
+    margin-bottom: 20px;
+    animation: pulseBlue 2s infinite;
+}
+
+@keyframes pulseBlue {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.verification-title {
+    font-size: 28px;
+    color: #1DA1F2;
+    margin-bottom: 15px;
+}
+
+.verification-description {
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.verification-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+    text-align: left;
+}
+
+.verification-step {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--border);
+}
+
+.step-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: #1DA1F2;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* ===== УВЕДОМЛЕНИЯ ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--panel-glow);
+    z-index: 10000;
+    transform: translateX(150%);
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    max-width: 400px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-success {
+    border-left: 4px solid var(--green);
+}
+
+.notification-error {
+    border-left: 4px solid var(--red);
+}
+
+/* ===== КАСТОМНЫЕ СТИЛИ ДЛЯ ВЫПАДАЮЩИХ СПИСКОВ ===== */
+select option {
+    background: #151a24 !important;
+    color: var(--text) !important;
+    padding: 10px !important;
+}
+
+select option:hover {
+    background: rgba(255,106,0,0.3) !important;
+}
+
+select option:checked {
+    background: rgba(255,106,0,0.5) !important;
+    color: white !important;
+}
+
+/* ===== ПАГИНАЦИЯ ===== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.page-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.page-btn:hover {
+    background: rgba(255,106,0,0.1);
+    border-color: var(--orange);
+}
+
+.page-btn.active {
+    background: var(--orange);
+    color: white;
+    border-color: var(--orange);
+}
+
+.page-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 10001;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--panel);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--panel-glow);
+    animation: modalAppear 0.3s ease;
+}
+
+@keyframes modalAppear {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    color: var(--orange);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.3s;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: var(--orange);
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 1200px) {
+    .table-header,
+    .transaction-row {
+        grid-template-columns: 70px 70px 1fr 100px 120px 90px;
+        padding: 12px 15px;
+    }
+    
+    .transaction-description {
+        font-size: 13px;
+    }
+    
+    .transaction-date {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .settings-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .sidebar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .nav-item {
+        flex: 1;
+        min-width: 150px;
+        justify-content: center;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+    }
+    
+    .nav-item.active {
+        border-left: none;
+        border-bottom-color: var(--orange);
+    }
+    
+    .table-header,
+    .transaction-row {
+        grid-template-columns: 60px 60px 1fr 90px 110px 80px;
+        font-size: 12px;
+        padding: 10px 12px;
+    }
+    
+    .transaction-type {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .transaction-amount,
+    .transaction-balance {
+        font-size: 13px;
+    }
+    
+    .transaction-date {
+        font-size: 11px;
+    }
+    
+    .transaction-status {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .settings-content {
+        padding: 20px;
+    }
+    
+    .finance-overview {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .finance-filters {
+        flex-direction: column;
+        padding: 15px;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .date-range {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .finance-stats {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    /* Адаптация таблицы для планшетов */
+    .table-header {
+        display: none;
+    }
+    
+    .transaction-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 15px;
+        border-bottom: 2px solid rgba(255,255,255,0.1);
+        position: relative;
+    }
+    
+    .transaction-row::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: rgba(255,106,0,0.2);
+    }
+    
+    .transaction-row > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+    }
+    
+    .transaction-id {
+        order: 1;
+    }
+    
+    .transaction-type-container {
+        order: 2;
+    }
+    
+    .transaction-description {
+        order: 3;
+        text-align: right;
+        font-size: 14px;
+        white-space: normal;
+        max-width: 60%;
+        line-height: 1.4;
+    }
+    
+    .transaction-amount {
+        order: 4;
+        font-size: 16px;
+        text-align: right;
+    }
+    
+    .transaction-balance {
+        order: 5;
+        font-size: 15px;
+        text-align: right;
+    }
+    
+    .transaction-date {
+        order: 6;
+        font-size: 13px;
+        text-align: right;
+    }
+    
+    .transaction-status {
+        order: 7;
+        font-size: 12px;
+        padding: 5px 10px;
+        margin-left: auto;
+    }
+    
+    /* Добавляем подписи для мобильной версии */
+    .transaction-row > div::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        min-width: 100px;
+        margin-right: 10px;
+    }
+    
+    .session-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .avatar-upload {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .verification-steps {
+        grid-template-columns: 1fr;
+    }
+    
+    .blacklist-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .finance-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 20px;
+    }
+    
+    .form-group {
+        padding: 15px;
+    }
+    
+    .finance-overview {
+        grid-template-columns: 1fr;
+    }
+    
+    .finance-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .finance-card {
+        padding: 15px;
+    }
+    
+    .finance-value {
+        font-size: 24px;
+    }
+    
+    .verification-section {
+        padding: 30px 15px;
+    }
+    
+    .sidebar-nav {
+        flex-direction: column;
+    }
+    
+    .nav-item {
+        width: 100%;
+    }
+    
+    .page-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+    
+    /* Улучшение мобильной таблицы */
+    .transaction-row {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .transaction-row > div {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px 0;
+        width: 100%;
+    }
+    
+    .transaction-row > div::before {
+        margin-bottom: 5px;
+        width: 100%;
+    }
+    
+    .transaction-id,
+    .transaction-description,
+    .transaction-amount,
+    .transaction-balance,
+    .transaction-date {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .transaction-type-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .transaction-status {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ===== СПИННЕР ===== */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    border-top-color: var(--orange);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ТЕМНОЙ ТЕМЫ ===== */
+select {
+    background-color: rgba(10, 15, 25, 0.9) !important;
+    color: var(--text) !important;
+}
+
+select:focus {
+    background-color: rgba(10, 15, 25, 0.95) !important;
+}
+
+/* Убираем стандартную стрелку в IE */
+select::-ms-expand {
+    display: none;
+}
+
+/* Стилизация для Firefox */
+select {
+    appearance: none;
+    -moz-appearance: none;
+    text-indent: 0.01px;
+    text-overflow: '';
+}
+
+/* Улучшенные стили для опций */
+optgroup {
+    background: #151a24;
+    color: var(--orange);
+    font-weight: 600;
+}
+
+optgroup option {
+    padding-left: 20px !important;
+}
+</style>
 </head>
 <body>
-    <header>
-        <h1>Settings</h1>
-    </header>
-    <main>
-        <section id="profile-settings">
-            <h2>Profile Settings</h2>
-            <form>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <button type="submit">Update Profile</button>
-            </form>
-        </section>
-        <section id="password-settings">
-            <h2>Password Settings</h2>
-            <form>
-                <label for="current-password">Current Password:</label>
-                <input type="password" id="current-password" name="current-password" required>
-                <label for="new-password">New Password:</label>
-                <input type="password" id="new-password" name="new-password" required>
-                <button type="submit">Change Password</button>
-            </form>
-        </section>
-        <section id="notification-settings">
-            <h2>Notification Settings</h2>
-            <form>
-                <label for="email-notifications">Email Notifications:</label>
-                <input type="checkbox" id="email-notifications" name="email-notifications">
-                <button type="submit">Save Notifications</button>
-            </form>
-        </section>
-    </main>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">CSFamily - НАСТРОЙКИ</div>
+        <button class="btn btn-secondary" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i> Назад в профиль
+        </button>
+    </div>
+    <nav class="header-main-nav" data-shared-nav="inline"></nav>
+    
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР НАСТРОЕК -->
+    <div class="settings-container">
+        <!-- БОКОВАЯ ПАНЕЛЬ -->
+        <div class="settings-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="ri-settings-3-line"></i> Панель настроек</h3>
+                <p>Управление вашим профилем</p>
+            </div>
+            
+            <div class="sidebar-nav">
+                <button class="nav-item active" onclick="openSettingsSection('profile')">
+                    <i class="ri-user-settings-line"></i>
+                    <span>Профиль</span>
+                </button>
+                
+                <button class="nav-item" onclick="openSettingsSection('privacy')">
+                    <i class="ri-shield-keyhole-line"></i>
+                    <span>Приватность</span>
+                </button>
+                
+                <button class="nav-item" onclick="openSettingsSection('blacklist')">
+                    <i class="ri-forbid-line"></i>
+                    <span>Чёрный список</span>
+                </button>
+                
+                <button class="nav-item" onclick="openSettingsSection('sessions')">
+                    <i class="ri-computer-line"></i>
+                    <span>Сессии</span>
+                </button>
+                
+                <button class="nav-item" onclick="openSettingsSection('finance')">
+                    <i class="ri-wallet-3-line"></i>
+                    <span>Финансы</span>
+                </button>
+                
+                <button class="nav-item" onclick="openSettingsSection('bans')">
+                    <i class="ri-alarm-warning-line"></i>
+                    <span>История банов</span>
+                </button>
+                
+                <button class="nav-item" onclick="openSettingsSection('verification')">
+                    <i class="ri-verified-badge-line"></i>
+                    <span>Верификация</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="version">v2.1.4 | CS 1.6 PRO</div>
+            </div>
+        </div>
+        
+        <!-- КОНТЕНТ НАСТРОЕК -->
+        <div class="settings-content">
+            <!-- РАЗДЕЛ: ПРОФИЛЬ -->
+            <div id="profile" class="settings-section active">
+                <!-- Содержимое раздела Профиль -->
+                <h2 class="section-title">
+                    <i class="ri-user-settings-line"></i> Настройки профиля
+                </h2>
+                
+                <div class="settings-form">
+                    <!-- АВАТАР -->
+                    <div class="form-group">
+                        <label><i class="ri-image-line"></i> Аватар</label>
+                        <div class="avatar-upload">
+                            <div class="current-avatar">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Текущий аватар">
+                            </div>
+                            <div class="avatar-controls">
+                                <input type="file" id="avatarUpload" class="form-control" accept="image/*" style="margin-bottom: 10px;">
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn btn-primary btn-small" onclick="uploadAvatar()">
+                                        <i class="ri-upload-line"></i> Загрузить
+                                    </button>
+                                    <button class="btn btn-secondary btn-small" onclick="resetAvatar()">
+                                        <i class="ri-refresh-line"></i> Сбросить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- НИКНЕЙМ -->
+                    <div class="form-group">
+                        <label><i class="ri-at-line"></i> Никнейм</label>
+                        <input type="text" class="form-control" value="BRRR^" placeholder="Введите ваш никнейм">
+                        <small style="color: var(--muted); margin-top: 5px; display: block;">
+                            Имя, которое видят другие игроки
+                        </small>
+                    </div>
+                    
+                    <!-- ДАТА РОЖДЕНИЯ -->
+                    <div class="form-group">
+                        <label><i class="ri-calendar-line"></i> Дата рождения</label>
+                        <input type="date" class="form-control" value="1995-06-15">
+                    </div>
+                    
+                    <!-- ИМЯ -->
+                    <div class="form-group">
+                        <label><i class="ri-user-line"></i> Имя</label>
+                        <input type="text" class="form-control" value="Алексей" placeholder="Ваше настоящее имя">
+                    </div>
+                    
+                    <!-- ФАМИЛИЯ -->
+                    <div class="form-group">
+                        <label><i class="ri-user-line"></i> Фамилия</label>
+                        <input type="text" class="form-control" value="Иванов" placeholder="Ваша фамилия">
+                    </div>
+                    
+                    <!-- ПОЛ -->
+                    <div class="form-group">
+                        <label><i class="ri-genderless-line"></i> Пол</label>
+                        <div class="select-wrapper">
+                            <select class="form-control">
+                                <option value="male" selected>Мужской</option>
+                                <option value="female">Женский</option>
+                                <option value="other">Другой</option>
+                                <option value="none">Не указывать</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- ЭЛЕКТРОННАЯ ПОЧТА -->
+                    <div class="form-group">
+                        <label><i class="ri-mail-line"></i> Электронная почта</label>
+                        <input type="email" class="form-control" value="alexey@example.com" placeholder="your@email.com">
+                        <small style="color: var(--muted); margin-top: 5px; display: block;">
+                            На эту почту приходят уведомления и сброс пароля
+                        </small>
+                    </div>
+                    
+                    <!-- КНОПКИ СОХРАНЕНИЯ -->
+                    <div style="display: flex; gap: 15px; margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="saveProfileSettings()">
+                            <i class="ri-save-line"></i> Сохранить изменения
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetProfileSettings()">
+                            <i class="ri-refresh-line"></i> Сбросить
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- РАЗДЕЛ: ФИНАНСЫ -->
+            <div id="finance" class="settings-section">
+                <h2 class="section-title">
+                    <i class="ri-wallet-3-line"></i> Финансы
+                </h2>
+                
+                <!-- ОБЗОР ФИНАНСОВ -->
+                <div class="finance-overview">
+                    <!-- БАЛАНС -->
+                    <div class="finance-card balance">
+                        <div class="finance-icon">
+                            <i class="ri-wallet-line"></i>
+                        </div>
+                        <div class="finance-label">Текущий баланс</div>
+                        <div class="finance-value">2,450.50 ₽</div>
+                        <div class="finance-change positive">
+                            <i class="ri-arrow-up-line"></i> +15%
+                        </div>
+                    </div>
+                    
+                    <!-- ПОПОЛНЕНИЯ -->
+                    <div class="finance-card deposits">
+                        <div class="finance-icon">
+                            <i class="ri-login-circle-line"></i>
+                        </div>
+                        <div class="finance-label">Пополнено</div>
+                        <div class="finance-value">8,750.00 ₽</div>
+                        <div class="finance-change positive">
+                            24 опер.
+                        </div>
+                    </div>
+                    
+                    <!-- ВЫВОДЫ -->
+                    <div class="finance-card withdrawals">
+                        <div class="finance-icon">
+                            <i class="ri-logout-circle-line"></i>
+                        </div>
+                        <div class="finance-label">Выведено</div>
+                        <div class="finance-value">5,300.00 ₽</div>
+                        <div class="finance-change positive">
+                            18 опер.
+                        </div>
+                    </div>
+                    
+                    <!-- ВЫИГРЫШИ -->
+                    <div class="finance-card profit">
+                        <div class="finance-icon">
+                            <i class="ri-trophy-line"></i>
+                        </div>
+                        <div class="finance-label">Выигрыши</div>
+                        <div class="finance-value">12,450.75 ₽</div>
+                        <div class="finance-change positive">
+                            <i class="ri-arrow-up-line"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- ПРОИГРЫШИ -->
+                    <div class="finance-card loss">
+                        <div class="finance-icon">
+                            <i class="ri-arrow-down-line"></i>
+                        </div>
+                        <div class="finance-label">Проигрыши</div>
+                        <div class="finance-value">7,890.25 ₽</div>
+                        <div class="finance-change negative">
+                            <i class="ri-arrow-down-line"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- СТАТИСТИКА -->
+                <div class="finance-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Ср. выигрыш</div>
+                        <div class="stat-value positive">+1,245 ₽</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Ср. проигрыш</div>
+                        <div class="stat-value negative">-658 ₽</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Коэф. прибыли</div>
+                        <div class="stat-value">1.89</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Общая прибыль</div>
+                        <div class="stat-value positive">+4,560.50 ₽</div>
+                    </div>
+                </div>
+                
+                <!-- ФИЛЬТРЫ -->
+                <div class="finance-filters">
+                    <div class="filter-group">
+                        <label>Тип операции</label>
+                        <select class="filter-select" id="filterType">
+                            <option value="all">Все операции</option>
+                            <option value="deposit">Пополнения</option>
+                            <option value="withdrawal">Выводы</option>
+                            <option value="win">Выигрыши</option>
+                            <option value="loss">Проигрыши</option>
+                            <option value="bonus">Бонусы</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Период</label>
+                        <select class="filter-select" id="filterPeriod">
+                            <option value="7days">7 дней</option>
+                            <option value="30days" selected>30 дней</option>
+                            <option value="90days">90 дней</option>
+                            <option value="year">За год</option>
+                            <option value="all">За всё время</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Даты</label>
+                        <div class="date-range">
+                            <input type="date" class="date-input" id="dateFrom" value="2024-01-01">
+                            <span style="color: var(--muted);">—</span>
+                            <input type="date" class="date-input" id="dateTo" value="2024-01-31">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group" style="align-self: flex-end;">
+                        <button class="btn btn-primary btn-small" onclick="applyFinanceFilters()">
+                            <i class="ri-filter-line"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- ТАБЛИЦА ТРАНЗАКЦИЙ -->
+                <div class="transactions-table">
+                    <div class="table-header">
+                        <div>ID</div>
+                        <div>Тип</div>
+                        <div>Описание</div>
+                        <div>Сумма</div>
+                        <div>Дата</div>
+                        <div>Статус</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 1: ВЫИГРЫШ -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784512</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-win">
+                                <i class="ri-trophy-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">Победа • Inferno</div>
+                        <div class="transaction-amount amount-positive" data-label="Сумма">+1,250.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">2,450.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">15.01.2024 14:32</div>
+                        <div class="transaction-status status-completed" data-label="Статус">Завершено</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 2: ПОПОЛНЕНИЕ -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784511</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-deposit">
+                                <i class="ri-login-circle-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">QIWI • ****7890</div>
+                        <div class="transaction-amount amount-positive" data-label="Сумма">+1,000.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">1,200.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">15.01.2024 12:15</div>
+                        <div class="transaction-status status-completed" data-label="Статус">Завершено</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 3: ПРОИГРЫШ -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784510</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-loss">
+                                <i class="ri-arrow-down-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">Матч • Mirage</div>
+                        <div class="transaction-amount amount-negative" data-label="Сумма">-500.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">200.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">14.01.2024 21:45</div>
+                        <div class="transaction-status status-completed" data-label="Статус">Завершено</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 4: ВЫВОД -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784509</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-withdrawal">
+                                <i class="ri-logout-circle-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">На карту • ****4321</div>
+                        <div class="transaction-amount amount-negative" data-label="Сумма">-2,000.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">700.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">13.01.2024 18:20</div>
+                        <div class="transaction-status status-completed" data-label="Статус">Завершено</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 5: БОНУС -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784508</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-bonus">
+                                <i class="ri-gift-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">Акция +20%</div>
+                        <div class="transaction-amount amount-positive" data-label="Сумма">+200.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">2,700.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">12.01.2024 10:30</div>
+                        <div class="transaction-status status-completed" data-label="Статус">Завершено</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 6: ВЫИГРЫШ -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784507</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-win">
+                                <i class="ri-trophy-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">Турнир • Winter Cup</div>
+                        <div class="transaction-amount amount-positive" data-label="Сумма">+3,000.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">2,500.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">11.01.2024 16:45</div>
+                        <div class="transaction-status status-completed" data-label="Статус">Завершено</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 7: ПРОИГРЫШ -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784506</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-loss">
+                                <i class="ri-arrow-down-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">Матч • Dust II</div>
+                        <div class="transaction-amount amount-negative" data-label="Сумма">-750.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">-500.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">10.01.2024 19:15</div>
+                        <div class="transaction-status status-completed" data-label="Статус">Завершено</div>
+                    </div>
+                    
+                    <!-- ТРАНЗАКЦИЯ 8: ПОПОЛНЕНИЕ (В ОЖИДАНИИ) -->
+                    <div class="transaction-row" data-label="Транзакция">
+                        <div class="transaction-id" data-label="ID">#TX784505</div>
+                        <div class="transaction-type-container" data-label="Тип">
+                            <span class="transaction-type type-deposit">
+                                <i class="ri-login-circle-line"></i>
+                            </span>
+                        </div>
+                        <div class="transaction-description" data-label="Описание">Bank Transfer</div>
+                        <div class="transaction-amount amount-positive" data-label="Сумма">+5,000.00 ₽</div>
+                        <div class="transaction-balance" data-label="Баланс">4,250.50 ₽</div>
+                        <div class="transaction-date" data-label="Дата">09.01.2024 09:00</div>
+                        <div class="transaction-status status-pending" data-label="Статус">Ожидание</div>
+                    </div>
+                </div>
+                
+                <!-- ПАГИНАЦИЯ -->
+                <div class="pagination">
+                    <button class="page-btn disabled">
+                        <i class="ri-arrow-left-s-line"></i>
+                    </button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn">5</button>
+                    <button class="page-btn">
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                </div>
+                
+                <!-- ДЕЙСТВИЯ -->
+                <div class="finance-actions">
+                    <button class="btn btn-success" onclick="openDepositModal()">
+                        <i class="ri-login-circle-line"></i> Пополнить
+                    </button>
+                    <button class="btn btn-primary" onclick="openWithdrawalModal()">
+                        <i class="ri-logout-circle-line"></i> Вывести
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportFinanceReport()">
+                        <i class="ri-download-line"></i> Отчёт
+                    </button>
+                </div>
+            </div>
+            
+            <!-- РАЗДЕЛ: ПРИВАТНОСТЬ -->
+            <div id="privacy" class="settings-section">
+                <!-- Содержимое раздела Приватность -->
+                <h2 class="section-title">
+                    <i class="ri-shield-keyhole-line"></i> Настройки приватности
+                </h2>
+                
+                <div class="settings-form">
+                    <!-- КТО МОЖЕТ ВИДЕТЬ АКТИВНОСТЬ -->
+                    <div class="form-group">
+                        <label><i class="ri-eye-line"></i> Кто может видеть мою активность</label>
+                        <div class="select-wrapper">
+                            <select class="form-control">
+                                <option value="all">Все пользователи</option>
+                                <option value="friends" selected>Только друзья</option>
+                                <option value="none">Никто</option>
+                            </select>
+                        </div>
+                        <small style="color: var(--muted); margin-top: 5px; display: block;">
+                            Включает информацию о последних матчах и онлайн статус
+                        </small>
+                    </div>
+                    
+                    <!-- КТО МОЖЕТ ОСТАВЛЯТЬ КОММЕНТАРИИ -->
+                    <div class="form-group">
+                        <label><i class="ri-chat-1-line"></i> Кто может оставлять комментарии в моём профиле</label>
+                        <div class="select-wrapper">
+                            <select class="form-control">
+                                <option value="all" selected>Все пользователи</option>
+                                <option value="friends">Только друзья</option>
+                                <option value="none">Никто</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- КТО МОЖЕТ ОТПРАВЛЯТЬ ЛИЧНЫЕ СООБЩЕНИЯ -->
+                    <div class="form-group">
+                        <label><i class="ri-message-line"></i> Кто может отправлять личные сообщения</label>
+                        <div class="select-wrapper">
+                            <select class="form-control">
+                                <option value="all">Все пользователи</option>
+                                <option value="friends" selected>Только друзья</option>
+                                <option value="none">Никто</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- КТО МОЖЕТ ПРИГЛАШАТЬ В МАТЧИ -->
+                    <div class="form-group">
+                        <label><i class="ri-user-add-line"></i> Кто может приглашать меня в матчи</label>
+                        <div class="select-wrapper">
+                            <select class="form-control">
+                                <option value="all">Все пользователи</option>
+                                <option value="friends" selected>Только друзья</option>
+                                <option value="none">Никто</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- КТО МОЖЕТ ВИДЕТЬ СТАТИСТИКУ -->
+                    <div class="form-group">
+                        <label><i class="ri-bar-chart-line"></i> Кто может видеть мою статистику</label>
+                        <div class="select-wrapper">
+                            <select class="form-control">
+                                <option value="all" selected>Все пользователи</option>
+                                <option value="friends">Только друзья</option>
+                                <option value="none">Никто</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- ПРОФИЛЬ В ПОИСКЕ -->
+                    <div class="form-group">
+                        <label><i class="ri-search-line"></i> Показывать мой профиль в поиске</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" checked>
+                                <span>Разрешить поиск моего профиля</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- КНОПКИ СОХРАНЕНИЯ -->
+                    <div style="display: flex; gap: 15px; margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="savePrivacySettings()">
+                            <i class="ri-save-line"></i> Сохранить настройки приватности
+                        </button>
+                        <button class="btn btn-secondary" onclick="applyDefaultPrivacy()">
+                            <i class="ri-shield-line"></i> Рекомендуемые настройки
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- РАЗДЕЛ: ЧЁРНЫЙ СПИСОК -->
+            <div id="blacklist" class="settings-section">
+                <!-- Содержимое раздела Чёрный список -->
+                <h2 class="section-title">
+                    <i class="ri-forbid-line"></i> Чёрный список
+                </h2>
+                
+                <div class="blacklist-container">
+                    <h3 style="color: var(--text); margin-bottom: 20px; font-size: 18px;">
+                        <i class="ri-user-unfollow-line"></i> Заблокированные пользователи
+                    </h3>
+                    
+                    <div class="blacklist-list">
+                        <!-- Заблокированный пользователь 1 -->
+                        <div class="blacklist-item">
+                            <div class="blacklist-user">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Аватар" class="blacklist-avatar">
+                                <div class="blacklist-info">
+                                    <div class="blacklist-name">ToxicPlayer123</div>
+                                    <div class="blacklist-reason">Оскорбления в чате, неадекватное поведение</div>
+                                    <div class="blacklist-reason" style="font-size: 12px;">Добавлен: 15.01.2024</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary btn-small" onclick="unblockUser('ToxicPlayer123')">
+                                <i class="ri-user-follow-line"></i> Разблокировать
+                            </button>
+                        </div>
+                        
+                        <!-- Заблокированный пользователь 2 -->
+                        <div class="blacklist-item">
+                            <div class="blacklist-user">
+                                <img src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&w=100&q=80" alt="Аватар" class="blacklist-avatar">
+                                <div class="blacklist-info">
+                                    <div class="blacklist-name">Cheater_X</div>
+                                    <div class="blacklist-reason">Подозрение в использовании читов</div>
+                                    <div class="blacklist-reason" style="font-size: 12px;">Добавлен: 10.01.2024</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary btn-small" onclick="unblockUser('Cheater_X')">
+                                <i class="ri-user-follow-line"></i> Разблокировать
+                            </button>
+                        </div>
+                        
+                        <!-- Заблокированный пользователь 3 -->
+                        <div class="blacklist-item">
+                            <div class="blacklist-user">
+                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Аватар" class="blacklist-avatar">
+                                <div class="blacklist-info">
+                                    <div class="blacklist-name">SpammerBot</div>
+                                    <div class="blacklist-reason">Спам в личных сообщениях</div>
+                                    <div class="blacklist-reason" style="font-size: 12px;">Добавлен: 05.01.2024</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary btn-small" onclick="unblockUser('SpammerBot')">
+                                <i class="ri-user-follow-line"></i> Разблокировать
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- ДОБАВЛЕНИЕ В ЧЁРНЫЙ СПИСОК -->
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
+                        <h4 style="color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <i class="ri-user-add-line"></i> Добавить в чёрный список
+                        </h4>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-control" placeholder="Введите никнейм пользователя" id="blockUsername">
+                            <button class="btn btn-danger" onclick="addToBlacklist()">
+                                <i class="ri-forbid-line"></i> Заблокировать
+                            </button>
+                        </div>
+                        <small style="color: var(--muted); margin-top: 5px; display: block;">
+                            Заблокированный пользователь не сможет писать вам и видеть ваш онлайн статус
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- РАЗДЕЛ: СЕССИИ -->
+            <div id="sessions" class="settings-section">
+                <!-- Содержимое раздела Сессии -->
+                <h2 class="section-title">
+                    <i class="ri-computer-line"></i> Активные сессии
+                </h2>
+                
+                <div class="sessions-container">
+                    <!-- Текущая сессия -->
+                    <div class="session-item session-current">
+                        <div class="session-info">
+                            <div class="session-label">Текущая сессия</div>
+                            <div class="session-value">Google Chrome • Windows 10</div>
+                            <div class="session-ip">192.168.1.100</div>
+                        </div>
+                        <div class="session-info">
+                            <div class="session-label">Последняя активность</div>
+                            <div class="session-value">Только что</div>
+                        </div>
+                        <div class="session-info">
+                            <div class="session-label">Тип доступа</div>
+                            <div class="session-status status-open">Открыта</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Другие сессии -->
+                    <div class="session-item">
+                        <div class="session-info">
+                            <div class="session-label">Устройство</div>
+                            <div class="session-value">Firefox • Android</div>
+                            <div class="session-ip">95.67.123.45</div>
+                        </div>
+                        <div class="session-info">
+                            <div class="session-label">Последняя активность</div>
+                            <div class="session-value">2 часа назад</div>
+                        </div>
+                        <div class="session-info">
+                            <div class="session-label">Тип доступа</div>
+                            <div class="session-status status-open">Открыта</div>
+                        </div>
+                    </div>
+                    
+                    <div class="session-item">
+                        <div class="session-info">
+                            <div class="session-label">Устройство</div>
+                            <div class="session-value">Safari • macOS</div>
+                            <div class="session-ip">178.45.67.89</div>
+                        </div>
+                        <div class="session-info">
+                            <div class="session-label">Последняя активность</div>
+                            <div class="session-value">3 дня назад</div>
+                        </div>
+                        <div class="session-info">
+                            <div class="session-label">Тип доступа</div>
+                            <div class="session-status status-open">Открыта</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- НАСТРОЙКИ СЕССИЙ -->
+                <div style="margin-top: 40px;">
+                    <h3 style="color: var(--text); margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="ri-settings-3-line"></i> Настройки безопасности
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label><i class="ri-eye-line"></i> Показывать IP-адреса в списке сессий</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="showIP" checked>
+                                <span>Разрешить отображение IP-адресов</span>
+                            </label>
+                        </div>
+                        <small style="color: var(--muted); margin-top: 5px; display: block;">
+                            Для дополнительной безопасности вы можете скрыть IP-адреса
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="ri-shield-line"></i> Автоматическое завершение сессий</label>
+                        <div class="select-wrapper">
+                            <select class="form-control" id="autoLogout">
+                                <option value="1">Через 1 день неактивности</option>
+                                <option value="7" selected>Через 7 дней неактивности</option>
+                                <option value="30">Через 30 дней неактивности</option>
+                                <option value="never">Никогда</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- КНОПКИ УПРАВЛЕНИЯ -->
+                    <div style="display: flex; gap: 15px; margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="saveSessionSettings()">
+                            <i class="ri-save-line"></i> Сохранить настройки
+                        </button>
+                        <button class="btn btn-danger" onclick="closeAllSessions()">
+                            <i class="ri-logout-box-line"></i> Завершить все сессии
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- РАЗДЕЛ: ИСТОРИЯ БАНОВ -->
+            <div id="bans" class="settings-section">
+                <!-- Содержимое раздела История банов -->
+                <h2 class="section-title">
+                    <i class="ri-alarm-warning-line"></i> История банов
+                </h2>
+                
+                <div class="bans-history">
+                    <!-- Активный бан -->
+                    <div class="ban-item ban-active">
+                        <div class="ban-header">
+                            <div class="ban-date">15 января 2024 • 14:32</div>
+                            <div class="ban-duration">3 дня</div>
+                        </div>
+                        <div class="ban-reason">Использование нецензурной лексики</div>
+                        <div class="ban-description">
+                            Система автоматически обнаружила множественные случаи использования нецензурной лексики 
+                            в публичном чате во время матчей. Бан будет снят автоматически 18 января 2024.
+                        </div>
+                    </div>
+                    
+                    <!-- Прошлый бан -->
+                    <div class="ban-item">
+                        <div class="ban-header">
+                            <div class="ban-date">5 декабря 2023 • 09:15</div>
+                            <div class="ban-duration">24 часа</div>
+                        </div>
+                        <div class="ban-reason">АФК во время матча</div>
+                        <div class="ban-description">
+                            Система зафиксировала ваше отсутствие во время матча, что негативно сказалось 
+                            на игровом процессе вашей команды.
+                        </div>
+                    </div>
+                    
+                    <!-- Старый бан -->
+                    <div class="ban-item">
+                        <div class="ban-header">
+                            <div class="ban-date">10 сентября 2023 • 18:45</div>
+                            <div class="ban-duration">7 дней</div>
+                        </div>
+                        <div class="ban-reason">Токсичное поведение</div>
+                        <div class="ban-description">
+                            Множественные жалобы от игроков на оскорбительное поведение, унижение других 
+                            игроков и провокационные действия.
+                        </div>
+                    </div>
+                    
+                    <!-- ИНФОРМАЦИЯ О БАНАХ -->
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(255,106,0,0.05); border-radius: 10px; border: 1px solid rgba(255,106,0,0.2);">
+                        <h3 style="color: var(--orange); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <i class="ri-information-line"></i> Информация о системе банов
+                        </h3>
+                        <p style="color: var(--muted); line-height: 1.6; margin-bottom: 10px;">
+                            • Первое нарушение: предупреждение<br>
+                            • Второе нарушение: бан на 24 часа<br>
+                            • Третье нарушение: бан на 3 дня<br>
+                            • Последующие нарушения: бан на 7 дней или больше
+                        </p>
+                        <p style="color: var(--muted); line-height: 1.6;">
+                            Бан снимается автоматически по истечении срока. Вы можете обжаловать бан в течение 
+                            24 часов после его получения, если считаете его несправедливым.
+                        </p>
+                        <button class="btn btn-secondary" style="margin-top: 15px;" onclick="showAppealForm()">
+                            <i class="ri-file-text-line"></i> Подать апелляцию
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- РАЗДЕЛ: ВЕРИФИКАЦИЯ -->
+            <div id="verification" class="settings-section">
+                <!-- Содержимое раздела Верификация -->
+                <h2 class="section-title">
+                    <i class="ri-verified-badge-line"></i> Верификация аккаунта
+                </h2>
+                
+                <div class="verification-section">
+                    <div class="verification-icon">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+                    
+                    <h3 class="verification-title">Подтвердите свою личность</h3>
+                    
+                    <p class="verification-description">
+                        Верификация аккаунта повышает доверие других игроков и открывает дополнительные 
+                        возможности: возможность участвовать в турнирах, получать призы и доступ к эксклюзивным функциям.
+                    </p>
+                    
+                    <button class="btn btn-primary" style="padding: 15px 40px; font-size: 18px;" onclick="startVerification()">
+                        <i class="ri-shield-user-line"></i> Начать верификацию
+                    </button>
+                    
+                    <div class="verification-steps">
+                        <div class="verification-step">
+                            <div class="step-number">1</div>
+                            <h4 style="color: var(--text); margin-bottom: 10px;">Подготовка документов</h4>
+                            <p style="color: var(--muted); font-size: 14px;">
+                                Подготовьте скан паспорта или водительского удостоверения
+                            </p>
+                        </div>
+                        
+                        <div class="verification-step">
+                            <div class="step-number">2</div>
+                            <h4 style="color: var(--text); margin-bottom: 10px;">Загрузка документов</h4>
+                            <p style="color: var(--muted); font-size: 14px;">
+                                Загрузите документы через безопасную форму
+                            </p>
+                        </div>
+                        
+                        <div class="verification-step">
+                            <div class="step-number">3</div>
+                            <h4 style="color: var(--text); margin-bottom: 10px;">Проверка модератором</h4>
+                            <p style="color: var(--muted); font-size: 14px;">
+                                Модератор проверит документы в течение 24-48 часов
+                            </p>
+                        </div>
+                        
+                        <div class="verification-step">
+                            <div class="step-number">4</div>
+                            <h4 style="color: var(--text); margin-bottom: 10px;">Получение статуса</h4>
+                            <p style="color: var(--muted); font-size: 14px;">
+                                После проверки вы получите значок верификации
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- ИНФОРМАЦИЯ О БЕЗОПАСНОСТИ -->
+                    <div style="margin-top: 40px; padding: 15px; background: rgba(29,161,242,0.05); border-radius: 8px; border: 1px solid rgba(29,161,242,0.1);">
+                        <p style="color: var(--muted); font-size: 14px; text-align: center;">
+                            <i class="ri-shield-line"></i> Ваши документы защищены и используются только для проверки личности. 
+                            Мы не передаём их третьим лицам и удаляем после завершения проверки.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- УВЕДОМЛЕНИЯ -->
+<div id="notification" class="notification">
+    <div id="notificationMessage"></div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ПОПОЛНЕНИЯ -->
+<div id="depositModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 class="modal-title"><i class="ri-login-circle-line"></i> Пополнение баланса</h2>
+            <button class="close-modal" onclick="closeDepositModal()">&times;</button>
+        </div>
+        <div style="padding: 20px;">
+            <div class="form-group">
+                <label>Сумма пополнения (₽)</label>
+                <input type="number" class="form-control" id="depositAmount" placeholder="Введите сумму" min="100" step="100" value="1000">
+                <small style="color: var(--muted); margin-top: 5px; display: block;">
+                    Минимальная сумма: 100 ₽
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label>Способ оплаты</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="paymentMethod" value="qiwi" checked>
+                        <i class="ri-wallet-line" style="color: var(--purple);"></i>
+                        <span>QIWI Кошелек</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="paymentMethod" value="card">
+                        <i class="ri-bank-card-line" style="color: var(--blue);"></i>
+                        <span>Банковская карта</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="paymentMethod" value="yoomoney">
+                        <i class="ri-money-dollar-box-line" style="color: var(--green);"></i>
+                        <span>ЮMoney</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="paymentMethod" value="crypt">
+                        <i class="ri-bit-coin-line" style="color: var(--yellow);"></i>
+                        <span>Криптовалюта</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="processDeposit()">
+                    <i class="ri-check-line"></i> Пополнить
+                </button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeDepositModal()">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Переключение разделов настроек
+function openSettingsSection(sectionId) {
+    // Убрать активный класс со всех кнопок навигации
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => item.classList.remove('active'));
+    
+    // Добавить активный класс текущей кнопке
+    event.currentTarget.classList.add('active');
+    
+    // Скрыть все разделы
+    const sections = document.querySelectorAll('.settings-section');
+    sections.forEach(section => section.classList.remove('active'));
+    
+    // Показать выбранный раздел
+    document.getElementById(sectionId).classList.add('active');
+    
+    // Плавная прокрутка к началу контента
+    document.querySelector('.settings-content').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Показать уведомление
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const messageElement = document.getElementById('notificationMessage');
+    
+    messageElement.textContent = message;
+    notification.className = 'notification';
+    notification.classList.add(`notification-${type}`);
+    
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// ===== ФИНАНСОВЫЕ ФУНКЦИИ =====
+
+// Применение фильтров для финансов
+function applyFinanceFilters() {
+    const type = document.getElementById('filterType').value;
+    const period = document.getElementById('filterPeriod').value;
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+    
+    showNotification(`Фильтры применены: ${type}, ${period}`, 'success');
+    
+    // В реальном приложении здесь будет загрузка данных с фильтрами
+    console.log('Фильтры:', { type, period, dateFrom, dateTo });
+}
+
+// Экспорт финансового отчета
+function exportFinanceReport() {
+    const format = prompt('Выберите формат экспорта (CSV, PDF, Excel):', 'CSV');
+    
+    if (format) {
+        showNotification(`Финансовый отчет экспортирован в формате ${format}`, 'success');
+        
+        // Имитация загрузки
+        setTimeout(() => {
+            showNotification('Файл скачан успешно', 'success');
+        }, 1500);
+    }
+}
+
+// Открытие модального окна пополнения
+function openDepositModal() {
+    document.getElementById('depositModal').style.display = 'flex';
+}
+
+// Закрытие модального окна пополнения
+function closeDepositModal() {
+    document.getElementById('depositModal').style.display = 'none';
+}
+
+// Обработка пополнения
+function processDeposit() {
+    const amount = document.getElementById('depositAmount').value;
+    const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+    
+    if (amount < 100) {
+        showNotification('Минимальная сумма пополнения: 100 ₽', 'error');
+        return;
+    }
+    
+    showNotification(`Переход на оплату ${amount} ₽ через ${method}`, 'success');
+    closeDepositModal();
+    
+    // Имитация редиректа на оплату
+    setTimeout(() => {
+        showNotification('Платеж успешно завершен', 'success');
+        
+        // Обновление баланса в интерфейсе
+        const balanceCard = document.querySelector('.finance-card.balance .finance-value');
+        const currentBalance = parseFloat(balanceCard.textContent.replace(/[^\d.]/g, ''));
+        const newBalance = currentBalance + parseFloat(amount);
+        balanceCard.textContent = `${newBalance.toFixed(2)} ₽`;
+    }, 2000);
+}
+
+// Открытие модального окна вывода
+function openWithdrawalModal() {
+    const minAmount = 500;
+    const balanceText = document.querySelector('.finance-card.balance .finance-value').textContent;
+    const currentBalance = parseFloat(balanceText.replace(/[^\d.]/g, ''));
+    
+    if (currentBalance < minAmount) {
+        showNotification(`Минимальная сумма вывода: ${minAmount} ₽. Ваш баланс: ${currentBalance} ₽`, 'error');
+        return;
+    }
+    
+    const amount = prompt(`Введите сумму для вывода (от ${minAmount} ₽ до ${currentBalance} ₽):`, minAmount.toString());
+    
+    if (amount && amount >= minAmount && amount <= currentBalance) {
+        showNotification(`Заявка на вывод ${amount} ₽ отправлена на рассмотрение`, 'success');
+    } else if (amount) {
+        showNotification(`Сумма должна быть от ${minAmount} до ${currentBalance} ₽`, 'error');
+    }
+}
+
+// ===== ОБЩИЕ ФУНКЦИИ =====
+
+// Сохранение настроек профиля
+function saveProfileSettings() {
+    showNotification('Настройки профиля успешно сохранены', 'success');
+    
+    // Имитация загрузки
+    const button = event.currentTarget;
+    const originalHTML = button.innerHTML;
+    button.innerHTML = '<span class="spinner"></span> Сохранение...';
+    button.disabled = true;
+    
+    setTimeout(() => {
+        button.innerHTML = originalHTML;
+        button.disabled = false;
+    }, 1500);
+}
+
+// Сброс настроек профиля
+function resetProfileSettings() {
+    if (confirm('Вы уверены, что хотите сбросить все изменения?')) {
+        showNotification('Настройки сброшены', 'success');
+        
+        // Здесь будет код для сброса полей формы
+        document.querySelectorAll('.form-control').forEach(input => {
+            if (input.type === 'text' || input.type === 'email') {
+                input.value = '';
+            }
+        });
+    }
+}
+
+// Загрузка аватара
+function uploadAvatar() {
+    const fileInput = document.getElementById('avatarUpload');
+    if (fileInput.files.length > 0) {
+        showNotification('Аватар успешно загружен', 'success');
+        
+        // В реальном приложении здесь будет код для загрузки файла на сервер
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            document.querySelector('.current-avatar img').src = e.target.result;
+        };
+        
+        reader.readAsDataURL(file);
+    } else {
+        showNotification('Пожалуйста, выберите файл', 'error');
+    }
+}
+
+// Сброс аватара
+function resetAvatar() {
+    if (confirm('Вернуть аватар по умолчанию?')) {
+        document.querySelector('.current-avatar img').src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80';
+        showNotification('Аватар сброшен', 'success');
+    }
+}
+
+// Сохранение настроек приватности
+function savePrivacySettings() {
+    showNotification('Настройки приватности сохранены', 'success');
+}
+
+// Применение рекомендуемых настройки приватности
+function applyDefaultPrivacy() {
+    if (confirm('Применить рекомендуемые настройки приватности?')) {
+        // Установка рекомендуемых значений
+        const selects = document.querySelectorAll('#privacy select');
+        selects.forEach(select => {
+            select.value = 'friends';
+        });
+        
+        showNotification('Рекомендуемые настройки применены', 'success');
+    }
+}
+
+// Добавление в чёрный список
+function addToBlacklist() {
+    const username = document.getElementById('blockUsername').value.trim();
+    
+    if (username) {
+        if (confirm(`Заблокировать пользователя ${username}?`)) {
+            showNotification(`Пользователь ${username} добавлен в чёрный список`, 'success');
+            document.getElementById('blockUsername').value = '';
+            
+            // Здесь будет код для добавления в чёрный список
+        }
+    } else {
+        showNotification('Введите никнейм пользователя', 'error');
+    }
+}
+
+// Разблокировка пользователя
+function unblockUser(username) {
+    if (confirm(`Разблокировать пользователя ${username}?`)) {
+        showNotification(`Пользователь ${username} разблокирован`, 'success');
+        
+        // Здесь будет код для удаления из чёрного списка
+        const item = event.currentTarget.closest('.blacklist-item');
+        item.style.opacity = '0.5';
+        
+        setTimeout(() => {
+            item.remove();
+        }, 300);
+    }
+}
+
+// Сохранение настроек сессий
+function saveSessionSettings() {
+    const showIP = document.getElementById('showIP').checked;
+    const autoLogout = document.getElementById('autoLogout').value;
+    
+    showNotification('Настройки безопасности сохранены', 'success');
+}
+
+// Завершение всех сессий
+function closeAllSessions() {
+    if (confirm('Завершить все сессии, кроме текущей? Вам потребуется войти заново на других устройствах.')) {
+        showNotification('Все сессии завершены', 'success');
+        
+        // Здесь будет код для завершения сессий
+        const sessions = document.querySelectorAll('.session-item:not(.session-current)');
+        sessions.forEach(session => {
+            session.style.opacity = '0.5';
+            setTimeout(() => {
+                session.remove();
+            }, 300);
+        });
+    }
+}
+
+// Начало верификации
+function startVerification() {
+    showNotification('Функция верификации находится в разработке', 'success');
+    
+    // Имитация процесса верификации
+    const button = event.currentTarget;
+    const originalHTML = button.innerHTML;
+    button.innerHTML = '<span class="spinner"></span> Подготовка...';
+    button.disabled = true;
+    
+    setTimeout(() => {
+        button.innerHTML = '<i class="ri-time-line"></i> Ожидайте...';
+        showNotification('Система верификации будет доступна в следующем обновлении', 'success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }, 2000);
+    }, 2000);
+}
+
+// Форма апелляции
+function showAppealForm() {
+    const reason = prompt('Пожалуйста, кратко опишите почему бан был несправедлив:');
+    if (reason) {
+        showNotification('Апелляция отправлена на рассмотрение', 'success');
+    }
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Установка текущей даты в поле даты рождения
+    const birthDateInput = document.querySelector('input[type="date"]');
+    if (birthDateInput && !birthDateInput.value) {
+        // Устанавливаем дату по умолчанию (25 лет назад)
+        const date = new Date();
+        date.setFullYear(date.getFullYear() - 25);
+        birthDateInput.valueAsDate = date;
+    }
+    
+    // Установка текущих дат в фильтрах финансов
+    const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    
+    document.getElementById('dateTo').valueAsDate = today;
+    document.getElementById('dateFrom').valueAsDate = lastMonth;
+    
+    // Добавляем обработчики для форм
+    const forms = document.querySelectorAll('.form-control');
+    forms.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.borderColor = 'rgba(255,106,0,0.5)';
+            this.parentElement.style.boxShadow = '0 0 15px rgba(255,106,0,0.2)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.borderColor = '';
+            this.parentElement.style.boxShadow = '';
+        });
+    });
+    
+    // Добавляем анимацию для переключения разделов
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            navItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // Автосохранение при изменении некоторых полей
+    const autoSaveFields = document.querySelectorAll('input[type="text"], input[type="email"], select');
+    autoSaveFields.forEach(field => {
+        field.addEventListener('change', function() {
+            // В реальном приложении здесь будет автосохранение
+            console.log('Поле изменено:', this.name || this.id, '=', this.value);
+        });
+    });
+    
+    // Исправление выпадающих списков для темной темы
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        // Устанавливаем темный фон для списка опций
+        select.style.backgroundColor = 'rgba(10, 15, 25, 0.9)';
+        select.style.color = 'var(--text)';
+        
+        // Добавляем иконку стрелки
+        select.style.backgroundImage = "url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23ff6a00\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"%3e%3cpolyline points=\"6 9 12 15 18 9\"%3e%3c/polyline%3e%3c/svg%3e')";
+        select.style.backgroundRepeat = 'no-repeat';
+        select.style.backgroundPosition = 'right 15px center';
+        select.style.backgroundSize = '16px';
+        select.style.paddingRight = '40px';
+    });
+    
+    // Анимация финансовых карточек при загрузке
+    const financeCards = document.querySelectorAll('.finance-card');
+    financeCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(10px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 50);
+    });
+});
+
+// Функция для экспорта настроек
+function exportSettings() {
+    const settings = {
+        profile: {},
+        privacy: {},
+        sessions: {},
+        finance: {}
+    };
+    
+    // Собираем данные профиля
+    document.querySelectorAll('#profile .form-control').forEach(input => {
+        const key = input.id || input.name;
+        if (key) {
+            settings.profile[key] = input.value;
+        }
+    });
+    
+    // Экспорт в JSON
+    const dataStr = JSON.stringify(settings, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'cs16pro-settings.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    showNotification('Настройки экспортированы', 'success');
+}
+
+// Функция для импорта настроек
+function importSettings() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = function(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                const settings = JSON.parse(e.target.result);
+                showNotification('Настройки импортированы', 'success');
+                
+                // В реальном приложении здесь будет применение импортированных настроек
+                console.log('Импортированные настройки:', settings);
+            } catch (error) {
+                showNotification('Ошибка при импорте настроек', 'error');
+            }
+        };
+        
+        reader.readAsText(file);
+    };
+    
+    input.click();
+}
+
+// Добавляем кнопки экспорта/импорта в боковую панель
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarFooter = document.querySelector('.sidebar-footer');
+    
+    const exportBtn = document.createElement('button');
+    exportBtn.className = 'btn btn-secondary btn-small';
+    exportBtn.innerHTML = '<i class="ri-download-line"></i> Экспорт';
+    exportBtn.style.width = '100%';
+    exportBtn.style.marginBottom = '10px';
+    exportBtn.onclick = exportSettings;
+    
+    const importBtn = document.createElement('button');
+    importBtn.className = 'btn btn-secondary btn-small';
+    importBtn.innerHTML = '<i class="ri-upload-line"></i> Импорт';
+    importBtn.style.width = '100%';
+    importBtn.onclick = importSettings;
+    
+    const divider = document.createElement('div');
+    divider.style.height = '1px';
+    divider.style.background = 'var(--border)';
+    divider.style.margin = '15px 0';
+    
+    sidebarFooter.insertBefore(divider, sidebarFooter.firstChild);
+    sidebarFooter.insertBefore(importBtn, sidebarFooter.firstChild);
+    sidebarFooter.insertBefore(exportBtn, sidebarFooter.firstChild);
+});
+
+// Закрытие модальных окон при клике вне их
+window.onclick = function(event) {
+    const depositModal = document.getElementById('depositModal');
+    if (event.target === depositModal) {
+        closeDepositModal();
+    }
+};
+</script>
+<script src="script.js"></script>
+
 </body>
 </html>

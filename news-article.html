@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новость | CSFamily</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #1a73e8;
+            --secondary: #ff6b00;
+            --dark: #121a26;
+            --darker: #0c111b;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --card-bg: rgba(18, 26, 38, 0.8);
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: rgba(12, 17, 27, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .logo span,
+        .logo i {
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover,
+        nav a[aria-current="page"] {
+            color: var(--secondary);
+        }
+
+        .article-wrap {
+            padding: 50px 0 70px;
+        }
+
+        .article-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .article-image {
+            width: 100%;
+            height: 360px;
+            object-fit: cover;
+        }
+
+        .article-content {
+            padding: 28px;
+        }
+
+        .article-category {
+            display: inline-block;
+            margin-bottom: 14px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--secondary);
+        }
+
+        .article-title {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .article-meta {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .article-text p {
+            color: #c6ccd7;
+            margin-bottom: 14px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                gap: 12px 18px;
+            }
+
+            .article-image {
+                height: 220px;
+            }
+
+            .article-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-crosshairs"></i>
+                CS<span>Family</span>
+            </a>
+            <nav data-shared-nav="list"></nav>
+        </div>
+    </header>
+
+    <main class="article-wrap">
+        <div class="container">
+            <article class="article-card">
+                <img id="articleImage" class="article-image" src="" alt="Новость CSFamily">
+                <div class="article-content">
+                    <span id="articleCategory" class="article-category">Новость</span>
+                    <h1 id="articleTitle" class="article-title">Загрузка...</h1>
+                    <div id="articleMeta" class="article-meta"></div>
+                    <div id="articleText" class="article-text"></div>
+                    <a class="back-link" href="news.html">
+                        <i class="fas fa-arrow-left"></i>
+                        Назад к списку новостей
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        const articleMap = {
+            'winter-cup-2023': {
+                category: 'Турнир',
+                title: 'Анонс турнира CSFamily Winter Cup 2023',
+                date: '15 декабря 2023',
+                views: '1,245',
+                image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1170&q=80',
+                body: [
+                    'CSFamily открывает регистрацию на Winter Cup 2023 с призовым фондом $10,000.',
+                    'Отборочные матчи пройдут в онлайн-формате, а финальные встречи будут транслироваться на наших площадках.',
+                    'Регистрация доступна до 25 декабря включительно.'
+                ]
+            },
+            'vac-plus-2': {
+                category: 'Обновление',
+                title: 'Обновление античита VAC+ 2.0',
+                date: '10 декабря 2023',
+                views: '2,187',
+                image: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1170&q=80',
+                body: [
+                    'Мы внедрили VAC+ 2.0 для повышения качества матчей и снижения числа читеров.',
+                    'Система использует расширенные сигнатуры и анализ поведения в реальном времени.',
+                    'По внутренним тестам скорость обнаружения нарушений выросла примерно на 40%.'
+                ]
+            },
+            'elo-2': {
+                category: 'Обновление',
+                title: 'Новая система рангов ELO 2.0',
+                date: '5 декабря 2023',
+                views: '3,042',
+                image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1171&q=80',
+                body: [
+                    'Рейтинговая система получила переработанную формулу изменения очков.',
+                    'Теперь в расчёте больше учитываются вклад в раунд и уровень соперников.',
+                    'Это позволяет собирать более равные и конкурентные матчи.'
+                ]
+            },
+            'dreamhack-2023': {
+                category: 'Событие',
+                title: 'CSFamily на DreamHack Winter 2023',
+                date: '30 ноября 2023',
+                views: '1,876',
+                image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1265&q=80',
+                body: [
+                    'Команда CSFamily представила проект на DreamHack Winter 2023.',
+                    'Мы провели серию встреч с партнёрами и показали дорожную карту платформы на 2024 год.',
+                    'В ближайших релизах ожидаются новые турниры и функции для команд.'
+                ]
+            },
+            'map-pool-update': {
+                category: 'Обновление',
+                title: 'Добавлены новые карты в пул матчмейкинга',
+                date: '25 ноября 2023',
+                views: '2,543',
+                image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1170&q=80',
+                body: [
+                    'В ротацию добавлены de_inferno_remake, de_mirage_ce и cs_office_2023.',
+                    'Карты уже доступны в рейтинговом и обычном режимах матчмейкинга.',
+                    'Просим делиться обратной связью после первых игр.'
+                ]
+            },
+            'razer-steelseries': {
+                category: 'Событие',
+                title: 'Партнёрство с Razer и SteelSeries',
+                date: '20 ноября 2023',
+                views: '1,987',
+                image: 'https://images.unsplash.com/photo-1600861194947-f8830c2bed49?auto=format&fit=crop&w=1169&q=80',
+                body: [
+                    'Подписаны партнёрские соглашения с Razer и SteelSeries.',
+                    'Совместно запускаем призовые активности и специальные ивенты для сообщества.',
+                    'Подробные условия будут опубликованы в следующем анонсе.'
+                ]
+            }
+        };
+
+        const post = new URLSearchParams(window.location.search).get('post') || 'winter-cup-2023';
+        const article = articleMap[post] || articleMap['winter-cup-2023'];
+
+        document.getElementById('articleCategory').textContent = article.category;
+        document.getElementById('articleTitle').textContent = article.title;
+        document.getElementById('articleMeta').textContent = `${article.date} • ${article.views} просмотров`;
+
+        const imageElement = document.getElementById('articleImage');
+        imageElement.src = article.image;
+        imageElement.alt = article.title;
+
+        document.getElementById('articleText').innerHTML = article.body
+            .map((paragraph) => `<p>${paragraph}</p>`)
+            .join('');
+
+        document.title = `${article.title} | CSFamily`;
+    </script>
+</body>
+</html>
