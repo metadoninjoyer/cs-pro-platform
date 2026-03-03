@@ -1,64 +1,142 @@
-{
-  "users": [],
-  "news": [
-    {
-      "slug": "winter-cup-2023",
-      "title": "Анонс турнира CSFamily Winter Cup 2023",
-      "category": "Турнир",
-      "date": "15 декабря 2023",
-      "views": 1245,
-      "excerpt": "Приглашаем всех участников на зимний кубок CSFamily с призовым фондом $10,000. Регистрация открыта до 25 декабря.",
-      "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1170&q=80"
-    },
-    {
-      "slug": "vac-plus-2",
-      "title": "Обновление античита VAC+ 2.0",
-      "category": "Обновление",
-      "date": "10 декабря 2023",
-      "views": 2187,
-      "excerpt": "Мы запустили обновлённую систему античита VAC+ 2.0, которая улучшает обнаружение читеров на 40% по сравнению с предыдущей версией.",
-      "image": "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1170&q=80"
-    },
-    {
-      "slug": "elo-2",
-      "title": "Новая система рангов ELO 2.0",
-      "category": "Обновление",
-      "date": "5 декабря 2023",
-      "views": 3042,
-      "excerpt": "Введена улучшенная система рангов, которая точнее определяет уровень игроков и подбирает более равные матчи.",
-      "image": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1171&q=80"
-    },
-    {
-      "slug": "dreamhack-2023",
-      "title": "CSFamily на DreamHack Winter 2023",
-      "category": "Событие",
-      "date": "30 ноября 2023",
-      "views": 1876,
-      "excerpt": "Наша команда приняла участие в крупнейшем киберспортивном фестивале Европы. Фотоотчёт и впечатления внутри.",
-      "image": "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1265&q=80"
-    },
-    {
-      "slug": "map-pool-update",
-      "title": "Добавлены новые карты в пул матчмейкинга",
-      "category": "Обновление",
-      "date": "25 ноября 2023",
-      "views": 2543,
-      "excerpt": "В ротацию матчмейкинга добавлены карты de_inferno_remake, de_mirage_ce и cs_office_2023 с улучшенной графикой.",
-      "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1170&q=80"
-    },
-    {
-      "slug": "razer-steelseries",
-      "title": "Партнёрство с Razer и SteelSeries",
-      "category": "Событие",
-      "date": "20 ноября 2023",
-      "views": 1987,
-      "excerpt": "Заключены партнёрские соглашения с ведущими производителями геймерского оборудования для турниров CSFamily.",
-      "image": "https://images.unsplash.com/photo-1600861194947-f8830c2bed49?auto=format&fit=crop&w=1169&q=80"
-    }
-  ],
-  "topPlayers": [
-    { "id": 784512, "nickname": "BRRR^", "rating": 3190, "kd": 1.78, "winrate": 74 },
-    { "id": 892345, "nickname": "AWP_Queen", "rating": 3015, "kd": 1.62, "winrate": 71 },
-    { "id": 671239, "nickname": "SniperPro", "rating": 2958, "kd": 1.54, "winrate": 69 }
-  ]
+﻿{
+    "users":  [
+                  {
+                      "id":  1772238877210,
+                      "nickname":  "РїРѕРїР°",
+                      "email":  "steam_76561198305045257@csfamily.local",
+                      "steamId":  "76561198305045257",
+                      "provider":  "steam",
+                      "avatar":  "https://avatars.steamstatic.com/43030ce494e604e7fa4cf087593a8db176938d57_full.jpg",
+                      "createdAt":  "2026-02-28T00:34:37.210Z",
+                      "tokenVersion":  2,
+                      "bio":  "РђР»РµРєСЃРµР№ РРІР°РЅРѕРІ",
+                      "country":  "РЈРєСЂР°РёРЅР°",
+                      "stats":  {
+                                    "kdRatio":  1.44,
+                                    "rating":  1.42,
+                                    "winRate":  79,
+                                    "matchesPlayed":  729,
+                                    "matchesWon":  576,
+                                    "matchesLost":  153,
+                                    "accuracy":  70.8,
+                                    "hsPercent":  58.3,
+                                    "kills":  12885,
+                                    "deaths":  8965,
+                                    "headshots":  7513,
+                                    "hsRatio":  58.3,
+                                    "adr":  119,
+                                    "damageDealt":  1694084,
+                                    "roundsPlayed":  14236,
+                                    "bombsPlanted":  3163,
+                                    "playTimeHours":  454,
+                                    "playTimeMinutes":  10,
+                                    "recentMatches":  [
+                                                          {
+                                                              "map":  "Ancient",
+                                                              "kd":  "14/8/9",
+                                                              "score":  "13:16",
+                                                              "result":  "loss",
+                                                              "resultLabel":  "РџРѕСЂР°Р¶РµРЅРёРµ",
+                                                              "dateLabel":  "27 С„РµРІСЂ"
+                                                          },
+                                                          {
+                                                              "map":  "Mirage",
+                                                              "kd":  "15/10/3",
+                                                              "score":  "16:2",
+                                                              "result":  "win",
+                                                              "resultLabel":  "РџРѕР±РµРґР°",
+                                                              "dateLabel":  "26 С„РµРІСЂ"
+                                                          },
+                                                          {
+                                                              "map":  "Train",
+                                                              "kd":  "24/15/8",
+                                                              "score":  "16:6",
+                                                              "result":  "win",
+                                                              "resultLabel":  "РџРѕР±РµРґР°",
+                                                              "dateLabel":  "25 С„РµРІСЂ"
+                                                          }
+                                                      ],
+                                    "generatedAtDay":  "2026-02-28"
+                                }
+                  }
+              ],
+    "news":  [
+                 {
+                     "slug":  "winter-cup-2023",
+                     "title":  "РђРЅРѕРЅСЃ С‚СѓСЂРЅРёСЂР° CSFamily Winter Cup 2023",
+                     "category":  "РўСѓСЂРЅРёСЂ",
+                     "date":  "15 РґРµРєР°Р±СЂСЏ 2023",
+                     "views":  1245,
+                     "excerpt":  "РџСЂРёРіР»Р°С€Р°РµРј РІСЃРµС… СѓС‡Р°СЃС‚РЅРёРєРѕРІ РЅР° Р·РёРјРЅРёР№ РєСѓР±РѕРє CSFamily СЃ РїСЂРёР·РѕРІС‹Рј С„РѕРЅРґРѕРј $10,000. Р РµРіРёСЃС‚СЂР°С†РёСЏ РѕС‚РєСЂС‹С‚Р° РґРѕ 25 РґРµРєР°Р±СЂСЏ.",
+                     "image":  "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format\u0026fit=crop\u0026w=1170\u0026q=80"
+                 },
+                 {
+                     "slug":  "vac-plus-2",
+                     "title":  "РћР±РЅРѕРІР»РµРЅРёРµ Р°РЅС‚РёС‡РёС‚Р° VAC+ 2.0",
+                     "category":  "РћР±РЅРѕРІР»РµРЅРёРµ",
+                     "date":  "10 РґРµРєР°Р±СЂСЏ 2023",
+                     "views":  2187,
+                     "excerpt":  "РњС‹ Р·Р°РїСѓСЃС‚РёР»Рё РѕР±РЅРѕРІР»С‘РЅРЅСѓСЋ СЃРёСЃС‚РµРјСѓ Р°РЅС‚РёС‡РёС‚Р° VAC+ 2.0, РєРѕС‚РѕСЂР°СЏ СѓР»СѓС‡С€Р°РµС‚ РѕР±РЅР°СЂСѓР¶РµРЅРёРµ С‡РёС‚РµСЂРѕРІ РЅР° 40% РїРѕ СЃСЂР°РІРЅРµРЅРёСЋ СЃ РїСЂРµРґС‹РґСѓС‰РµР№ РІРµСЂСЃРёРµР№.",
+                     "image":  "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format\u0026fit=crop\u0026w=1170\u0026q=80"
+                 },
+                 {
+                     "slug":  "elo-2",
+                     "title":  "РќРѕРІР°СЏ СЃРёСЃС‚РµРјР° СЂР°РЅРіРѕРІ ELO 2.0",
+                     "category":  "РћР±РЅРѕРІР»РµРЅРёРµ",
+                     "date":  "5 РґРµРєР°Р±СЂСЏ 2023",
+                     "views":  3042,
+                     "excerpt":  "Р’РІРµРґРµРЅР° СѓР»СѓС‡С€РµРЅРЅР°СЏ СЃРёСЃС‚РµРјР° СЂР°РЅРіРѕРІ, РєРѕС‚РѕСЂР°СЏ С‚РѕС‡РЅРµРµ РѕРїСЂРµРґРµР»СЏРµС‚ СѓСЂРѕРІРµРЅСЊ РёРіСЂРѕРєРѕРІ Рё РїРѕРґР±РёСЂР°РµС‚ Р±РѕР»РµРµ СЂР°РІРЅС‹Рµ РјР°С‚С‡Рё.",
+                     "image":  "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format\u0026fit=crop\u0026w=1171\u0026q=80"
+                 },
+                 {
+                     "slug":  "dreamhack-2023",
+                     "title":  "CSFamily РЅР° DreamHack Winter 2023",
+                     "category":  "РЎРѕР±С‹С‚РёРµ",
+                     "date":  "30 РЅРѕСЏР±СЂСЏ 2023",
+                     "views":  1876,
+                     "excerpt":  "РќР°С€Р° РєРѕРјР°РЅРґР° РїСЂРёРЅСЏР»Р° СѓС‡Р°СЃС‚РёРµ РІ РєСЂСѓРїРЅРµР№С€РµРј РєРёР±РµСЂСЃРїРѕСЂС‚РёРІРЅРѕРј С„РµСЃС‚РёРІР°Р»Рµ Р•РІСЂРѕРїС‹. Р¤РѕС‚РѕРѕС‚С‡С‘С‚ Рё РІРїРµС‡Р°С‚Р»РµРЅРёСЏ РІРЅСѓС‚СЂРё.",
+                     "image":  "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format\u0026fit=crop\u0026w=1265\u0026q=80"
+                 },
+                 {
+                     "slug":  "map-pool-update",
+                     "title":  "Р”РѕР±Р°РІР»РµРЅС‹ РЅРѕРІС‹Рµ РєР°СЂС‚С‹ РІ РїСѓР» РјР°С‚С‡РјРµР№РєРёРЅРіР°",
+                     "category":  "РћР±РЅРѕРІР»РµРЅРёРµ",
+                     "date":  "25 РЅРѕСЏР±СЂСЏ 2023",
+                     "views":  2543,
+                     "excerpt":  "Р’ СЂРѕС‚Р°С†РёСЋ РјР°С‚С‡РјРµР№РєРёРЅРіР° РґРѕР±Р°РІР»РµРЅС‹ РєР°СЂС‚С‹ de_inferno_remake, de_mirage_ce Рё cs_office_2023 СЃ СѓР»СѓС‡С€РµРЅРЅРѕР№ РіСЂР°С„РёРєРѕР№.",
+                     "image":  "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format\u0026fit=crop\u0026w=1170\u0026q=80"
+                 },
+                 {
+                     "slug":  "razer-steelseries",
+                     "title":  "РџР°СЂС‚РЅС‘СЂСЃС‚РІРѕ СЃ Razer Рё SteelSeries",
+                     "category":  "РЎРѕР±С‹С‚РёРµ",
+                     "date":  "20 РЅРѕСЏР±СЂСЏ 2023",
+                     "views":  1987,
+                     "excerpt":  "Р—Р°РєР»СЋС‡РµРЅС‹ РїР°СЂС‚РЅС‘СЂСЃРєРёРµ СЃРѕРіР»Р°С€РµРЅРёСЏ СЃ РІРµРґСѓС‰РёРјРё РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЏРјРё РіРµР№РјРµСЂСЃРєРѕРіРѕ РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ РґР»СЏ С‚СѓСЂРЅРёСЂРѕРІ CSFamily.",
+                     "image":  "https://images.unsplash.com/photo-1600861194947-f8830c2bed49?auto=format\u0026fit=crop\u0026w=1169\u0026q=80"
+                 }
+             ],
+    "topPlayers":  [
+                       {
+                           "id":  784512,
+                           "nickname":  "BRRR^",
+                           "rating":  3190,
+                           "kd":  1.78,
+                           "winrate":  74
+                       },
+                       {
+                           "id":  892345,
+                           "nickname":  "AWP_Queen",
+                           "rating":  3015,
+                           "kd":  1.62,
+                           "winrate":  71
+                       },
+                       {
+                           "id":  671239,
+                           "nickname":  "SniperPro",
+                           "rating":  2958,
+                           "kd":  1.54,
+                           "winrate":  69
+                       }
+                   ]
 }

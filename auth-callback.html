@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Авторизация | CSFamily</title>
+</head>
+<body>
+  <p style="font-family: Segoe UI, sans-serif; padding: 24px;">Завершаем вход через Steam...</p>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      const refreshToken = params.get('refreshToken');
+      const userRaw = params.get('user');
+
+      if (!token || !refreshToken || !userRaw) {
+        window.location.replace('index.html?steamError=callback');
+        return;
+      }
+
+      try {
+        let user;
+        try {
+          user = JSON.parse(userRaw);
+        } catch {
+          user = JSON.parse(decodeURIComponent(userRaw));
+        }
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('user', JSON.stringify(user));
+        window.location.replace('profile.html');
+      } catch {
+        window.location.replace('index.html?steamError=parse');
+      }
+    })();
+  </script>
+</body>
+</html>

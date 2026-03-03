@@ -86,6 +86,20 @@ body::after {
     letter-spacing: 2px;
 }
 
+.header-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-mini-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
 .header-main-nav {
     display: flex;
     flex-wrap: wrap;
@@ -1580,9 +1594,17 @@ optgroup option {
 <div class="container">
     <div class="header">
         <div class="logo">CSFamily - НАСТРОЙКИ</div>
-        <button class="btn btn-secondary" onclick="window.history.back()">
-            <i class="fas fa-arrow-left"></i> Назад в профиль
-        </button>
+        <div class="header-user-actions">
+            <img
+                class="header-mini-avatar"
+                id="settingsHeaderAvatar"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                alt="Мини-аватар"
+            >
+            <button class="btn btn-secondary" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i> Назад в профиль
+            </button>
+        </div>
     </div>
     <nav class="header-main-nav" data-shared-nav="list"></nav>
     
@@ -1652,7 +1674,7 @@ optgroup option {
                         <label><i class="ri-image-line"></i> Аватар</label>
                         <div class="avatar-upload">
                             <div class="current-avatar">
-                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Текущий аватар">
+                                <img id="settingsAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Текущий аватар">
                             </div>
                             <div class="avatar-controls">
                                 <input type="file" id="avatarUpload" class="form-control" accept="image/*" style="margin-bottom: 10px;">
@@ -2286,6 +2308,9 @@ optgroup option {
                         <button class="btn btn-primary" onclick="saveSessionSettings()">
                             <i class="ri-save-line"></i> Сохранить настройки
                         </button>
+                        <button class="btn btn-secondary" onclick="closeOtherSessions()">
+                            <i class="ri-shield-keyhole-line"></i> Завершить другие сессии
+                        </button>
                         <button class="btn btn-danger" onclick="closeAllSessions()">
                             <i class="ri-logout-box-line"></i> Завершить все сессии
                         </button>
@@ -2681,6 +2706,8 @@ function applyProfileSettingsData(user) {
     const emailInput = document.getElementById('profileEmailInput');
     const firstNameInput = document.getElementById('profileFirstNameInput');
     const lastNameInput = document.getElementById('profileLastNameInput');
+    const avatarElement = document.getElementById('settingsAvatar');
+    const headerAvatarElement = document.getElementById('settingsHeaderAvatar');
 
     if (nicknameInput && user.nickname) {
         nicknameInput.value = user.nickname;
@@ -2698,6 +2725,14 @@ function applyProfileSettingsData(user) {
         if (lastNameInput) {
             lastNameInput.value = bioParts.slice(1).join(' ') || lastNameInput.value;
         }
+    }
+
+    if (avatarElement && typeof user.avatar === 'string' && user.avatar.trim()) {
+        avatarElement.src = user.avatar.trim();
+    }
+
+    if (headerAvatarElement && typeof user.avatar === 'string' && user.avatar.trim()) {
+        headerAvatarElement.src = user.avatar.trim();
     }
 }
 
@@ -2735,7 +2770,17 @@ function uploadAvatar() {
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            document.querySelector('.current-avatar img').src = e.target.result;
+            const avatarSrc = e.target.result;
+            const avatarElement = document.getElementById('settingsAvatar');
+            if (avatarElement) {
+                avatarElement.src = avatarSrc;
+            }
+
+            const cachedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            localStorage.setItem('user', JSON.stringify({
+                ...cachedUser,
+                avatar: avatarSrc
+            }));
         };
         
         reader.readAsDataURL(file);
@@ -2746,7 +2791,18 @@ function uploadAvatar() {
 
 // Сброс аватара
 function resetAvatar() {
-    document.querySelector('.current-avatar img').src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80';
+    const fallbackAvatar = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80';
+    const avatarElement = document.getElementById('settingsAvatar');
+    if (avatarElement) {
+        avatarElement.src = fallbackAvatar;
+    }
+
+    const cachedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    localStorage.setItem('user', JSON.stringify({
+        ...cachedUser,
+        avatar: fallbackAvatar
+    }));
+
     showNotification('Аватар сброшен', 'success');
 }
 
@@ -2795,15 +2851,39 @@ function saveSessionSettings() {
 }
 
 // Завершение всех сессий
-function closeAllSessions() {
-    showNotification('Все сессии завершены', 'success');
-    const sessions = document.querySelectorAll('.session-item:not(.session-current)');
-    sessions.forEach(session => {
-        session.style.opacity = '0.5';
+async function closeAllSessions() {
+    try {
+        await window.CSAuth.apiRequest('/auth/logout-all', {
+            method: 'POST'
+        });
+
+        showNotification('Все сессии завершены. Выполните вход снова.', 'success');
+
         setTimeout(() => {
-            session.remove();
-        }, 300);
-    });
+            window.CSAuth.clearAuthSession();
+            window.location.href = 'index.html';
+        }, 700);
+    } catch (error) {
+        showNotification(`Ошибка завершения сессий: ${error.message}`, 'error');
+    }
+}
+
+// Завершение других сессий (текущая остается активной)
+async function closeOtherSessions() {
+    try {
+        const result = await window.CSAuth.apiRequest('/auth/logout-others', {
+            method: 'POST'
+        });
+
+        if (result.token) {
+            const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            window.CSAuth.setAuthSession(currentUser, result.token, result.refreshToken || null);
+        }
+
+        showNotification('Другие сессии завершены. Текущая сессия сохранена.', 'success');
+    } catch (error) {
+        showNotification(`Ошибка завершения других сессий: ${error.message}`, 'error');
+    }
 }
 
 // Начало верификации

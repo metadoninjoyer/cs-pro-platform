@@ -111,6 +111,20 @@
             background-color: var(--primary-dark);
         }
 
+        .header-user-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-mini-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
         /* Основной контент */
         .news-content {
             padding: 180px 0 80px;
@@ -482,7 +496,12 @@
             
             <nav data-shared-nav="list"></nav>
             
-            <div>
+            <div class="header-user-actions">
+                <img
+                    class="header-mini-avatar"
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                    alt="Мини-аватар"
+                >
                 <button class="btn btn-primary" id="profileBtn">
                     <i class="fas fa-user"></i> Мой профиль
                 </button>

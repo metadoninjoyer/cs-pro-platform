@@ -77,6 +77,20 @@ body::after{
 
 .logo{color:var(--orange);font-size:26px;font-weight:700;letter-spacing:2px;}
 
+.header-user-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.header-mini-avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid var(--border);
+}
+
 .header-main-nav{
     display:flex;
     flex-wrap:wrap;
@@ -113,7 +127,7 @@ body::after{
     position:relative;
     box-shadow:var(--panel-glow);
     border-radius:12px;
-    overflow:hidden;
+    overflow:visible;
 }
 
 .profile-header {
@@ -125,7 +139,8 @@ body::after{
     border-bottom: 2px solid var(--border);
     align-items: start;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    z-index: 5;
 }
 
 /* Аватар - КРУГЛЫЙ */
@@ -208,6 +223,24 @@ body::after{
     vertical-align: middle;
     text-shadow: 0 0 10px rgba(29, 161, 242, 0.5);
     animation: pulse 2s infinite;
+}
+
+.auth-provider-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--muted);
+    width: fit-content;
+}
+
+.auth-provider-badge.steam {
+    color: var(--text);
+    border-color: var(--orange);
 }
 
 @keyframes pulse {
@@ -383,6 +416,8 @@ body::after{
     padding-top: 25px;
     border-top: 1px solid rgba(255,255,255,0.08);
     margin-top: 25px;
+    position: relative;
+    z-index: 20;
 }
 
 .social-links {
@@ -458,6 +493,7 @@ body::after{
 /* Выпадающее меню для кнопки Действия - УВЕЛИЧЕН Z-INDEX */
 .dropdown {
     position: relative;
+    z-index: 30;
 }
 
 .dropdown-menu {
@@ -1501,6 +1537,81 @@ body::after{
     box-shadow:0 0 15px rgba(255,106,0,.3);
 }
 
+.messenger-modal .modal-content {
+    max-width: 620px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.messenger-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 520px;
+}
+
+.messenger-top {
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.messenger-top strong {
+    color: var(--text);
+}
+
+.messenger-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255,255,255,0.02);
+}
+
+.messenger-empty {
+    margin: auto;
+    color: var(--muted);
+    text-align: center;
+    opacity: 0.85;
+}
+
+.message-bubble {
+    max-width: 78%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    line-height: 1.4;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.message-bubble.outgoing {
+    margin-left: auto;
+    background: linear-gradient(135deg, var(--orange), var(--orange-light));
+    color: #fff;
+}
+
+.message-bubble.incoming {
+    margin-right: auto;
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.messenger-compose {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--border);
+}
+
+.messenger-compose .form-control {
+    margin: 0;
+}
+
 /* ===== АДАПТИВНОСТЬ ===== */
 @media(max-width:1100px){
     .vertical-stats-container{
@@ -1578,7 +1689,15 @@ body::after{
 <div class="container">
     <div class="header">
         <div class="logo">CSFamily PROFILE</div>
-        <button class="btn btn-primary" id="logoutBtn">Выйти</button>
+        <div class="header-user-actions">
+            <img
+                class="header-mini-avatar"
+                id="profileHeaderAvatar"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                alt="Мини-аватар"
+            >
+            <button class="btn btn-primary" id="logoutBtn">Выйти</button>
+        </div>
     </div>
     <nav class="header-main-nav" data-shared-nav="list"></nav>
 
@@ -1594,7 +1713,7 @@ body::after{
             
             <div class="avatar-section">
                 <div class="avatar-container">
-                    <img class="avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Аватар пользователя">
+                    <img class="avatar" id="profileAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Аватар пользователя">
                     <div class="avatar-status online"></div>
                     <!-- ОВАЛЬНЫЙ БЕЙДЖ СКИЛЛА С БУКВОЙ "H" (уменьшен на 20%) -->
                     <div class="skill-badge"></div>
@@ -1608,6 +1727,7 @@ body::after{
                         <!-- Значок верификации после логина -->
                         <i class="fas fa-check-circle verified-badge" title="Проверенный аккаунт"></i>
                     </div>
+                    <div class="auth-provider-badge" id="authProviderBadge">Вход: Email</div>
                 </div>
                 
                 <!-- ГОРИЗОНТАЛЬНЫЙ РЯД С РАЗДЕЛИТЕЛЯМИ - ОБНОВЛЕННЫЙ (с кликабельными друзьями) -->
@@ -1733,40 +1853,40 @@ body::after{
             <div class="stats-row">
                 <div class="stat-circle-card">
                     <div class="title">K/D Ratio</div>
-                    <div class="circle kd" style="--value:78"><span>1.55</span></div>
+                    <div class="circle kd" id="profileKdCircle" style="--value:78"><span id="profileKdValue">1.55</span></div>
                 </div>
                 <div class="stat-circle-card">
                     <div class="title">Rating</div>
-                    <div class="circle" style="--value:82"><span>1.60</span></div>
+                    <div class="circle" id="profileRatingCircle" style="--value:82"><span id="profileRatingValue">1.60</span></div>
                 </div>
             </div>
             
             <div class="vertical-stats-container">
                 <div class="vertical-stat-card">
                     <div class="stat-header"><i class="ri-trophy-line"></i> WIN RATE</div>
-                    <div class="stat-main-value">69%</div>
-                    <div class="stat-detail-row"><span>Сыграно матчей</span><span class="stat-detail-value">684</span></div>
-                    <div class="stat-detail-row"><span>Выиграно</span><span class="stat-detail-value">473</span></div>
-                    <div class="stat-detail-row"><span>Проиграно</span><span class="stat-detail-value">211</span></div>
-                    <div class="stat-detail-row"><span>Точность</span><span class="stat-detail-value">68.9%</span></div>
+                    <div class="stat-main-value" id="profileWinRateValue">69%</div>
+                    <div class="stat-detail-row"><span>Сыграно матчей</span><span class="stat-detail-value" id="profileMatchesPlayedValue">684</span></div>
+                    <div class="stat-detail-row"><span>Выиграно</span><span class="stat-detail-value" id="profileMatchesWonValue">473</span></div>
+                    <div class="stat-detail-row"><span>Проиграно</span><span class="stat-detail-value" id="profileMatchesLostValue">211</span></div>
+                    <div class="stat-detail-row"><span>Точность</span><span class="stat-detail-value" id="profileAccuracyValue">68.9%</span></div>
                 </div>
                 
                 <div class="vertical-stat-card">
                     <div class="stat-header"><i class="ri-crosshair-line"></i> HS%</div>
-                    <div class="stat-main-value">61%</div>
-                    <div class="stat-detail-row"><span>Убийства</span><span class="stat-detail-value">15,866</span></div>
-                    <div class="stat-detail-row"><span>Смерти</span><span class="stat-detail-value">10,231</span></div>
-                    <div class="stat-detail-row"><span>Убийства в голову</span><span class="stat-detail-value">9,755</span></div>
-                    <div class="stat-detail-row"><span>Соотношение HS</span><span class="stat-detail-value">61.5%</span></div>
+                    <div class="stat-main-value" id="profileHsPercentValue">61%</div>
+                    <div class="stat-detail-row"><span>Убийства</span><span class="stat-detail-value" id="profileKillsValue">15,866</span></div>
+                    <div class="stat-detail-row"><span>Смерти</span><span class="stat-detail-value" id="profileDeathsValue">10,231</span></div>
+                    <div class="stat-detail-row"><span>Убийства в голову</span><span class="stat-detail-value" id="profileHeadshotsValue">9,755</span></div>
+                    <div class="stat-detail-row"><span>Соотношение HS</span><span class="stat-detail-value" id="profileHsRatioValue">61.5%</span></div>
                 </div>
                 
                 <div class="vertical-stat-card">
                     <div class="stat-header"><i class="ri-flashlight-line"></i> ADR</div>
-                    <div class="stat-main-value">110</div>
-                    <div class="stat-detail-row"><span>Нанесенный урон</span><span class="stat-detail-value">1,612,291</span></div>
-                    <div class="stat-detail-row"><span>Сыграно раундов</span><span class="stat-detail-value">14,657</span></div>
-                    <div class="stat-detail-row"><span>Бомб установлено</span><span class="stat-detail-value">3,421</span></div>
-                    <div class="stat-detail-row"><span>Время в игре</span><span class="stat-detail-value">612ч 34м</span></div>
+                    <div class="stat-main-value" id="profileAdrValue">110</div>
+                    <div class="stat-detail-row"><span>Нанесенный урон</span><span class="stat-detail-value" id="profileDamageValue">1,612,291</span></div>
+                    <div class="stat-detail-row"><span>Сыграно раундов</span><span class="stat-detail-value" id="profileRoundsValue">14,657</span></div>
+                    <div class="stat-detail-row"><span>Бомб установлено</span><span class="stat-detail-value" id="profileBombsValue">3,421</span></div>
+                    <div class="stat-detail-row"><span>Время в игре</span><span class="stat-detail-value" id="profilePlayTimeValue">612ч 34м</span></div>
                 </div>
             </div>
             
@@ -1782,46 +1902,17 @@ body::after{
                     </a>
                 </div>
                 
-                <div class="matches-mini-container">
-                    <!-- Матч 1 -->
+                <div class="matches-mini-container" id="profileRecentMatchesMini">
                     <div class="match-mini-card">
                         <div class="match-mini-result match-mini-win"></div>
-                        <div class="match-mini-map">Tuscan</div>
+                        <div class="match-mini-map">Загрузка...</div>
                         <div class="match-mini-stats">
-                            <div class="match-mini-kd">24/9/6</div>
-                            <div class="match-mini-score">16:2</div>
+                            <div class="match-mini-kd">--/--/--</div>
+                            <div class="match-mini-score">--:--</div>
                         </div>
                         <div class="match-mini-outcome">
-                            <div class="match-mini-outcome-text match-mini-win-text">Победа</div>
-                            <div class="match-mini-date">12 янв.</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Матч 2 -->
-                    <div class="match-mini-card">
-                        <div class="match-mini-result match-mini-loss"></div>
-                        <div class="match-mini-map">Mirage</div>
-                        <div class="match-mini-stats">
-                            <div class="match-mini-kd">18/12/4</div>
-                            <div class="match-mini-score">12:16</div>
-                        </div>
-                        <div class="match-mini-outcome">
-                            <div class="match-mini-outcome-text match-mini-loss-text">Поражение</div>
-                            <div class="match-mini-date">11 янв.</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Матч 3 -->
-                    <div class="match-mini-card">
-                        <div class="match-mini-result match-mini-win"></div>
-                        <div class="match-mini-map">Inferno</div>
-                        <div class="match-mini-stats">
-                            <div class="match-mini-kd">21/10/5</div>
-                            <div class="match-mini-score">16:8</div>
-                        </div>
-                        <div class="match-mini-outcome">
-                            <div class="match-mini-outcome-text match-mini-win-text">Победа</div>
-                            <div class="match-mini-date">10 янв.</div>
+                            <div class="match-mini-outcome-text match-mini-win-text">Подгружаем данные</div>
+                            <div class="match-mini-date">...</div>
                         </div>
                     </div>
                 </div>
@@ -2042,6 +2133,34 @@ body::after{
     </div>
 </div>
 
+<!-- МИНИ-МЕССЕНДЖЕР -->
+<div id="messageModal" class="modal messenger-modal">
+    <div class="modal-content">
+        <div class="modal-header" style="padding: 20px 22px 14px; margin: 0;">
+            <h2 class="modal-title" style="font-size: 22px;">Мини-мессенджер</h2>
+            <button class="close-modal" onclick="closeMessageModal()">&times;</button>
+        </div>
+
+        <div class="messenger-shell">
+            <div class="messenger-top">
+                Диалог с <strong id="messengerRecipient">BRRR^</strong>
+            </div>
+
+            <div class="messenger-messages" id="messengerMessages">
+                <div class="messenger-empty">Напишите первое сообщение</div>
+            </div>
+
+            <div class="messenger-compose">
+                <input type="text" id="messengerInput" class="form-control" placeholder="Введите сообщение..." maxlength="500">
+                <button type="button" class="btn btn-primary" onclick="sendMessengerMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                    Отправить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- МОДАЛЬНОЕ ОКНО ПЕРЕВОДА СРЕДСТВ -->
 <div id="transferModal" class="modal">
     <div class="modal-content">
@@ -2119,6 +2238,114 @@ function closeTransferModal(){
     document.getElementById('transferModal').style.display='none';
 }
 
+const messengerState = {
+    currentRecipient: 'BRRR^'
+};
+
+function getConversationStorageKey() {
+    return `csfamily-chat-${messengerState.currentRecipient}`;
+}
+
+function readConversation() {
+    try {
+        const payload = JSON.parse(localStorage.getItem(getConversationStorageKey()) || '[]');
+        return Array.isArray(payload) ? payload : [];
+    } catch {
+        return [];
+    }
+}
+
+function writeConversation(messages) {
+    localStorage.setItem(getConversationStorageKey(), JSON.stringify(messages));
+}
+
+function renderMessengerMessages() {
+    const list = document.getElementById('messengerMessages');
+    if (!list) {
+        return;
+    }
+
+    const conversation = readConversation();
+    list.innerHTML = '';
+
+    if (!conversation.length) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'messenger-empty';
+        emptyState.textContent = 'Напишите первое сообщение';
+        list.appendChild(emptyState);
+        return;
+    }
+
+    conversation.forEach((entry) => {
+        const bubble = document.createElement('div');
+        bubble.className = `message-bubble ${entry.type === 'incoming' ? 'incoming' : 'outgoing'}`;
+        bubble.textContent = entry.text;
+        list.appendChild(bubble);
+    });
+
+    list.scrollTop = list.scrollHeight;
+}
+
+function openMessageModal(){
+    const usernameElement = document.getElementById('profileUsername');
+    const recipient = (usernameElement?.textContent || messengerState.currentRecipient || 'Игрок').trim();
+    messengerState.currentRecipient = recipient;
+
+    const recipientElement = document.getElementById('messengerRecipient');
+    if (recipientElement) {
+        recipientElement.textContent = recipient;
+    }
+
+    const modal = document.getElementById('messageModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+
+    renderMessengerMessages();
+
+    const input = document.getElementById('messengerInput');
+    if (input) {
+        input.value = '';
+        input.focus();
+    }
+}
+
+function closeMessageModal(){
+    const modal = document.getElementById('messageModal');
+    if (modal) {
+        modal.style.display='none';
+    }
+}
+
+function sendMessengerMessage(){
+    const input = document.getElementById('messengerInput');
+    if (!input) {
+        return;
+    }
+
+    const messageText = input.value.trim();
+    if (!messageText) {
+        showProfileNotice('Введите сообщение', 'error');
+        return;
+    }
+
+    const conversation = readConversation();
+    conversation.push({ type: 'outgoing', text: messageText, at: Date.now() });
+    writeConversation(conversation);
+    input.value = '';
+    renderMessengerMessages();
+}
+
+const messengerInput = document.getElementById('messengerInput');
+if (messengerInput) {
+    messengerInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendMessengerMessage();
+        }
+    });
+}
+
 // Обработка формы перевода
 document.getElementById('transferForm').addEventListener('submit',function(e){
     e.preventDefault();
@@ -2136,7 +2363,7 @@ document.getElementById('transferForm').addEventListener('submit',function(e){
 
 // Функции для кнопок выпадающего меню
 function sendMessage(){
-    window.location.href = 'news.html';
+    openMessageModal();
 }
 
 function addFriend(){
@@ -2181,9 +2408,15 @@ function showProfileNotice(message, type = 'success') {
 
 // Закрыть модальное окно при клике вне его
 window.onclick=function(event){
-    const modal=document.getElementById('transferModal');
-    if(event.target===modal){
+    const transferModal = document.getElementById('transferModal');
+    const messageModal = document.getElementById('messageModal');
+
+    if(event.target===transferModal){
         closeTransferModal();
+    }
+
+    if (event.target === messageModal) {
+        closeMessageModal();
     }
 }
 
@@ -2285,6 +2518,10 @@ function applyProfileUser(user) {
     const countryElement = document.getElementById('profileCountry');
     const idElement = document.getElementById('profileId');
     const recipientElement = document.getElementById('recipient');
+    const messengerRecipientElement = document.getElementById('messengerRecipient');
+    const providerBadgeElement = document.getElementById('authProviderBadge');
+    const avatarElement = document.getElementById('profileAvatar');
+    const headerAvatarElement = document.getElementById('profileHeaderAvatar');
 
     if (usernameElement && user.nickname) {
         usernameElement.textContent = user.nickname;
@@ -2301,6 +2538,142 @@ function applyProfileUser(user) {
     if (recipientElement && user.nickname) {
         recipientElement.value = user.nickname;
     }
+
+    if (messengerRecipientElement && user.nickname) {
+        messengerState.currentRecipient = user.nickname;
+        messengerRecipientElement.textContent = user.nickname;
+    }
+
+    if (avatarElement && typeof user.avatar === 'string' && user.avatar.trim()) {
+        avatarElement.src = user.avatar.trim();
+    }
+
+    if (headerAvatarElement && typeof user.avatar === 'string' && user.avatar.trim()) {
+        headerAvatarElement.src = user.avatar.trim();
+    }
+
+    if (providerBadgeElement) {
+        const isSteam = user.provider === 'steam' || Boolean(user.steamId);
+        providerBadgeElement.classList.toggle('steam', isSteam);
+        providerBadgeElement.innerHTML = isSteam
+            ? '<i class="fab fa-steam"></i> Вход: Steam'
+            : 'Вход: Email';
+    }
+}
+
+function clampPercent(value) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+        return 0;
+    }
+    return Math.max(0, Math.min(100, Math.round(numeric)));
+}
+
+function formatStatNumber(value) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+        return '0';
+    }
+    return numeric.toLocaleString('ru-RU');
+}
+
+function setProfileStatText(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+function renderRecentMatches(matches) {
+    const container = document.getElementById('profileRecentMatchesMini');
+    if (!container) {
+        return;
+    }
+
+    const items = Array.isArray(matches) ? matches.slice(0, 5) : [];
+    if (!items.length) {
+        container.innerHTML = `
+            <div class="match-mini-card">
+                <div class="match-mini-result match-mini-win"></div>
+                <div class="match-mini-map">Нет данных</div>
+                <div class="match-mini-stats">
+                    <div class="match-mini-kd">--/--/--</div>
+                    <div class="match-mini-score">--:--</div>
+                </div>
+                <div class="match-mini-outcome">
+                    <div class="match-mini-outcome-text match-mini-win-text">Матчи не найдены</div>
+                    <div class="match-mini-date">-</div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = items.map((match) => {
+        const isWin = match.result === 'win';
+        const resultClass = isWin ? 'match-mini-win' : 'match-mini-loss';
+        const resultTextClass = isWin ? 'match-mini-win-text' : 'match-mini-loss-text';
+        return `
+            <div class="match-mini-card">
+                <div class="match-mini-result ${resultClass}"></div>
+                <div class="match-mini-map">${match.map || 'Unknown'}</div>
+                <div class="match-mini-stats">
+                    <div class="match-mini-kd">${match.kd || '--/--/--'}</div>
+                    <div class="match-mini-score">${match.score || '--:--'}</div>
+                </div>
+                <div class="match-mini-outcome">
+                    <div class="match-mini-outcome-text ${resultTextClass}">${match.resultLabel || (isWin ? 'Победа' : 'Поражение')}</div>
+                    <div class="match-mini-date">${match.dateLabel || '-'}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function applyProfileStats(stats) {
+    if (!stats) {
+        return;
+    }
+
+    const kdValue = Number(stats.kdRatio) || 0;
+    const ratingValue = Number(stats.rating) || 0;
+    const kdCirclePercent = clampPercent((kdValue / 2.2) * 100);
+    const ratingCirclePercent = clampPercent((ratingValue / 2.0) * 100);
+
+    const kdCircle = document.getElementById('profileKdCircle');
+    if (kdCircle) {
+        kdCircle.style.setProperty('--value', String(kdCirclePercent));
+    }
+
+    const ratingCircle = document.getElementById('profileRatingCircle');
+    if (ratingCircle) {
+        ratingCircle.style.setProperty('--value', String(ratingCirclePercent));
+    }
+
+    setProfileStatText('profileKdValue', kdValue.toFixed(2));
+    setProfileStatText('profileRatingValue', ratingValue.toFixed(2));
+    setProfileStatText('profileWinRateValue', `${Number(stats.winRate || 0).toFixed(0)}%`);
+    setProfileStatText('profileMatchesPlayedValue', formatStatNumber(stats.matchesPlayed));
+    setProfileStatText('profileMatchesWonValue', formatStatNumber(stats.matchesWon));
+    setProfileStatText('profileMatchesLostValue', formatStatNumber(stats.matchesLost));
+    setProfileStatText('profileAccuracyValue', `${Number(stats.accuracy || 0).toFixed(1)}%`);
+
+    setProfileStatText('profileHsPercentValue', `${Number(stats.hsPercent || 0).toFixed(1)}%`);
+    setProfileStatText('profileKillsValue', formatStatNumber(stats.kills));
+    setProfileStatText('profileDeathsValue', formatStatNumber(stats.deaths));
+    setProfileStatText('profileHeadshotsValue', formatStatNumber(stats.headshots));
+    setProfileStatText('profileHsRatioValue', `${Number(stats.hsRatio || stats.hsPercent || 0).toFixed(1)}%`);
+
+    setProfileStatText('profileAdrValue', String(Number(stats.adr || 0).toFixed(0)));
+    setProfileStatText('profileDamageValue', formatStatNumber(stats.damageDealt));
+    setProfileStatText('profileRoundsValue', formatStatNumber(stats.roundsPlayed));
+    setProfileStatText('profileBombsValue', formatStatNumber(stats.bombsPlanted));
+
+    const hours = Number(stats.playTimeHours || 0);
+    const minutes = Number(stats.playTimeMinutes || 0);
+    setProfileStatText('profilePlayTimeValue', `${hours}ч ${minutes}м`);
+
+    renderRecentMatches(stats.recentMatches);
 }
 
 async function hydrateProfileData() {
@@ -2318,7 +2691,20 @@ async function hydrateProfileData() {
     }
 }
 
+async function hydrateProfileStats() {
+    try {
+        const statsFromApi = await window.CSAuth.apiRequest('/profile/stats');
+        applyProfileStats(statsFromApi);
+        localStorage.setItem('profileStats', JSON.stringify(statsFromApi));
+        return;
+    } catch {
+        const statsFromStorage = JSON.parse(localStorage.getItem('profileStats') || '{}');
+        applyProfileStats(statsFromStorage);
+    }
+}
+
 hydrateProfileData();
+hydrateProfileStats();
 </script>
 
 </body>

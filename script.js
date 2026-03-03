@@ -64,10 +64,49 @@ function renderSharedNavigation() {
     });
 }
 
+function getStoredUser() {
+    try {
+        return JSON.parse(localStorage.getItem('user') || '{}');
+    } catch {
+        return {};
+    }
+}
+
+function bindMiniAvatars() {
+    const avatarElements = document.querySelectorAll('.header-mini-avatar');
+    if (!avatarElements.length) {
+        return;
+    }
+
+    const user = getStoredUser();
+    const avatarSrc = typeof user.avatar === 'string' ? user.avatar.trim() : '';
+
+    avatarElements.forEach((avatarElement) => {
+        if (avatarSrc) {
+            avatarElement.src = avatarSrc;
+        }
+
+        if (avatarElement.dataset.clickBound === 'true') {
+            return;
+        }
+
+        avatarElement.style.cursor = 'pointer';
+        avatarElement.title = 'Открыть профиль';
+        avatarElement.addEventListener('click', () => {
+            window.location.href = 'profile.html';
+        });
+        avatarElement.dataset.clickBound = 'true';
+    });
+}
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderSharedNavigation);
+    document.addEventListener('DOMContentLoaded', () => {
+        renderSharedNavigation();
+        bindMiniAvatars();
+    });
 } else {
     renderSharedNavigation();
+    bindMiniAvatars();
 }
 
 const authStorageKeys = [
@@ -80,12 +119,16 @@ const authStorageKeys = [
 ];
 
 const API_BASE_URL = localStorage.getItem('apiBaseUrl') || 'http://localhost:4000/api';
+let refreshRequestPromise = null;
 
-function setAuthSession(user, token = null) {
+function setAuthSession(user, token = null, refreshToken = null) {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('user', JSON.stringify(user));
     if (token) {
         localStorage.setItem('authToken', token);
+    }
+    if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
     }
 }
 
@@ -102,23 +145,16 @@ function isAuthenticated() {
     return isLoggedIn || hasToken;
 }
 
-function loginWithSteam(actionText = 'Вход') {
-    const steamUser = {
-        nickname: 'SteamPlayer',
-        email: 'steam@csfamily.local',
-        provider: 'steam'
-    };
-
-    setAuthSession(steamUser);
-    alert(`${actionText} выполнен через Steam!\nПеренаправляем в личный кабинет...`);
-    window.location.href = 'profile.html';
+function loginWithSteam() {
+    window.location.href = `${API_BASE_URL}/auth/steam`;
 }
 
 async function apiRequest(path, options = {}) {
+    const { allowRefresh = true, ...requestOptions } = options;
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
     const headers = {
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
+        ...(requestOptions.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(requestOptions.headers || {})
     };
 
     if (token) {
@@ -126,25 +162,80 @@ async function apiRequest(path, options = {}) {
     }
 
     const response = await fetch(`${API_BASE_URL}${path}`, {
-        ...options,
+        ...requestOptions,
         headers
     });
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
+        const canRetryWithRefresh =
+            response.status === 401
+            && allowRefresh
+            && path !== '/auth/refresh'
+            && path !== '/auth/login'
+            && path !== '/auth/register';
+
+        if (canRetryWithRefresh) {
+            try {
+                await refreshAccessToken();
+                return await apiRequest(path, { ...requestOptions, allowRefresh: false });
+            } catch {
+                clearAuthSession();
+                throw new Error('Сессия истекла. Войдите снова');
+            }
+        }
+
+        if (response.status === 401) {
+            clearAuthSession();
+        }
         throw new Error(data.message || 'Ошибка API');
     }
 
     return data;
 }
 
+async function refreshAccessToken() {
+    if (refreshRequestPromise) {
+        return refreshRequestPromise;
+    }
+
+    const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+    if (!refreshToken) {
+        throw new Error('Refresh token не найден');
+    }
+
+    refreshRequestPromise = (async () => {
+        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ refreshToken })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.message || 'Не удалось обновить сессию');
+        }
+
+        const user = getStoredUser();
+        setAuthSession(user, data.token, data.refreshToken);
+        return data.token;
+    })();
+
+    try {
+        return await refreshRequestPromise;
+    } finally {
+        refreshRequestPromise = null;
+    }
+}
 async function loginWithPassword(email, password) {
     const data = await apiRequest('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password })
     });
 
-    setAuthSession(data.user, data.token);
+    setAuthSession(data.user, data.token, data.refreshToken);
     return data.user;
 }
 
@@ -154,7 +245,7 @@ async function registerWithPassword(nickname, email, password) {
         body: JSON.stringify({ nickname, email, password })
     });
 
-    setAuthSession(data.user, data.token);
+    setAuthSession(data.user, data.token, data.refreshToken);
     return data.user;
 }
 

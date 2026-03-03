@@ -15,6 +15,7 @@
     --orange:#ff6a00;
     --orange-light:#ff9a3c;
     --orange-dark:#cc5500;
+    --light:#f8f9fa;
     --bg:#0b0e13;
     --panel:#141922;
     --card:#151a24;
@@ -100,6 +101,15 @@ body{
 .header-main-nav a:hover,
 .header-main-nav a[aria-current="page"] {
     color: var(--orange);
+}
+
+.header-mini-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    margin-right: 8px;
 }
 
 /* СТАТИСТИКА В ШАПКЕ */
@@ -1121,6 +1131,11 @@ body{
         </div>
         
         <div class="controls">
+            <img
+                class="header-mini-avatar"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                alt="Мини-аватар"
+            >
             <button class="control-btn active" onclick="refreshTop()">
                 <i class="ri-refresh-line"></i>
                 Обновить

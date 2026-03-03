@@ -162,6 +162,7 @@
             margin-bottom: 20px;
             line-height: 1.2;
             background: linear-gradient(90deg, #fff, var(--secondary));
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -700,16 +701,45 @@
         const steamLoginButton = document.getElementById('steamLoginBtn');
         const steamRegisterButton = document.getElementById('steamRegisterBtn');
 
+        async function startSteamAuth() {
+            try {
+                const response = await fetch(`${window.CSAuth.API_BASE_URL}/auth/steam/config`);
+                const config = await response.json();
+
+                if (!config.configured) {
+                    alert('Steam OAuth пока не настроен на сервере. Добавь STEAM_API_KEY в backend/.env и перезапусти API.');
+                    return;
+                }
+
+                window.CSAuth.loginWithSteam();
+            } catch {
+                alert('Не удалось проверить Steam OAuth. Убедись, что backend запущен на http://localhost:4000.');
+            }
+        }
+
         if (steamLoginButton) {
             steamLoginButton.addEventListener('click', function() {
-                window.CSAuth.loginWithSteam('Вход');
+                startSteamAuth();
             });
         }
 
         if (steamRegisterButton) {
             steamRegisterButton.addEventListener('click', function() {
-                window.CSAuth.loginWithSteam('Регистрация');
+                startSteamAuth();
             });
+        }
+
+        const steamErrorCode = new URLSearchParams(window.location.search).get('steamError');
+        if (steamErrorCode) {
+            const messages = {
+                'not-configured': 'Steam OAuth не настроен на сервере.',
+                'auth-failed': 'Steam авторизация не удалась. Попробуй снова.',
+                'callback': 'Некорректный ответ от Steam OAuth callback.',
+                'parse': 'Не удалось обработать данные Steam авторизации.'
+            };
+
+            alert(messages[steamErrorCode] || 'Ошибка Steam авторизации.');
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
         
         // Обработка формы входа
