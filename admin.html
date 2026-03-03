@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ панель | CSFamily</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #090f1b;
+      --panel: rgba(17, 27, 43, 0.82);
+      --panel-2: rgba(28, 42, 64, 0.92);
+      --text: #eef4ff;
+      --muted: #9db1d2;
+      --accent: #ff8a2a;
+      --accent-2: #3f8eff;
+      --border: rgba(255, 255, 255, 0.12);
+      --danger: #ff4f70;
+      --ok: #22b66f;
+      --shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { min-height: 100vh; color: var(--text); }
+    .container { width: min(1280px, 92%); margin: 0 auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      background: rgba(7, 13, 23, 0.68);
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 0;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .title span {
+      color: var(--accent);
+      text-shadow: 0 8px 20px rgba(255, 138, 42, 0.45);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    nav ul { list-style: none; display: flex; gap: 18px; flex-wrap: wrap; }
+    nav a { color: var(--text); text-decoration: none; opacity: 0.86; }
+    nav a[aria-current="page"], nav a:hover { opacity: 1; color: #fff; }
+
+    main { padding: 22px 0 28px; }
+
+    .admin-hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 22px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(700px 240px at 5% 10%, rgba(63, 142, 255, 0.2), transparent 60%),
+        radial-gradient(620px 240px at 95% -10%, rgba(255, 138, 42, 0.16), transparent 58%),
+        var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-title { font-size: clamp(22px, 2.8vw, 32px); font-weight: 800; margin-bottom: 8px; }
+    .hero-sub { color: var(--muted); font-size: 14px; max-width: 640px; line-height: 1.55; }
+    .hero-badge {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 9px 14px;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #dce7ff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .notice {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .access-gate {
+      display: none;
+      margin-bottom: 16px;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 16%), var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .access-gate h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .access-gate p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      max-width: 760px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 14%), var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card .value { font-size: 34px; font-weight: 800; line-height: 1.1; }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .toolbar.two { grid-template-columns: 2fr 1fr; }
+
+    button {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      padding: 8px 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    button.primary { background: linear-gradient(135deg, #2f6fe8, #4ea2ff); border-color: transparent; }
+    button.ok { background: linear-gradient(135deg, #24bc73, #159f5f); border-color: transparent; }
+    button.danger { background: linear-gradient(135deg, #ff5a7b, #ef365e); border-color: transparent; }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-height: 400px;
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 740px;
+    }
+
+    th, td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; }
+    th { color: var(--muted); font-weight: 700; position: sticky; top: 0; background: rgba(18, 29, 46, 0.95); z-index: 1; }
+
+    input, select, textarea {
+      width: 100%;
+      background: rgba(8, 16, 29, 0.78);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .danger-text { color: #ffb0bf; font-size: 12px; }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tiny-input {
+      width: 100%;
+      min-width: 128px;
+      padding: 6px 8px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 1020px) {
+      .admin-hero { flex-direction: column; align-items: flex-start; }
+      .grid-4 { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .two-col { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+      .toolbar.two { grid-template-columns: 1fr; }
+      .table-wrap { max-height: 340px; }
+    }
+
+    @media (max-width: 620px) {
+      .grid-4 { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+      nav ul { gap: 12px; }
+      .hero-title { font-size: 24px; }
+    }
+  </style>
+  <link rel="stylesheet" href="modern.css">
+</head>
+<body>
+  <header>
+    <div class="container header-row">
+      <div class="title"><span>CSFamily</span> Admin</div>
+      <nav data-shared-nav="list"></nav>
+      <div class="header-actions">
+        <div class="quick-profile-menu" data-quick-profile-menu>
+          <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
+            <img
+              class="quick-menu-avatar"
+              id="adminMenuAvatar"
+              data-menu-avatar
+              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+              alt="Аватар профиля"
+            >
+          </button>
+          <div class="quick-menu-dropdown" role="menu" aria-label="Меню профиля">
+            <button class="quick-menu-item" type="button" data-menu-action="profile"><i class="fa-regular fa-id-card"></i> Профиль</button>
+            <button class="quick-menu-item" type="button" data-menu-action="settings"><i class="fa-solid fa-sliders"></i> Настройки</button>
+            <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="fa-solid fa-right-from-bracket"></i> Выйти</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="admin-hero">
+      <div>
+        <h1 class="hero-title">Панель управления платформой</h1>
+        <p class="hero-sub">Центр администрирования: пользователи, новости и рейтинг игроков в одном рабочем пространстве.</p>
+      </div>
+      <div class="hero-badge" id="heroRoleBadge"><i class="fa-solid fa-shield-halved"></i> Режим: Administrator</div>
+    </section>
+
+    <div class="notice" id="adminNotice">Проверка прав администратора...</div>
+
+    <section class="access-gate" id="accessGate">
+      <h3><i class="fa-solid fa-lock"></i> Доступ к админ-панели ограничен</h3>
+      <p id="accessGateText">Для продолжения войдите в аккаунт с ролью <strong>admin</strong>. После входа вернитесь на эту страницу.</p>
+      <div class="actions">
+        <button class="primary" id="goToLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Войти</button>
+        <button id="goToProfileBtn"><i class="fa-regular fa-id-card"></i> Профиль</button>
+        <button id="retryAccessBtn"><i class="fa-solid fa-rotate"></i> Проверить снова</button>
+      </div>
+    </section>
+
+    <div class="grid-4" id="summaryCards" style="display:none;">
+      <div class="card"><div class="label"><i class="fa-regular fa-user"></i> Пользователи</div><div class="value" id="sumUsers">0</div></div>
+      <div class="card"><div class="label"><i class="fa-solid fa-user-shield"></i> Админы</div><div class="value" id="sumAdmins">0</div></div>
+      <div class="card"><div class="label"><i class="fa-regular fa-newspaper"></i> Новости</div><div class="value" id="sumNews">0</div></div>
+      <div class="card"><div class="label"><i class="fa-solid fa-ranking-star"></i> Топ-игроки</div><div class="value" id="sumTop">0</div></div>
+    </div>
+
+    <section class="section" id="usersSection" style="display:none;">
+      <div class="section-head">
+        <h2 class="section-title"><i class="fa-solid fa-users"></i> Пользователи</h2>
+        <div class="actions">
+          <button class="primary" id="reloadUsersBtn"><i class="fa-solid fa-rotate"></i> Обновить</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input id="userSearchInput" placeholder="Поиск: ник, email, id">
+        <select id="userRoleFilter">
+          <option value="all">Все роли</option>
+          <option value="admin">admin</option>
+          <option value="moderator">moderator</option>
+          <option value="user">user</option>
+        </select>
+        <select id="userStatusFilter">
+          <option value="all">Все статусы</option>
+          <option value="active">active</option>
+          <option value="blocked">blocked</option>
+        </select>
+      </div>
+
+      <div class="table-wrap" style="max-height: 390px;">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Ник</th>
+              <th>Email</th>
+              <th>Роль</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="usersTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="two-col" id="contentSections" style="display:none;">
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title"><i class="fa-regular fa-newspaper"></i> Новости</h2>
+          <div class="actions">
+            <button class="primary" id="reloadNewsBtn"><i class="fa-solid fa-rotate"></i> Обновить</button>
+          </div>
+        </div>
+
+        <div class="toolbar two">
+          <input id="newsSearchInput" placeholder="Поиск по slug, заголовку, категории">
+          <select id="newsCategoryFilter">
+            <option value="all">Все категории</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <input id="newsSlug" placeholder="slug (например major-update-2026)">
+          <input id="newsTitle" placeholder="Заголовок">
+        </div>
+        <div class="row">
+          <input id="newsCategory" placeholder="Категория" value="Обновление">
+          <input id="newsDate" placeholder="Дата" value="3 марта 2026">
+        </div>
+        <textarea id="newsExcerpt" placeholder="Короткий текст новости"></textarea>
+        <div class="row" style="margin-top:10px;">
+          <input id="newsImage" placeholder="URL изображения">
+          <button class="ok" id="addNewsBtn"><i class="fa-solid fa-plus"></i> Добавить новость</button>
+        </div>
+
+        <div class="table-wrap" style="max-height: 290px; margin-top: 10px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Slug</th>
+                <th>Заголовок</th>
+                <th>Категория</th>
+                <th>Дата</th>
+                <th>Views</th>
+                <th>Сохранить</th>
+                <th>Удалить</th>
+              </tr>
+            </thead>
+            <tbody id="newsTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title"><i class="fa-solid fa-ranking-star"></i> Топ-игроки</h2>
+          <div class="actions">
+            <button class="primary" id="reloadTopBtn"><i class="fa-solid fa-rotate"></i> Загрузить</button>
+          </div>
+        </div>
+
+        <textarea id="topPlayersJson" placeholder='[{"id":1,"nickname":"PRO","rating":3000,"kd":1.6,"winrate":72}]'></textarea>
+        <div class="actions" style="margin-top:10px;">
+          <button class="ok" id="saveTopBtn"><i class="fa-solid fa-floppy-disk"></i> Сохранить</button>
+        </div>
+        <p class="danger-text" style="margin-top:8px;">Ожидается JSON-массив объектов: id, nickname, rating, kd, winrate.</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    const noticeElement = document.getElementById('adminNotice');
+    const accessGateElement = document.getElementById('accessGate');
+    const accessGateTextElement = document.getElementById('accessGateText');
+    const summaryCardsElement = document.getElementById('summaryCards');
+    const usersSectionElement = document.getElementById('usersSection');
+    const contentSectionsElement = document.getElementById('contentSections');
+    const heroRoleBadgeElement = document.getElementById('heroRoleBadge');
+    const avatarImageElement = document.getElementById('adminMenuAvatar');
+    let usersCache = [];
+    let newsCache = [];
+    let currentAdminUser = null;
+
+    function setNotice(message, type = 'info') {
+      noticeElement.textContent = message;
+      noticeElement.style.borderColor = 'rgba(255,255,255,0.08)';
+      if (type === 'error') {
+        noticeElement.style.borderColor = 'rgba(255,77,79,0.55)';
+      }
+      if (type === 'ok') {
+        noticeElement.style.borderColor = 'rgba(31,157,85,0.6)';
+      }
+    }
+
+    function showPanel() {
+      accessGateElement.style.display = 'none';
+      summaryCardsElement.style.display = '';
+      usersSectionElement.style.display = '';
+      contentSectionsElement.style.display = '';
+    }
+
+    function hidePanel() {
+      summaryCardsElement.style.display = 'none';
+      usersSectionElement.style.display = 'none';
+      contentSectionsElement.style.display = 'none';
+    }
+
+    function showAccessGate(message) {
+      hidePanel();
+      accessGateTextElement.textContent = message;
+      accessGateElement.style.display = '';
+    }
+
+    function bindById(id, eventName, handler) {
+      const element = document.getElementById(id);
+      if (!element) {
+        return;
+      }
+      element.addEventListener(eventName, handler);
+    }
+
+    async function ensureAdminAccess() {
+      if (!window.CSAuth) {
+        setNotice('Критическая ошибка: модуль авторизации не загружен', 'error');
+        showAccessGate('Не удалось инициализировать клиентскую авторизацию. Обновите страницу или откройте главную страницу.');
+        return false;
+      }
+
+      if (!window.CSAuth.isAuthenticated()) {
+        setNotice('Необходим вход в аккаунт администратора', 'error');
+        showAccessGate('Сессия не найдена. Нажмите «Войти», затем повторите проверку доступа.');
+        return false;
+      }
+
+      try {
+        const me = await window.CSAuth.apiRequest('/auth/me');
+        currentAdminUser = me;
+        const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken') || null;
+        const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken') || null;
+        window.CSAuth.setAuthSession(me, authToken, refreshToken);
+
+        if (avatarImageElement && typeof me.avatar === 'string' && me.avatar.trim()) {
+          avatarImageElement.src = me.avatar.trim();
+        }
+
+        if (!window.CSAuth.isAdminUser(me)) {
+          setNotice('Доступ запрещён: требуется роль admin.', 'error');
+          showAccessGate('Текущая учетная запись не имеет роли admin. Откройте профиль или войдите под администратором.');
+          return false;
+        }
+
+        if (heroRoleBadgeElement) {
+          heroRoleBadgeElement.innerHTML = me.isOwner
+            ? '<i class="fa-solid fa-crown"></i> Режим: Owner'
+            : '<i class="fa-solid fa-shield-halved"></i> Режим: Administrator';
+        }
+
+        setNotice('Админ-панель активна', 'ok');
+        showPanel();
+        return true;
+      } catch (error) {
+        setNotice(`Ошибка проверки доступа: ${error.message}`, 'error');
+        showAccessGate('Не удалось подтвердить права администратора. Проверьте сессию и повторите попытку.');
+        return false;
+      }
+    }
+
+    function updateSummary(summary) {
+      document.getElementById('sumUsers').textContent = String(summary.users || 0);
+      document.getElementById('sumAdmins').textContent = String(summary.admins || 0);
+      document.getElementById('sumNews').textContent = String(summary.news || 0);
+      document.getElementById('sumTop').textContent = String(summary.topPlayers || 0);
+    }
+
+    function createButton(label, className, onClick) {
+      const button = document.createElement('button');
+      button.className = className;
+      button.textContent = label;
+      button.addEventListener('click', onClick);
+      return button;
+    }
+
+    async function loadSummary() {
+      const data = await window.CSAuth.apiRequest('/admin/summary');
+      updateSummary(data);
+    }
+
+    async function loadUsers() {
+      usersCache = await window.CSAuth.apiRequest('/admin/users');
+      renderUsersTable();
+    }
+
+    function getFilteredUsers() {
+      const searchValue = (document.getElementById('userSearchInput')?.value || '').trim().toLowerCase();
+      const roleFilter = document.getElementById('userRoleFilter')?.value || 'all';
+      const statusFilter = document.getElementById('userStatusFilter')?.value || 'all';
+
+      return usersCache.filter((user) => {
+        const userStatus = user.blocked ? 'blocked' : 'active';
+        if (roleFilter !== 'all' && user.role !== roleFilter) {
+          return false;
+        }
+        if (statusFilter !== 'all' && userStatus !== statusFilter) {
+          return false;
+        }
+
+        if (!searchValue) {
+          return true;
+        }
+
+        const searchable = `${user.id} ${user.nickname || ''} ${user.email || ''}`.toLowerCase();
+        return searchable.includes(searchValue);
+      });
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTbody');
+      tbody.innerHTML = '';
+      const users = getFilteredUsers();
+
+      users.forEach((user) => {
+        const row = document.createElement('tr');
+        const actorIsOwner = Boolean(currentAdminUser?.isOwner);
+        const targetIsOwner = Boolean(user.isOwner);
+        const targetIsAdmin = user.role === 'admin';
+        const canManageAdmin = actorIsOwner;
+
+        const roleSelect = document.createElement('select');
+        ['user', 'moderator', 'admin'].forEach((role) => {
+          const option = document.createElement('option');
+          option.value = role;
+          option.textContent = role;
+          option.selected = user.role === role;
+          roleSelect.appendChild(option);
+        });
+
+        if (targetIsOwner || (targetIsAdmin && !canManageAdmin)) {
+          roleSelect.disabled = true;
+        }
+
+        const statusSelect = document.createElement('select');
+        ['active', 'blocked'].forEach((state) => {
+          const option = document.createElement('option');
+          option.value = state;
+          option.textContent = state;
+          option.selected = state === (user.blocked ? 'blocked' : 'active');
+          statusSelect.appendChild(option);
+        });
+
+        if (targetIsOwner || (targetIsAdmin && !canManageAdmin)) {
+          statusSelect.disabled = true;
+        }
+
+        const saveBtn = createButton('Сохранить', 'ok', async () => {
+          try {
+            await window.CSAuth.apiRequest(`/admin/users/${user.id}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                role: roleSelect.value,
+                blocked: statusSelect.value === 'blocked'
+              })
+            });
+            setNotice(`Пользователь ${user.nickname} обновлён`, 'ok');
+            await loadUsers();
+            await loadSummary();
+          } catch (error) {
+            setNotice(error.message, 'error');
+          }
+        });
+
+        if (targetIsOwner || (targetIsAdmin && !canManageAdmin)) {
+          saveBtn.disabled = true;
+          saveBtn.title = targetIsOwner
+            ? 'Владельца нельзя изменять'
+            : 'Только владелец может менять права админа';
+        }
+
+        const deleteBtn = createButton('Удалить', 'danger', async () => {
+          if (!confirm(`Удалить пользователя ${user.nickname}?`)) {
+            return;
+          }
+
+          try {
+            await window.CSAuth.apiRequest(`/admin/users/${user.id}`, { method: 'DELETE' });
+            setNotice(`Пользователь ${user.nickname} удалён`, 'ok');
+            await loadUsers();
+            await loadSummary();
+          } catch (error) {
+            setNotice(error.message, 'error');
+          }
+        });
+
+        if (targetIsOwner || (targetIsAdmin && !canManageAdmin)) {
+          deleteBtn.disabled = true;
+          deleteBtn.title = targetIsOwner
+            ? 'Владельца нельзя удалить'
+            : 'Только владелец может удалять админов';
+        }
+
+        const roleCell = document.createElement('td');
+        roleCell.appendChild(roleSelect);
+
+        const statusCell = document.createElement('td');
+        statusCell.appendChild(statusSelect);
+
+        const actionsCell = document.createElement('td');
+        actionsCell.className = 'row-actions';
+        actionsCell.append(saveBtn, deleteBtn);
+
+        row.innerHTML = `
+          <td>${user.id}</td>
+          <td>${user.nickname || '-'}${targetIsOwner ? ' <strong style="color:#ffdf8f;">(owner)</strong>' : ''}</td>
+          <td>${user.email || '-'}</td>
+        `;
+
+        row.appendChild(roleCell);
+        row.appendChild(statusCell);
+        row.appendChild(actionsCell);
+        tbody.appendChild(row);
+      });
+
+      if (!users.length) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = '<td colspan="6" style="color: var(--muted);">Пользователи не найдены</td>';
+        tbody.appendChild(emptyRow);
+      }
+    }
+
+    async function loadNews() {
+      newsCache = await window.CSAuth.apiRequest('/admin/news');
+      syncNewsCategoryFilter();
+      renderNewsTable();
+    }
+
+    function syncNewsCategoryFilter() {
+      const filter = document.getElementById('newsCategoryFilter');
+      const previousValue = filter.value;
+      const categories = Array.from(new Set(newsCache.map((entry) => String(entry.category || '').trim()).filter(Boolean)));
+
+      filter.innerHTML = '<option value="all">Все категории</option>';
+      categories.forEach((category) => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        filter.appendChild(option);
+      });
+
+      if (previousValue && (previousValue === 'all' || categories.includes(previousValue))) {
+        filter.value = previousValue;
+      }
+    }
+
+    function getFilteredNews() {
+      const searchValue = (document.getElementById('newsSearchInput')?.value || '').trim().toLowerCase();
+      const categoryFilter = document.getElementById('newsCategoryFilter')?.value || 'all';
+
+      return newsCache.filter((entry) => {
+        if (categoryFilter !== 'all' && String(entry.category || '') !== categoryFilter) {
+          return false;
+        }
+
+        if (!searchValue) {
+          return true;
+        }
+
+        const searchable = `${entry.slug || ''} ${entry.title || ''} ${entry.category || ''}`.toLowerCase();
+        return searchable.includes(searchValue);
+      });
+    }
+
+    function createTinyInput(initialValue, type = 'text') {
+      const input = document.createElement('input');
+      input.className = 'tiny-input';
+      input.type = type;
+      input.value = String(initialValue ?? '');
+      return input;
+    }
+
+    function renderNewsTable() {
+      const tbody = document.getElementById('newsTbody');
+      tbody.innerHTML = '';
+      const news = getFilteredNews();
+
+      news.forEach((entry) => {
+        const row = document.createElement('tr');
+
+        const titleInput = createTinyInput(entry.title);
+        const categoryInput = createTinyInput(entry.category);
+        const dateInput = createTinyInput(entry.date);
+        const viewsInput = createTinyInput(entry.views, 'number');
+
+        const saveBtn = createButton('Сохранить', 'ok', async () => {
+          try {
+            await window.CSAuth.apiRequest(`/admin/news/${encodeURIComponent(entry.slug)}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                title: titleInput.value,
+                category: categoryInput.value,
+                date: dateInput.value,
+                views: Number(viewsInput.value || 0)
+              })
+            });
+            setNotice(`Новость ${entry.slug} обновлена`, 'ok');
+            await loadNews();
+          } catch (error) {
+            setNotice(error.message, 'error');
+          }
+        });
+
+        const removeBtn = createButton('Удалить', 'danger', async () => {
+          if (!confirm(`Удалить новость ${entry.title}?`)) {
+            return;
+          }
+
+          try {
+            await window.CSAuth.apiRequest(`/admin/news/${encodeURIComponent(entry.slug)}`, { method: 'DELETE' });
+            setNotice(`Новость ${entry.slug} удалена`, 'ok');
+            await loadNews();
+            await loadSummary();
+          } catch (error) {
+            setNotice(error.message, 'error');
+          }
+        });
+
+        const slugCell = document.createElement('td');
+        slugCell.textContent = entry.slug;
+
+        const titleCell = document.createElement('td');
+        titleCell.appendChild(titleInput);
+
+        const categoryCell = document.createElement('td');
+        categoryCell.appendChild(categoryInput);
+
+        const dateCell = document.createElement('td');
+        dateCell.appendChild(dateInput);
+
+        const viewsCell = document.createElement('td');
+        viewsCell.appendChild(viewsInput);
+
+        const saveCell = document.createElement('td');
+        saveCell.appendChild(saveBtn);
+
+        const removeCell = document.createElement('td');
+        removeCell.appendChild(removeBtn);
+
+        row.append(slugCell, titleCell, categoryCell, dateCell, viewsCell, saveCell, removeCell);
+        tbody.appendChild(row);
+      });
+
+      if (!news.length) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = '<td colspan="7" style="color: var(--muted);">Новости не найдены</td>';
+        tbody.appendChild(emptyRow);
+      }
+    }
+
+    async function addNews() {
+      const payload = {
+        slug: document.getElementById('newsSlug').value,
+        title: document.getElementById('newsTitle').value,
+        category: document.getElementById('newsCategory').value,
+        date: document.getElementById('newsDate').value,
+        excerpt: document.getElementById('newsExcerpt').value,
+        image: document.getElementById('newsImage').value
+      };
+
+      try {
+        await window.CSAuth.apiRequest('/admin/news', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        setNotice('Новость добавлена', 'ok');
+        document.getElementById('newsSlug').value = '';
+        document.getElementById('newsTitle').value = '';
+        document.getElementById('newsExcerpt').value = '';
+        document.getElementById('newsImage').value = '';
+        await loadNews();
+        await loadSummary();
+      } catch (error) {
+        setNotice(error.message, 'error');
+      }
+    }
+
+    async function loadTopPlayers() {
+      const top = await window.CSAuth.apiRequest('/admin/top-players');
+      document.getElementById('topPlayersJson').value = JSON.stringify(top, null, 2);
+    }
+
+    async function saveTopPlayers() {
+      const raw = document.getElementById('topPlayersJson').value;
+
+      try {
+        const players = JSON.parse(raw);
+        await window.CSAuth.apiRequest('/admin/top-players', {
+          method: 'PUT',
+          body: JSON.stringify({ players })
+        });
+        setNotice('Топ-игроки обновлены', 'ok');
+        await loadSummary();
+      } catch (error) {
+        setNotice(error.message || 'Некорректный JSON', 'error');
+      }
+    }
+
+    bindById('reloadUsersBtn', 'click', () => loadUsers().catch((e) => setNotice(e.message, 'error')));
+    bindById('reloadNewsBtn', 'click', () => loadNews().catch((e) => setNotice(e.message, 'error')));
+    bindById('reloadTopBtn', 'click', () => loadTopPlayers().catch((e) => setNotice(e.message, 'error')));
+    bindById('addNewsBtn', 'click', addNews);
+    bindById('saveTopBtn', 'click', saveTopPlayers);
+    bindById('userSearchInput', 'input', renderUsersTable);
+    bindById('userRoleFilter', 'change', renderUsersTable);
+    bindById('userStatusFilter', 'change', renderUsersTable);
+    bindById('newsSearchInput', 'input', renderNewsTable);
+    bindById('newsCategoryFilter', 'change', renderNewsTable);
+    bindById('goToLoginBtn', 'click', () => {
+      window.location.href = 'index.html';
+    });
+    bindById('goToProfileBtn', 'click', () => {
+      window.location.href = 'profile.html';
+    });
+    bindById('retryAccessBtn', 'click', async () => {
+      const allowed = await ensureAdminAccess();
+      if (allowed) {
+        await loadAdminData();
+      }
+    });
+
+    async function loadAdminData() {
+      const tasks = [
+        ['сводка', loadSummary],
+        ['пользователи', loadUsers],
+        ['новости', loadNews],
+        ['топ-игроки', loadTopPlayers]
+      ];
+
+      const failures = [];
+      for (const [label, task] of tasks) {
+        try {
+          await task();
+        } catch (error) {
+          failures.push(`${label}: ${error.message}`);
+        }
+      }
+
+      if (failures.length) {
+        setNotice(`Часть данных не загрузилась (${failures.join(' | ')})`, 'error');
+      }
+    }
+
+    (async function initAdmin() {
+      const allowed = await ensureAdminAccess();
+      if (!allowed) {
+        return;
+      }
+
+      await loadAdminData();
+    })();
+  </script>
+</body>
+</html>

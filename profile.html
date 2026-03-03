@@ -83,14 +83,6 @@ body::after{
     gap:12px;
 }
 
-.header-mini-avatar{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    object-fit:cover;
-    border:1px solid var(--border);
-}
-
 .header-main-nav{
     display:flex;
     flex-wrap:wrap;
@@ -1683,6 +1675,7 @@ body::after{
     }
 }
 </style>
+<link rel="stylesheet" href="modern.css">
 </head>
 <body>
 
@@ -1690,13 +1683,22 @@ body::after{
     <div class="header">
         <div class="logo">CSFamily PROFILE</div>
         <div class="header-user-actions">
-            <img
-                class="header-mini-avatar"
-                id="profileHeaderAvatar"
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
-                alt="Мини-аватар"
-            >
-            <button class="btn btn-primary" id="logoutBtn">Выйти</button>
+            <div class="quick-profile-menu" data-quick-profile-menu>
+                <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
+                    <img
+                        class="quick-menu-avatar"
+                        id="profileHeaderAvatar"
+                        data-menu-avatar
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                        alt="Мини-аватар"
+                    >
+                </button>
+                <div class="quick-menu-dropdown" role="menu" aria-label="Меню профиля">
+                    <button class="quick-menu-item" type="button" data-menu-action="profile"><i class="fas fa-user"></i> Профиль</button>
+                    <button class="quick-menu-item" type="button" data-menu-action="settings"><i class="fas fa-sliders-h"></i> Настройки</button>
+                    <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                </div>
+            </div>
         </div>
     </div>
     <nav class="header-main-nav" data-shared-nav="list"></nav>
@@ -2195,7 +2197,7 @@ body::after{
 
 <script>
 // Переключение вкладок
-function openTab(tabName){
+function openTab(tabName, triggerEvent = null){
     // Скрыть все вкладки
     const tabContents=document.querySelectorAll('.tab-content');
     tabContents.forEach(tab=>tab.classList.remove('active'));
@@ -2208,7 +2210,11 @@ function openTab(tabName){
     document.getElementById(tabName).classList.add('active');
     
     // Активировать соответствующую кнопку вкладки
-    event.currentTarget.classList.add('active');
+    const eventRef = triggerEvent || (typeof event !== 'undefined' ? event : null);
+    const tabTrigger = eventRef?.currentTarget || null;
+    if (tabTrigger) {
+        tabTrigger.classList.add('active');
+    }
 }
 
 // Функция для быстрого доступа к друзьям
@@ -2221,8 +2227,11 @@ function goToFriends() {
 }
 
 // Функция для просмотра профиля друга
-function viewFriendProfile(friendName) {
-    event.preventDefault(); // Предотвращаем переход по ссылке
+function viewFriendProfile(friendName, triggerEvent = null) {
+    const eventRef = triggerEvent || (typeof event !== 'undefined' ? event : null);
+    if (eventRef) {
+        eventRef.preventDefault();
+    }
     sessionStorage.setItem('selectedFriend', JSON.stringify({ nickname: friendName }));
     showProfileNotice(`Открыт профиль друга: ${friendName}`, 'success');
     window.location.href = `profile.html?friend=${encodeURIComponent(friendName)}`;
@@ -2497,15 +2506,78 @@ setInterval(updateLastActivity, 30000);
 </script>
 <script src="script.js"></script>
 <script>
-if (!window.CSAuth.isAuthenticated()) {
-    window.location.replace('index.html');
+const profileParams = new URLSearchParams(window.location.search);
+const requestedPlayerId = Number(profileParams.get('playerId') || 0);
+
+function parseSelectedPlayer() {
+    try {
+        return JSON.parse(sessionStorage.getItem('selectedPlayer') || '{}');
+    } catch {
+        return {};
+    }
 }
 
-const logoutButton = document.getElementById('logoutBtn');
-if (logoutButton) {
-    logoutButton.addEventListener('click', function() {
-        window.CSAuth.clearAuthSession();
-        window.location.href = 'index.html';
+function canUsePublicProfileView() {
+    const selectedPlayer = parseSelectedPlayer();
+    const selectedPlayerId = Number(selectedPlayer.id || 0);
+    return requestedPlayerId > 0 && (selectedPlayerId === 0 || selectedPlayerId === requestedPlayerId);
+}
+
+function ensureProfileAccess() {
+    const hasAuthModule = window.CSAuth && typeof window.CSAuth.isAuthenticated === 'function';
+    const authenticated = hasAuthModule && window.CSAuth.isAuthenticated();
+
+    if (authenticated) {
+        return 'self';
+    }
+
+    if (canUsePublicProfileView()) {
+        return 'public';
+    }
+
+    window.location.replace('index.html?auth=required&next=profile.html#formsSection');
+    return 'redirect';
+}
+
+function hydratePublicProfileView() {
+    const selectedPlayer = parseSelectedPlayer();
+    const fallbackNickname = requestedPlayerId > 0 ? `Игрок #${requestedPlayerId}` : 'Игрок';
+
+    applyProfileUser({
+        id: requestedPlayerId > 0 ? requestedPlayerId : Number(selectedPlayer.id || 0),
+        nickname: selectedPlayer.nickname || fallbackNickname,
+        avatar: typeof selectedPlayer.avatar === 'string' ? selectedPlayer.avatar : '',
+        provider: 'public'
+    });
+
+    const providerBadgeElement = document.getElementById('authProviderBadge');
+    if (providerBadgeElement) {
+        providerBadgeElement.classList.remove('steam');
+        providerBadgeElement.textContent = 'Публичный профиль';
+    }
+
+    applyProfileStats({
+        kdRatio: Number(selectedPlayer.kd || 0),
+        rating: Number.isFinite(Number(selectedPlayer.rating))
+            ? Math.max(0, Math.min(2, Number(selectedPlayer.rating) / 2000))
+            : 0,
+        winRate: Number(selectedPlayer.winRate || 0),
+        matchesPlayed: 0,
+        matchesWon: 0,
+        matchesLost: 0,
+        accuracy: 0,
+        hsPercent: 0,
+        kills: 0,
+        deaths: 0,
+        headshots: 0,
+        hsRatio: 0,
+        adr: 0,
+        damageDealt: 0,
+        roundsPlayed: 0,
+        bombsPlanted: 0,
+        playTimeHours: 0,
+        playTimeMinutes: 0,
+        recentMatches: []
     });
 }
 
@@ -2677,6 +2749,10 @@ function applyProfileStats(stats) {
 }
 
 async function hydrateProfileData() {
+    if (!window.CSAuth || typeof window.CSAuth.apiRequest !== 'function') {
+        return;
+    }
+
     try {
         const userFromApi = await window.CSAuth.apiRequest('/profile/me');
         applyProfileUser(userFromApi);
@@ -2692,6 +2768,10 @@ async function hydrateProfileData() {
 }
 
 async function hydrateProfileStats() {
+    if (!window.CSAuth || typeof window.CSAuth.apiRequest !== 'function') {
+        return;
+    }
+
     try {
         const statsFromApi = await window.CSAuth.apiRequest('/profile/stats');
         applyProfileStats(statsFromApi);
@@ -2703,8 +2783,14 @@ async function hydrateProfileStats() {
     }
 }
 
-hydrateProfileData();
-hydrateProfileStats();
+const profileAccessMode = ensureProfileAccess();
+
+if (profileAccessMode === 'self') {
+    hydrateProfileData();
+    hydrateProfileStats();
+} else if (profileAccessMode === 'public') {
+    hydratePublicProfileView();
+}
 </script>
 
 </body>

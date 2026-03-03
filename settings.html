@@ -92,14 +92,6 @@ body::after {
     gap: 12px;
 }
 
-.header-mini-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--border);
-}
-
 .header-main-nav {
     display: flex;
     flex-wrap: wrap;
@@ -1588,6 +1580,7 @@ optgroup option {
     padding-left: 20px !important;
 }
 </style>
+<link rel="stylesheet" href="modern.css">
 </head>
 <body>
 
@@ -1595,15 +1588,22 @@ optgroup option {
     <div class="header">
         <div class="logo">CSFamily - НАСТРОЙКИ</div>
         <div class="header-user-actions">
-            <img
-                class="header-mini-avatar"
-                id="settingsHeaderAvatar"
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
-                alt="Мини-аватар"
-            >
-            <button class="btn btn-secondary" onclick="window.history.back()">
-                <i class="fas fa-arrow-left"></i> Назад в профиль
-            </button>
+            <div class="quick-profile-menu" data-quick-profile-menu>
+                <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
+                    <img
+                        class="quick-menu-avatar"
+                        id="settingsHeaderAvatar"
+                        data-menu-avatar
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                        alt="Мини-аватар"
+                    >
+                </button>
+                <div class="quick-menu-dropdown" role="menu" aria-label="Меню профиля">
+                    <button class="quick-menu-item" type="button" data-menu-action="profile"><i class="ri-user-line"></i> Профиль</button>
+                    <button class="quick-menu-item" type="button" data-menu-action="settings"><i class="ri-settings-3-line"></i> Настройки</button>
+                    <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="ri-logout-box-line"></i> Выйти</button>
+                </div>
+            </div>
         </div>
     </div>
     <nav class="header-main-nav" data-shared-nav="list"></nav>
@@ -3090,11 +3090,54 @@ window.onclick = function(event) {
 </script>
 <script src="script.js"></script>
 <script>
-if (!window.CSAuth.isAuthenticated()) {
-    window.location.replace('index.html');
+const SETTINGS_ENTRY_KEY = 'settingsEntryAllowedAt';
+
+function hasProfileReferrer() {
+    if (!document.referrer) {
+        return false;
+    }
+
+    try {
+        const referrerUrl = new URL(document.referrer);
+        return referrerUrl.origin === window.location.origin && referrerUrl.pathname.toLowerCase().endsWith('/profile.html');
+    } catch {
+        return false;
+    }
 }
 
-hydrateSettingsProfileData();
+function hasSettingsEntryPermission() {
+    const marker = sessionStorage.getItem(SETTINGS_ENTRY_KEY);
+    const hasMarker = Boolean(marker);
+    if (hasMarker) {
+        sessionStorage.removeItem(SETTINGS_ENTRY_KEY);
+        return true;
+    }
+
+    return hasProfileReferrer();
+}
+
+function ensureSettingsAuth() {
+    if (!window.CSAuth || typeof window.CSAuth.isAuthenticated !== 'function') {
+        window.location.replace('index.html?auth=required&next=settings.html#formsSection');
+        return false;
+    }
+
+    if (!window.CSAuth.isAuthenticated()) {
+        window.location.replace('index.html?auth=required&next=settings.html#formsSection');
+        return false;
+    }
+
+    if (!hasSettingsEntryPermission()) {
+        window.location.replace('profile.html');
+        return false;
+    }
+
+    return true;
+}
+
+if (ensureSettingsAuth()) {
+    hydrateSettingsProfileData();
+}
 </script>
 
 </body>

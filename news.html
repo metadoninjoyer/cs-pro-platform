@@ -92,37 +92,10 @@
             color: var(--secondary);
         }
 
-        .btn {
-            padding: 10px 22px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            font-size: 15px;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-
         .header-user-actions {
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-
-        .header-mini-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         /* Основной контент */
@@ -484,6 +457,7 @@
         .news-card:nth-child(5) { animation-delay: 0.5s; }
         .news-card:nth-child(6) { animation-delay: 0.6s; }
     </style>
+    <link rel="stylesheet" href="modern.css">
 </head>
 <body>
     <!-- Шапка -->
@@ -497,14 +471,21 @@
             <nav data-shared-nav="list"></nav>
             
             <div class="header-user-actions">
-                <img
-                    class="header-mini-avatar"
-                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
-                    alt="Мини-аватар"
-                >
-                <button class="btn btn-primary" id="profileBtn">
-                    <i class="fas fa-user"></i> Мой профиль
-                </button>
+                <div class="quick-profile-menu" data-quick-profile-menu>
+                    <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
+                        <img
+                            class="quick-menu-avatar"
+                            data-menu-avatar
+                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                            alt="Мини-аватар"
+                        >
+                    </button>
+                    <div class="quick-menu-dropdown" role="menu" aria-label="Меню профиля">
+                        <button class="quick-menu-item" type="button" data-menu-action="profile"><i class="fas fa-user"></i> Профиль</button>
+                        <button class="quick-menu-item" type="button" data-menu-action="settings"><i class="fas fa-sliders-h"></i> Настройки</button>
+                        <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -708,7 +689,6 @@
                     <a href="news.html">Новости</a>
                     <a href="top-players.html">Топ игроки</a>
                     <a href="profile.html">Профиль</a>
-                    <a href="settings.html">Настройки</a>
                     <a href="index.html">Поддержка</a>
                 </div>
                 
@@ -740,11 +720,6 @@
             observer.observe(card);
         });
         
-        // Кнопка профиля в шапке
-        document.getElementById('profileBtn').addEventListener('click', () => {
-            window.location.href = 'profile.html';
-        });
-        
         // Активация пагинации по параметру ?page=
         const pageParam = Number(new URLSearchParams(window.location.search).get('page')) || 1;
         const currentPage = Math.min(Math.max(pageParam, 1), 5);
@@ -757,8 +732,12 @@
 
         const prevLink = document.querySelector('.page-link.prev');
         const nextLink = document.querySelector('.page-link.next');
-        prevLink.setAttribute('href', `news.html?page=${Math.max(currentPage - 1, 1)}`);
-        nextLink.setAttribute('href', `news.html?page=${Math.min(currentPage + 1, 5)}`);
+        if (prevLink) {
+            prevLink.setAttribute('href', `news.html?page=${Math.max(currentPage - 1, 1)}`);
+        }
+        if (nextLink) {
+            nextLink.setAttribute('href', `news.html?page=${Math.min(currentPage + 1, 5)}`);
+        }
 
         function getCategoryClass(category) {
             const normalized = String(category || '').toLowerCase();

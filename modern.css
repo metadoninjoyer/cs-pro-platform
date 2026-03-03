@@ -1,0 +1,412 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');
+
+:root {
+  --mx-bg-1: #05070c;
+  --mx-bg-2: #0b1320;
+  --mx-surface: rgba(17, 26, 41, 0.76);
+  --mx-surface-2: rgba(25, 37, 57, 0.84);
+  --mx-border: rgba(255, 255, 255, 0.14);
+  --mx-text: #eef4ff;
+  --mx-muted: #9cb2d6;
+  --mx-accent: #ff8a2a;
+  --mx-accent-2: #3e8cff;
+  --mx-danger: #ff4f70;
+  --mx-shadow: 0 16px 44px rgba(0, 0, 0, 0.45);
+
+  --primary: #3b82f6 !important;
+  --primary-dark: #2563eb !important;
+  --secondary: #ff8a2a !important;
+  --dark: #101827 !important;
+  --darker: #070b12 !important;
+  --light: #eef4ff !important;
+  --gray: #9cb2d6 !important;
+  --success: #22c55e !important;
+
+  --orange: #ff8a2a !important;
+  --orange-light: #ffaf66 !important;
+  --orange-dark: #d06a12 !important;
+  --panel: rgba(17, 26, 41, 0.78) !important;
+  --card: rgba(20, 30, 48, 0.84) !important;
+  --border: rgba(255, 255, 255, 0.13) !important;
+  --text: #eef4ff !important;
+  --muted: #9cb2d6 !important;
+}
+
+* {
+  font-family: Inter, Segoe UI, Tahoma, sans-serif !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1200px 620px at -8% -14%, rgba(62, 140, 255, 0.27), transparent 56%),
+    radial-gradient(1100px 650px at 105% -10%, rgba(255, 138, 42, 0.23), transparent 56%),
+    linear-gradient(165deg, var(--mx-bg-1), var(--mx-bg-2) 62%, #0a101a 100%) !important;
+  color: var(--mx-text) !important;
+}
+
+header,
+.header {
+  background: rgba(8, 14, 23, 0.76) !important;
+  backdrop-filter: blur(16px) saturate(130%);
+  border-bottom: 1px solid var(--mx-border) !important;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.34);
+}
+
+.logo,
+.title,
+.top-players-title,
+.section-title,
+h1,
+h2,
+h3 {
+  font-family: Manrope, Inter, Segoe UI, sans-serif !important;
+  letter-spacing: 0.2px;
+}
+
+nav a,
+.header-main-nav a {
+  position: relative;
+  color: var(--mx-text) !important;
+  opacity: 0.86;
+}
+
+nav a::after,
+.header-main-nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--mx-accent), var(--mx-accent-2));
+  transition: width 0.26s ease;
+}
+
+nav a:hover,
+nav a[aria-current='page'],
+.header-main-nav a:hover,
+.header-main-nav a[aria-current='page'] {
+  opacity: 1;
+  color: #ffffff !important;
+}
+
+nav a:hover::after,
+nav a[aria-current='page']::after,
+.header-main-nav a:hover::after,
+.header-main-nav a[aria-current='page']::after {
+  width: 100%;
+}
+
+.hero,
+.news-content,
+.forms-section,
+.features,
+.popular-news,
+.top-players-section,
+.settings-container,
+.profile-container,
+.tab-content,
+.section,
+.form-box,
+.news-card,
+.feature-card,
+.popular-card,
+.vertical-stat-card,
+.stat-circle-card,
+.friend-card,
+.match-card,
+.finance-card,
+.session-item,
+.ban-item,
+.blacklist-item,
+.modal-content,
+.card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 14%), var(--mx-surface) !important;
+  border: 1px solid var(--mx-border) !important;
+  box-shadow: var(--mx-shadow) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 16px !important;
+}
+
+.hero h1 {
+  color: #ffffff !important;
+  background: none !important;
+  text-shadow: none !important;
+}
+
+.hero p {
+  color: #c8d6ee !important;
+  text-shadow: none !important;
+}
+
+.hero p,
+.news-excerpt,
+.form-footer,
+.stat-label,
+.stat-label-sm,
+.search-info,
+.copyright,
+.notice,
+.notification {
+  color: var(--mx-muted) !important;
+}
+
+.btn,
+button,
+.control-btn,
+.pagination-btn,
+.page-link,
+.search-btn {
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  font-weight: 600 !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
+}
+
+.btn:hover,
+button:hover,
+.control-btn:hover,
+.pagination-btn:hover,
+.page-link:hover,
+.search-btn:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.32);
+}
+
+.btn-primary,
+button.primary,
+button.ok,
+.search-btn,
+.control-btn.active {
+  background: linear-gradient(135deg, #2b6ee8, #53a1ff) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.btn-secondary,
+.btn-danger,
+button.danger {
+  background: linear-gradient(135deg, #ff5f78, #ff3f5f) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.steam-login {
+  background: linear-gradient(135deg, #1a4f8d, #2d7cd7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.steam-login:hover {
+  background: linear-gradient(135deg, #255f9f, #1f6abd) !important;
+}
+
+#steamLoginBtn,
+#steamRegisterBtn {
+  background: linear-gradient(180deg, #2a475e 0%, #1b2838 62%, #171a21 100%) !important;
+  border: 1px solid rgba(102, 192, 244, 0.42) !important;
+  color: #d6e3f1 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+#steamLoginBtn:hover,
+#steamRegisterBtn:hover {
+  background: linear-gradient(180deg, #315a78 0%, #22384d 64%, #1b2838 100%) !important;
+  border-color: rgba(157, 216, 255, 0.68) !important;
+}
+
+#steamLoginBtn i,
+#steamRegisterBtn i {
+  font-family: 'Font Awesome 6 Brands' !important;
+  color: #66c0f4 !important;
+  font-size: 16px;
+}
+
+input,
+select,
+textarea,
+.form-control,
+.search-input,
+.filter-select,
+.date-input {
+  background: rgba(8, 14, 25, 0.76) !important;
+  border: 1px solid rgba(255, 255, 255, 0.17) !important;
+  color: var(--mx-text) !important;
+  border-radius: 12px !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.form-control:focus,
+.search-input:focus,
+.filter-select:focus,
+.date-input:focus {
+  outline: none;
+  border-color: rgba(83, 161, 255, 0.9) !important;
+  box-shadow: 0 0 0 3px rgba(83, 161, 255, 0.23) !important;
+}
+
+::placeholder {
+  color: #98accd !important;
+}
+
+table,
+.players-table,
+.transactions-table {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+thead,
+.players-table thead,
+.table-header {
+  background: rgba(255, 255, 255, 0.045) !important;
+}
+
+th,
+td {
+  border-color: rgba(255, 255, 255, 0.09) !important;
+}
+
+tbody tr:hover,
+.players-table tbody tr:hover,
+.transaction-row:hover {
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.avatar,
+.friend-avatar,
+.player-avatar {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
+.quick-profile-menu {
+  position: relative;
+}
+
+.quick-menu-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-menu-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+}
+
+.quick-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  min-width: 200px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(9, 16, 28, 0.98);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.38);
+  display: none;
+  z-index: 80;
+}
+
+.quick-profile-menu.is-open .quick-menu-dropdown {
+  display: block;
+}
+
+.quick-menu-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--mx-text);
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.quick-menu-item:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pagination-btn.active,
+.page-link.active {
+  background: linear-gradient(135deg, #2b6ee8, #53a1ff) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+.modal {
+  backdrop-filter: blur(6px);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4f86e8, #2b5fc4);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 768px) {
+  .header-buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .btn,
+  button,
+  .steam-login {
+    min-height: 42px;
+  }
+
+  .hero {
+    padding-top: 146px !important;
+  }
+
+  .hero p {
+    font-size: 17px !important;
+  }
+
+  .table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 29px !important;
+    line-height: 1.25 !important;
+  }
+}

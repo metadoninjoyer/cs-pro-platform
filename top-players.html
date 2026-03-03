@@ -103,15 +103,6 @@ body{
     color: var(--orange);
 }
 
-.header-mini-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--border);
-    margin-right: 8px;
-}
-
 /* СТАТИСТИКА В ШАПКЕ */
 .stats-summary {
     display: flex;
@@ -1066,6 +1057,7 @@ body{
 .players-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
 .players-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
 </style>
+<link rel="stylesheet" href="modern.css">
 </head>
 <body>
 
@@ -1108,46 +1100,24 @@ body{
                     <div class="stat-label-sm">Матчей сегодня</div>
                 </div>
             </div>
-            
-            <div class="stat-item">
-                <div class="stat-icon">
-                    <i class="ri-flashlight-line"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value-sm">1.42</div>
-                    <div class="stat-label-sm">Средний K/D</div>
-                </div>
-            </div>
-            
-            <div class="stat-item">
-                <div class="stat-icon">
-                    <i class="ri-timer-line"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value-sm">15м 42с</div>
-                    <div class="stat-label-sm">Среднее время</div>
-                </div>
-            </div>
         </div>
         
-        <div class="controls">
-            <img
-                class="header-mini-avatar"
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
-                alt="Мини-аватар"
-            >
-            <button class="control-btn active" onclick="refreshTop()">
-                <i class="ri-refresh-line"></i>
-                Обновить
-            </button>
-            <button class="control-btn" onclick="exportTop()">
-                <i class="ri-download-line"></i>
-                Экспорт
-            </button>
-            <button class="control-btn" onclick="showFilters()">
-                <i class="ri-filter-line"></i>
-                Фильтры
-            </button>
+        <div class="controls" data-auth-only>
+            <div class="quick-profile-menu" data-quick-profile-menu>
+                <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
+                    <img
+                        class="quick-menu-avatar"
+                        data-menu-avatar
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                        alt="Мини-аватар"
+                    >
+                </button>
+                <div class="quick-menu-dropdown" role="menu" aria-label="Меню профиля">
+                    <button class="quick-menu-item" type="button" data-menu-action="profile"><i class="ri-user-line"></i> Профиль</button>
+                    <button class="quick-menu-item" type="button" data-menu-action="settings"><i class="ri-settings-3-line"></i> Настройки</button>
+                    <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="ri-logout-box-line"></i> Выйти</button>
+                </div>
+            </div>
         </div>
     </div>
     <nav class="header-main-nav" data-shared-nav="list"></nav>
@@ -1583,84 +1553,38 @@ function searchPlayer() {
 }
 
 // Быстрый поиск по нажатию Enter
-document.getElementById('playerSearch').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchPlayer();
-    }
-});
+const playerSearchInput = document.getElementById('playerSearch');
+if (playerSearchInput) {
+    playerSearchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchPlayer();
+        }
+    });
+}
 
 // Функция для перехода в профиль игрока
 function viewPlayerProfile(playerName, playerId) {
     console.log(`Переход в профиль игрока: ${playerName} (ID: ${playerId})`);
 
+    const normalizedPlayerId = Number(playerId || 0);
+    const selectedFromList = [...filteredPlayers, ...topPlayersCache].find((player) => {
+        const sameId = normalizedPlayerId > 0 && Number(player?.id || 0) === normalizedPlayerId;
+        const sameName = String(player?.nickname || '').trim() === String(playerName || '').trim();
+        return sameId || sameName;
+    }) || {};
+
     sessionStorage.setItem('selectedPlayer', JSON.stringify({
         nickname: playerName,
-        id: playerId
+        id: normalizedPlayerId,
+        kd: Number(selectedFromList.kd || 0),
+        rating: Number(selectedFromList.rating || 0),
+        winRate: Number(selectedFromList.winrate || 0),
+        avatar: typeof selectedFromList.avatar === 'string' ? selectedFromList.avatar : ''
     }));
 
-    window.location.href = `profile.html?playerId=${playerId}`;
+    window.location.href = `profile.html?playerId=${normalizedPlayerId}`;
     
     return false;
-}
-
-// Кнопки управления
-async function refreshTop() {
-    console.log('Обновление топа...');
-    
-    const refreshBtn = document.querySelector('.control-btn.active');
-    const originalHtml = refreshBtn.innerHTML;
-    refreshBtn.innerHTML = '<i class="ri-loader-4-line"></i> Обновление...';
-    refreshBtn.disabled = true;
-
-    try {
-        await hydrateTopPlayersFromApi();
-        updateTime();
-        console.log('Топ обновлен');
-    } finally {
-        refreshBtn.innerHTML = originalHtml;
-        refreshBtn.disabled = false;
-    }
-}
-
-function exportTop() {
-    const playersToExport = filteredPlayers.length ? filteredPlayers : topPlayersCache;
-    const header = ['id', 'nickname', 'rating', 'winrate', 'kd'];
-    const rows = playersToExport.map((player) => [
-        player.id,
-        player.nickname,
-        getSafeNumber(player.rating),
-        getSafeNumber(player.winrate),
-        getSafeNumber(player.kd)
-    ]);
-
-    const csv = [header, ...rows]
-        .map((columns) => columns.map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`).join(','))
-        .join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'top-players.csv';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-}
-
-function showFilters() {
-    const ratingValue = prompt('Минимальный рейтинг (пусто = без фильтра):', '');
-    const winrateValue = prompt('Минимальный % побед (пусто = без фильтра):', '');
-
-    const parsedRating = ratingValue === null || ratingValue.trim() === '' ? null : getSafeNumber(ratingValue, NaN);
-    const parsedWinrate = winrateValue === null || winrateValue.trim() === '' ? null : getSafeNumber(winrateValue, NaN);
-
-    if ((parsedRating !== null && Number.isNaN(parsedRating)) || (parsedWinrate !== null && Number.isNaN(parsedWinrate))) {
-        alert('Введите корректные числовые значения для фильтров.');
-        return;
-    }
-
-    applyFilters(document.getElementById('playerSearch').value, parsedRating, parsedWinrate);
 }
 
 function formatKdProgress(kdValue) {
@@ -1796,14 +1720,6 @@ function updateTime() {
     const timeElement = document.getElementById('updateTime');
     timeElement.textContent = timeString;
 }
-
-// Автоматическое обновление каждые 60 секунд
-setInterval(async () => {
-    const refreshBtn = document.querySelector('.control-btn.active');
-    if (!refreshBtn.disabled) {
-        await refreshTop();
-    }
-}, 60000);
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', function() {

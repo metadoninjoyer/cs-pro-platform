@@ -25,6 +25,14 @@ const DB_PATH = path.join(__dirname, 'db.json');
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5500';
 const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${PORT}`;
 const STEAM_API_KEY = process.env.STEAM_API_KEY || '';
+const ADMIN_EMAILS = new Set(
+  (process.env.ADMIN_EMAILS || '')
+    .split(',')
+    .map((value) => normalizeEmail(value))
+    .filter(Boolean)
+);
+const OWNER_EMAIL = normalizeEmail(process.env.OWNER_EMAIL || [...ADMIN_EMAILS][0] || '');
+const ALLOWED_USER_ROLES = new Set(['user', 'moderator', 'admin']);
 const PLACEHOLDER_APP_SECRETS = new Set([
   'dev-secret-change-me',
   'dev-session-secret-change-me',
@@ -151,7 +159,7 @@ function asyncHandler(handler) {
 
 async function readDb() {
   const raw = await fs.readFile(DB_PATH, 'utf-8');
-  return JSON.parse(raw);
+  return JSON.parse(raw.replace(/^\uFEFF/, ''));
 }
 
 async function writeDb(db) {
@@ -343,6 +351,39 @@ function normalizeEmail(value) {
   return String(value || '').trim().toLowerCase();
 }
 
+function normalizeRole(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  return ALLOWED_USER_ROLES.has(normalized) ? normalized : 'user';
+}
+
+function isAdminEmail(value) {
+  const normalizedEmail = normalizeEmail(value);
+  return Boolean(normalizedEmail) && ADMIN_EMAILS.has(normalizedEmail);
+}
+
+function isOwnerEmail(value) {
+  const normalizedEmail = normalizeEmail(value);
+  return Boolean(normalizedEmail) && normalizedEmail === OWNER_EMAIL;
+}
+
+function isOwnerUser(user) {
+  return isOwnerEmail(user?.email);
+}
+
+function getUserRole(user) {
+  if (isAdminEmail(user?.email)) {
+    return 'admin';
+  }
+
+  return normalizeRole(user?.role);
+}
+
+function ensureUserRole(user) {
+  const role = getUserRole(user);
+  user.role = role;
+  return role;
+}
+
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
@@ -353,6 +394,31 @@ function isValidNickname(value) {
 
 function isValidPassword(value) {
   return typeof value === 'string' && value.length >= 8 && value.length <= 72;
+}
+
+function buildPublicUser(user) {
+  return {
+    id: user.id,
+    nickname: user.nickname,
+    email: user.email,
+    role: getUserRole(user),
+    isOwner: isOwnerUser(user),
+    createdAt: user.createdAt,
+    provider: user.provider || 'password',
+    steamId: user.steamId || null,
+    avatar: user.avatar || '',
+    bio: user.bio || '',
+    country: user.country || 'Украина'
+  };
+}
+
+function requireAdmin(req, res, next) {
+  const role = getUserRole(req.authUser);
+  if (role !== 'admin' && !isOwnerUser(req.authUser)) {
+    return res.status(403).json({ message: 'Недостаточно прав' });
+  }
+
+  return next();
 }
 
 passport.serializeUser((user, done) => {
@@ -408,6 +474,10 @@ async function authMiddleware(req, res, next) {
 
     if (!user) {
       return res.status(401).json({ message: 'Пользователь не найден' });
+    }
+
+    if (user.blocked) {
+      return res.status(403).json({ message: 'Аккаунт заблокирован администратором' });
     }
 
     const userTokenVersion = Number.isInteger(user.tokenVersion) ? user.tokenVersion : 0;
@@ -470,12 +540,15 @@ app.get('/api/auth/steam/callback', (req, res, next) => {
           steamId: steamUser.steamId,
           provider: 'steam',
           avatar: steamUser.avatar,
+          role: 'user',
           tokenVersion: 0,
           createdAt: new Date().toISOString()
         };
 
+        ensureUserRole(user);
         db.users.push(user);
-        await writeDb(db);
+      } else {
+        ensureUserRole(user);
       }
 
       const { accessToken, refreshToken } = issueAuthTokensForUser(user, {
@@ -485,12 +558,7 @@ app.get('/api/auth/steam/callback', (req, res, next) => {
       await writeDb(db);
       const payload = encodeURIComponent(
         JSON.stringify({
-          id: user.id,
-          nickname: user.nickname,
-          email: user.email,
-          provider: 'steam',
-          steamId: user.steamId,
-          avatar: user.avatar || ''
+          ...buildPublicUser(user)
         })
       );
 
@@ -532,9 +600,12 @@ app.post('/api/auth/register', authLimiter, asyncHandler(async (req, res) => {
     nickname: nickname.trim(),
     email: normalizedEmail,
     passwordHash,
+    role: 'user',
     tokenVersion: 0,
     createdAt: new Date().toISOString()
   };
+
+  ensureUserRole(user);
 
   db.users.push(user);
   const { accessToken, refreshToken } = issueAuthTokensForUser(user, {
@@ -546,11 +617,7 @@ app.post('/api/auth/register', authLimiter, asyncHandler(async (req, res) => {
   return res.status(201).json({
     token: accessToken,
     refreshToken,
-    user: {
-      id: user.id,
-      nickname: user.nickname,
-      email: user.email
-    }
+    user: buildPublicUser(user)
   });
 }));
 
@@ -569,10 +636,16 @@ app.post('/api/auth/login', authLimiter, asyncHandler(async (req, res) => {
     return res.status(401).json({ message: 'Неверный email или пароль' });
   }
 
+  if (user.blocked) {
+    return res.status(403).json({ message: 'Аккаунт заблокирован администратором' });
+  }
+
   const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
   if (!isPasswordValid) {
     return res.status(401).json({ message: 'Неверный email или пароль' });
   }
+
+  ensureUserRole(user);
 
   const { accessToken, refreshToken } = issueAuthTokensForUser(user, {
     ip: req.ip,
@@ -583,11 +656,7 @@ app.post('/api/auth/login', authLimiter, asyncHandler(async (req, res) => {
   return res.json({
     token: accessToken,
     refreshToken,
-    user: {
-      id: user.id,
-      nickname: user.nickname,
-      email: user.email
-    }
+    user: buildPublicUser(user)
   });
 }));
 
@@ -618,6 +687,10 @@ app.post('/api/auth/refresh', refreshLimiter, asyncHandler(async (req, res) => {
 
   const user = db.users[userIndex];
   normalizeRefreshTokens(user);
+
+  if (user.blocked) {
+    return res.status(403).json({ message: 'Аккаунт заблокирован администратором' });
+  }
 
   const userTokenVersion = Number.isInteger(user.tokenVersion) ? user.tokenVersion : 0;
   const decodedTokenVersion = Number.isInteger(decoded.tokenVersion) ? decoded.tokenVersion : 0;
@@ -655,12 +728,8 @@ app.get('/api/auth/me', authMiddleware, asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Пользователь не найден' });
   }
 
-  return res.json({
-    id: user.id,
-    nickname: user.nickname,
-    email: user.email,
-    createdAt: user.createdAt
-  });
+  ensureUserRole(user);
+  return res.json(buildPublicUser(user));
 }));
 
 app.post('/api/auth/logout-all', authMiddleware, asyncHandler(async (req, res) => {
@@ -752,16 +821,8 @@ app.get('/api/profile/me', authMiddleware, asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Профиль не найден' });
   }
 
-  return res.json({
-    id: user.id,
-    nickname: user.nickname,
-    email: user.email,
-    bio: user.bio || '',
-    country: user.country || 'Украина',
-    provider: user.provider || 'password',
-    steamId: user.steamId || null,
-    avatar: user.avatar || ''
-  });
+  ensureUserRole(user);
+  return res.json(buildPublicUser(user));
 }));
 
 app.patch('/api/profile/me', authMiddleware, asyncHandler(async (req, res) => {
@@ -794,16 +855,265 @@ app.patch('/api/profile/me', authMiddleware, asyncHandler(async (req, res) => {
 
   await writeDb(db);
 
+  ensureUserRole(db.users[index]);
+  return res.json(buildPublicUser(db.users[index]));
+}));
+
+app.get('/api/admin/summary', authMiddleware, requireAdmin, asyncHandler(async (_, res) => {
+  const db = await readDb();
+  const users = Array.isArray(db.users) ? db.users : [];
+  const adminCount = users.filter((entry) => getUserRole(entry) === 'admin').length;
+
   return res.json({
-    id: db.users[index].id,
-    nickname: db.users[index].nickname,
-    email: db.users[index].email,
-    bio: db.users[index].bio || '',
-    country: db.users[index].country || 'Украина',
-    provider: db.users[index].provider || 'password',
-    steamId: db.users[index].steamId || null,
-    avatar: db.users[index].avatar || ''
+    users: users.length,
+    admins: adminCount,
+    news: Array.isArray(db.news) ? db.news.length : 0,
+    topPlayers: Array.isArray(db.topPlayers) ? db.topPlayers.length : 0
   });
+}));
+
+app.get('/api/admin/users', authMiddleware, requireAdmin, asyncHandler(async (_, res) => {
+  const db = await readDb();
+  const users = (Array.isArray(db.users) ? db.users : []).map((entry) => ({
+    ...buildPublicUser(entry),
+    blocked: Boolean(entry.blocked),
+    hasPassword: Boolean(entry.passwordHash),
+    refreshSessions: Array.isArray(entry.refreshTokens) ? entry.refreshTokens.length : 0,
+    tokenVersion: Number.isInteger(entry.tokenVersion) ? entry.tokenVersion : 0
+  }));
+
+  return res.json(users);
+}));
+
+app.patch('/api/admin/users/:id', authMiddleware, requireAdmin, asyncHandler(async (req, res) => {
+  const userId = Number(req.params.id);
+  if (!Number.isInteger(userId)) {
+    return res.status(400).json({ message: 'Некорректный id пользователя' });
+  }
+
+  const { nickname, bio, country, role, blocked } = req.body || {};
+  const db = await readDb();
+  const index = db.users.findIndex((entry) => entry.id === userId);
+
+  if (index === -1) {
+    return res.status(404).json({ message: 'Пользователь не найден' });
+  }
+
+  const actorIsOwner = isOwnerUser(req.authUser);
+  const targetUser = db.users[index];
+  const targetRoleBefore = getUserRole(targetUser);
+  const targetIsOwner = isOwnerUser(targetUser);
+
+  if (targetIsOwner && req.authUser.id !== targetUser.id) {
+    return res.status(403).json({ message: 'Нельзя изменять владельца аккаунта' });
+  }
+
+  if (role !== undefined) {
+    const normalizedRole = normalizeRole(role);
+
+    if (targetIsOwner) {
+      return res.status(400).json({ message: 'Роль владельца изменить нельзя' });
+    }
+
+    const affectsAdminPrivileges = targetRoleBefore === 'admin' || normalizedRole === 'admin';
+    if (affectsAdminPrivileges && !actorIsOwner) {
+      return res.status(403).json({ message: 'Только владелец может назначать и снимать администраторов' });
+    }
+
+    db.users[index].role = normalizedRole;
+  }
+
+  if (nickname !== undefined) {
+    if (!isValidNickname(nickname)) {
+      return res.status(400).json({ message: 'nickname должен быть от 2 до 32 символов' });
+    }
+
+    db.users[index].nickname = nickname.trim();
+  }
+
+  if (country !== undefined) {
+    const trimmedCountry = String(country || '').trim();
+    if (!trimmedCountry || trimmedCountry.length > 56) {
+      return res.status(400).json({ message: 'country должен быть от 1 до 56 символов' });
+    }
+
+    db.users[index].country = trimmedCountry;
+  }
+
+  if (bio !== undefined) {
+    db.users[index].bio = String(bio || '').trim().slice(0, 300);
+  }
+
+  if (blocked !== undefined) {
+    if (targetIsOwner && Boolean(blocked)) {
+      return res.status(400).json({ message: 'Владельца нельзя заблокировать' });
+    }
+
+    if (!actorIsOwner && targetRoleBefore === 'admin' && Boolean(blocked)) {
+      return res.status(403).json({ message: 'Только владелец может блокировать администраторов' });
+    }
+
+    db.users[index].blocked = Boolean(blocked);
+    if (db.users[index].blocked) {
+      const currentTokenVersion = Number.isInteger(db.users[index].tokenVersion) ? db.users[index].tokenVersion : 0;
+      db.users[index].tokenVersion = currentTokenVersion + 1;
+      db.users[index].refreshTokens = [];
+    }
+  }
+
+  ensureUserRole(db.users[index]);
+  await writeDb(db);
+
+  return res.json({
+    ...buildPublicUser(db.users[index]),
+    blocked: Boolean(db.users[index].blocked)
+  });
+}));
+
+app.delete('/api/admin/users/:id', authMiddleware, requireAdmin, asyncHandler(async (req, res) => {
+  const userId = Number(req.params.id);
+  if (!Number.isInteger(userId)) {
+    return res.status(400).json({ message: 'Некорректный id пользователя' });
+  }
+
+  const db = await readDb();
+  const index = db.users.findIndex((entry) => entry.id === userId);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Пользователь не найден' });
+  }
+
+  const actorIsOwner = isOwnerUser(req.authUser);
+  const targetUser = db.users[index];
+  const targetRole = getUserRole(targetUser);
+
+  if (req.authUser.id === userId) {
+    return res.status(400).json({ message: 'Нельзя удалить текущего администратора' });
+  }
+
+  if (isOwnerUser(targetUser)) {
+    return res.status(400).json({ message: 'Владельца нельзя удалить' });
+  }
+
+  if (targetRole === 'admin' && !actorIsOwner) {
+    return res.status(403).json({ message: 'Только владелец может удалять администраторов' });
+  }
+
+  db.users.splice(index, 1);
+  await writeDb(db);
+  return res.json({ ok: true });
+}));
+
+app.get('/api/admin/news', authMiddleware, requireAdmin, asyncHandler(async (_, res) => {
+  const db = await readDb();
+  return res.json(Array.isArray(db.news) ? db.news : []);
+}));
+
+app.post('/api/admin/news', authMiddleware, requireAdmin, asyncHandler(async (req, res) => {
+  const { slug, title, category, date, views, excerpt, image } = req.body || {};
+  const normalizedSlug = String(slug || '').trim().toLowerCase();
+
+  if (!normalizedSlug || !/^[a-z0-9-]{3,80}$/.test(normalizedSlug)) {
+    return res.status(400).json({ message: 'slug должен содержать 3-80 символов: a-z, 0-9, -' });
+  }
+
+  if (!String(title || '').trim() || !String(excerpt || '').trim()) {
+    return res.status(400).json({ message: 'title и excerpt обязательны' });
+  }
+
+  const db = await readDb();
+  db.news = Array.isArray(db.news) ? db.news : [];
+
+  if (db.news.some((entry) => entry.slug === normalizedSlug)) {
+    return res.status(409).json({ message: 'Новость с таким slug уже существует' });
+  }
+
+  const article = {
+    slug: normalizedSlug,
+    title: String(title).trim().slice(0, 140),
+    category: String(category || 'Обновление').trim().slice(0, 32),
+    date: String(date || new Date().toLocaleDateString('ru-RU')).trim().slice(0, 40),
+    views: Math.max(0, Number.parseInt(views || 0, 10) || 0),
+    excerpt: String(excerpt).trim().slice(0, 400),
+    image: String(image || '').trim()
+  };
+
+  db.news.unshift(article);
+  await writeDb(db);
+  return res.status(201).json(article);
+}));
+
+app.patch('/api/admin/news/:slug', authMiddleware, requireAdmin, asyncHandler(async (req, res) => {
+  const slug = String(req.params.slug || '').trim().toLowerCase();
+  const db = await readDb();
+  const index = (Array.isArray(db.news) ? db.news : []).findIndex((entry) => entry.slug === slug);
+
+  if (index === -1) {
+    return res.status(404).json({ message: 'Новость не найдена' });
+  }
+
+  const current = db.news[index];
+  const nextTitle = req.body?.title !== undefined ? String(req.body.title).trim() : current.title;
+  const nextExcerpt = req.body?.excerpt !== undefined ? String(req.body.excerpt).trim() : current.excerpt;
+
+  if (!nextTitle || !nextExcerpt) {
+    return res.status(400).json({ message: 'title и excerpt обязательны' });
+  }
+
+  db.news[index] = {
+    ...current,
+    title: nextTitle.slice(0, 140),
+    category: req.body?.category !== undefined ? String(req.body.category).trim().slice(0, 32) : current.category,
+    date: req.body?.date !== undefined ? String(req.body.date).trim().slice(0, 40) : current.date,
+    views: req.body?.views !== undefined ? Math.max(0, Number.parseInt(req.body.views, 10) || 0) : current.views,
+    excerpt: nextExcerpt.slice(0, 400),
+    image: req.body?.image !== undefined ? String(req.body.image).trim() : current.image
+  };
+
+  await writeDb(db);
+  return res.json(db.news[index]);
+}));
+
+app.delete('/api/admin/news/:slug', authMiddleware, requireAdmin, asyncHandler(async (req, res) => {
+  const slug = String(req.params.slug || '').trim().toLowerCase();
+  const db = await readDb();
+  const beforeLength = Array.isArray(db.news) ? db.news.length : 0;
+  db.news = (Array.isArray(db.news) ? db.news : []).filter((entry) => entry.slug !== slug);
+
+  if (db.news.length === beforeLength) {
+    return res.status(404).json({ message: 'Новость не найдена' });
+  }
+
+  await writeDb(db);
+  return res.json({ ok: true });
+}));
+
+app.get('/api/admin/top-players', authMiddleware, requireAdmin, asyncHandler(async (_, res) => {
+  const db = await readDb();
+  return res.json(Array.isArray(db.topPlayers) ? db.topPlayers : []);
+}));
+
+app.put('/api/admin/top-players', authMiddleware, requireAdmin, asyncHandler(async (req, res) => {
+  const { players } = req.body || {};
+  if (!Array.isArray(players)) {
+    return res.status(400).json({ message: 'players должен быть массивом' });
+  }
+
+  const normalizedPlayers = players.slice(0, 100).map((entry, index) => ({
+    id: Number.isInteger(entry?.id) ? entry.id : Date.now() + index,
+    nickname: String(entry?.nickname || '').trim().slice(0, 32),
+    rating: Math.max(0, Number.parseInt(entry?.rating || 0, 10) || 0),
+    kd: Number((Number(entry?.kd || 0) || 0).toFixed(2)),
+    winrate: Math.max(0, Math.min(100, Number.parseInt(entry?.winrate || 0, 10) || 0))
+  })).filter((entry) => entry.nickname);
+
+  if (!normalizedPlayers.length) {
+    return res.status(400).json({ message: 'players не должен быть пустым' });
+  }
+
+  const db = await readDb();
+  db.topPlayers = normalizedPlayers;
+  await writeDb(db);
+  return res.json(db.topPlayers);
 }));
 
 app.use((_, res) => {

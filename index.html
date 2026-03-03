@@ -161,10 +161,8 @@
             font-size: 48px;
             margin-bottom: 20px;
             line-height: 1.2;
-            background: linear-gradient(90deg, #fff, var(--secondary));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffffff;
+            text-shadow: none;
         }
 
         .hero p {
@@ -218,6 +216,36 @@
             justify-content: center;
             gap: 40px;
             flex-wrap: wrap;
+        }
+
+        .auth-feedback {
+            display: none;
+            width: 100%;
+            max-width: 840px;
+            margin: 0 auto 18px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.45;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(12, 19, 31, 0.7);
+            color: #c7d5e0;
+        }
+
+        .auth-feedback.show {
+            display: block;
+        }
+
+        .auth-feedback.success {
+            border-color: rgba(46, 160, 67, 0.6);
+            background: rgba(16, 44, 27, 0.65);
+            color: #a4e7b3;
+        }
+
+        .auth-feedback.error {
+            border-color: rgba(248, 81, 73, 0.65);
+            background: rgba(61, 21, 23, 0.65);
+            color: #ffc1bf;
         }
 
         .form-box {
@@ -484,6 +512,7 @@
             animation: fadeIn 0.8s ease-out forwards;
         }
     </style>
+    <link rel="stylesheet" href="modern.css">
 </head>
 <body>
     <!-- Шапка -->
@@ -530,6 +559,7 @@
     <section class="forms-section" id="formsSection">
         <div class="container">
             <h2 class="section-title">Присоединяйся к <span>CSFamily</span></h2>
+            <div id="authFeedback" class="auth-feedback" role="status" aria-live="polite"></div>
             
             <div class="forms-container">
                 <!-- Форма входа -->
@@ -655,7 +685,6 @@
                     <a href="news.html">Блог</a>
                     <a href="top-players.html">Топ игроки</a>
                     <a href="profile.html">Профиль</a>
-                    <a href="settings.html">Настройки</a>
                     <a href="news.html">Новости</a>
                 </div>
                 
@@ -668,31 +697,127 @@
 
     <script src="script.js"></script>
     <script>
+        function setAuthFeedback(message = '', type = 'info') {
+            const feedbackElement = document.getElementById('authFeedback');
+            if (!feedbackElement) {
+                return;
+            }
+
+            if (!message) {
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'auth-feedback';
+                return;
+            }
+
+            feedbackElement.textContent = message;
+            feedbackElement.className = `auth-feedback show ${type}`;
+        }
+
+        function setButtonLoading(buttonElement, loadingText, isLoading) {
+            if (!buttonElement) {
+                return;
+            }
+
+            if (isLoading) {
+                buttonElement.dataset.originalText = buttonElement.textContent;
+                buttonElement.textContent = loadingText;
+                buttonElement.disabled = true;
+                return;
+            }
+
+            buttonElement.textContent = buttonElement.dataset.originalText || buttonElement.textContent;
+            buttonElement.disabled = false;
+        }
+
+        function showAuthForm(mode = 'login') {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const shouldShowRegister = mode === 'register';
+
+            if (loginForm) {
+                loginForm.style.display = shouldShowRegister ? 'none' : 'block';
+            }
+            if (registerForm) {
+                registerForm.style.display = shouldShowRegister ? 'block' : 'none';
+            }
+        }
+
+        function handleAuthRequiredEntry() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('auth') !== 'required') {
+                return;
+            }
+
+            const nextPage = (params.get('next') || '').toLowerCase();
+            const pageLabels = {
+                'profile.html': 'профиль',
+                'admin.html': 'админ-панель'
+            };
+            const nextPageLabel = pageLabels[nextPage] || 'закрытый раздел';
+
+            setAuthFeedback(`Чтобы открыть ${nextPageLabel}, войдите или зарегистрируйтесь.`, 'error');
+            showAuthForm('register');
+            document.getElementById('formsSection')?.scrollIntoView({ behavior: 'smooth' });
+            window.history.replaceState({}, document.title, 'index.html#formsSection');
+        }
+
+        function syncHeaderAuthButtons() {
+            const loginButton = document.getElementById('loginBtn');
+            const registerButton = document.getElementById('registerBtn');
+            if (!loginButton || !registerButton || !window.CSAuth) {
+                return;
+            }
+
+            const authenticated = window.CSAuth.isAuthenticated();
+            if (authenticated) {
+                loginButton.textContent = 'Выйти';
+                loginButton.classList.add('btn-primary');
+                loginButton.classList.remove('btn-outline');
+                registerButton.style.display = 'none';
+                registerButton.disabled = true;
+            } else {
+                loginButton.textContent = 'Войти';
+                loginButton.classList.add('btn-outline');
+                loginButton.classList.remove('btn-primary');
+                registerButton.style.display = '';
+                registerButton.disabled = false;
+            }
+        }
+
         // Переключение между формами входа и регистрации
         document.getElementById('showRegister').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
+            showAuthForm('register');
+            setAuthFeedback();
         });
         
         document.getElementById('showLogin').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
+            showAuthForm('login');
+            setAuthFeedback();
         });
         
         // Кнопки в шапке
         document.getElementById('loginBtn').addEventListener('click', function() {
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
+            if (window.CSAuth?.isAuthenticated()) {
+                window.CSAuth.clearAuthSession();
+                setAuthFeedback('Вы вышли из аккаунта.', 'success');
+                syncHeaderAuthButtons();
+                showAuthForm('login');
+                document.getElementById('formsSection').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            showAuthForm('login');
+            setAuthFeedback();
             
             // Прокрутка к формам
             document.getElementById('formsSection').scrollIntoView({ behavior: 'smooth' });
         });
         
         document.getElementById('registerBtn').addEventListener('click', function() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
+            showAuthForm('register');
+            setAuthFeedback();
             
             // Прокрутка к формам
             document.getElementById('formsSection').scrollIntoView({ behavior: 'smooth' });
@@ -701,33 +826,39 @@
         const steamLoginButton = document.getElementById('steamLoginBtn');
         const steamRegisterButton = document.getElementById('steamRegisterBtn');
 
-        async function startSteamAuth() {
+        async function startSteamAuth(triggerButton = null) {
+            setButtonLoading(triggerButton, 'Проверка Steam...', true);
             try {
                 const response = await fetch(`${window.CSAuth.API_BASE_URL}/auth/steam/config`);
                 const config = await response.json();
 
                 if (!config.configured) {
-                    alert('Steam OAuth пока не настроен на сервере. Добавь STEAM_API_KEY в backend/.env и перезапусти API.');
+                    setAuthFeedback('Steam OAuth пока не настроен на сервере. Добавь STEAM_API_KEY в backend/.env и перезапусти API.', 'error');
                     return;
                 }
 
                 window.CSAuth.loginWithSteam();
             } catch {
-                alert('Не удалось проверить Steam OAuth. Убедись, что backend запущен на http://localhost:4000.');
+                setAuthFeedback('Не удалось проверить Steam OAuth. Убедись, что backend запущен на http://localhost:4000.', 'error');
+            } finally {
+                setButtonLoading(triggerButton, 'Проверка Steam...', false);
             }
         }
 
         if (steamLoginButton) {
             steamLoginButton.addEventListener('click', function() {
-                startSteamAuth();
+                startSteamAuth(steamLoginButton);
             });
         }
 
         if (steamRegisterButton) {
             steamRegisterButton.addEventListener('click', function() {
-                startSteamAuth();
+                startSteamAuth(steamRegisterButton);
             });
         }
+
+        handleAuthRequiredEntry();
+        syncHeaderAuthButtons();
 
         const steamErrorCode = new URLSearchParams(window.location.search).get('steamError');
         if (steamErrorCode) {
@@ -738,7 +869,7 @@
                 'parse': 'Не удалось обработать данные Steam авторизации.'
             };
 
-            alert(messages[steamErrorCode] || 'Ошибка Steam авторизации.');
+            setAuthFeedback(messages[steamErrorCode] || 'Ошибка Steam авторизации.', 'error');
             window.history.replaceState({}, document.title, window.location.pathname);
         }
         
@@ -748,15 +879,21 @@
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            const submitButton = this.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, 'Входим...', true);
 
             try {
                 const user = await window.CSAuth.loginWithPassword(email, password);
-                alert(`Вход выполнен!\nПользователь: ${user.nickname}\nПеренаправляем в личный кабинет...`);
+                setAuthFeedback(`Вход выполнен. Добро пожаловать, ${user.nickname}! Перенаправляем в профиль...`, 'success');
 
                 this.reset();
-                window.location.href = 'profile.html';
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 400);
             } catch (error) {
-                alert(`Ошибка входа: ${error.message}\n\nЕсли backend не запущен, войдите через Steam-демо кнопку.`);
+                setAuthFeedback(`Ошибка входа: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(submitButton, 'Входим...', false);
             }
         });
         
@@ -768,20 +905,27 @@
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const submitButton = this.querySelector('button[type="submit"]');
             
             if (password !== confirmPassword) {
-                alert('Пароли не совпадают!');
+                setAuthFeedback('Пароли не совпадают.', 'error');
                 return;
             }
+
+            setButtonLoading(submitButton, 'Создаем аккаунт...', true);
             
             try {
                 const user = await window.CSAuth.registerWithPassword(nickname, email, password);
-                alert(`Регистрация успешна!\nДобро пожаловать в CSFamily, ${user.nickname}!`);
+                setAuthFeedback(`Регистрация успешна! Добро пожаловать в CSFamily, ${user.nickname}.`, 'success');
 
                 this.reset();
-                window.location.href = 'profile.html';
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 400);
             } catch (error) {
-                alert(`Ошибка регистрации: ${error.message}`);
+                setAuthFeedback(`Ошибка регистрации: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(submitButton, 'Создаем аккаунт...', false);
             }
         });
         

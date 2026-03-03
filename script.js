@@ -4,22 +4,68 @@ const sharedNavItems = [
     { href: 'index.html', label: 'Главная' },
     { href: 'news.html', label: 'Новости' },
     { href: 'top-players.html', label: 'Топ игроки' },
-    { href: 'profile.html', label: 'Профиль' },
-    { href: 'settings.html', label: 'Настройки' }
+    { href: 'profile.html', label: 'Профиль', requiresAuth: true }
 ];
 
+const protectedPages = new Set(['profile.html', 'settings.html', 'admin.html']);
+const SETTINGS_ENTRY_KEY = 'settingsEntryAllowedAt';
+
+function getStoredUser() {
+    try {
+        return JSON.parse(localStorage.getItem('user') || '{}');
+    } catch {
+        return {};
+    }
+}
+
+function isAdminUser(user) {
+    return String(user?.role || '').toLowerCase() === 'admin';
+}
+
+function getNavigationItems() {
+    const user = getStoredUser();
+    const authenticated = isAuthenticated();
+    const items = sharedNavItems.filter((item) => !item.requiresAuth || authenticated);
+    if (authenticated && isAdminUser(user)) {
+        items.push({ href: 'admin.html', label: 'Админ', requiresAuth: true, requiresAdmin: true });
+    }
+    return items;
+}
+
 function getCurrentPage() {
-    const pathParts = window.location.pathname.split('/');
+    const pathname = window.location.pathname || '';
+    const normalizedPath = pathname.endsWith('/') ? `${pathname}index.html` : pathname;
+    const pathParts = normalizedPath.split('/');
     const page = pathParts[pathParts.length - 1] || 'index.html';
     return page.split('?')[0].split('#')[0] || 'index.html';
 }
 
-function renderSharedNavigation() {
+function getAuthGatewayHref(targetPage) {
+    const safeTarget = String(targetPage || 'profile.html').split('?')[0].split('#')[0];
+    return `index.html?auth=required&next=${encodeURIComponent(safeTarget)}#formsSection`;
+}
+
+function isAuthenticated() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+    const hasToken = Boolean(localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
+    return isLoggedIn || hasToken;
+}
+
+function getNavHref(item) {
+    if (item.requiresAuth && !isAuthenticated()) {
+        return getAuthGatewayHref(item.href);
+    }
+
+    return item.href;
+}
+
+function renderSharedNavigation(force = false) {
     const currentPage = getCurrentPage();
     const navElements = document.querySelectorAll('nav[data-shared-nav]');
+    const navItems = getNavigationItems();
 
     navElements.forEach((navElement) => {
-        if (navElement.dataset.navReady === 'true') {
+        if (!force && navElement.dataset.navReady === 'true') {
             return;
         }
 
@@ -30,11 +76,11 @@ function renderSharedNavigation() {
         if (mode === 'list') {
             const navList = document.createElement('ul');
 
-            sharedNavItems.forEach((item) => {
+            navItems.forEach((item) => {
                 const listItem = document.createElement('li');
                 const link = document.createElement('a');
 
-                link.href = item.href;
+                link.href = getNavHref(item);
                 link.textContent = item.label;
                 if (item.href === currentPage) {
                     link.setAttribute('aria-current', 'page');
@@ -49,9 +95,9 @@ function renderSharedNavigation() {
             return;
         }
 
-        sharedNavItems.forEach((item) => {
+        navItems.forEach((item) => {
             const link = document.createElement('a');
-            link.href = item.href;
+            link.href = getNavHref(item);
             link.textContent = item.label;
             if (item.href === currentPage) {
                 link.setAttribute('aria-current', 'page');
@@ -64,49 +110,148 @@ function renderSharedNavigation() {
     });
 }
 
-function getStoredUser() {
-    try {
-        return JSON.parse(localStorage.getItem('user') || '{}');
-    } catch {
-        return {};
-    }
-}
+function bindQuickProfileMenus() {
+    const menus = document.querySelectorAll('[data-quick-profile-menu]');
+    const authenticated = isAuthenticated();
+    const authOnlyBlocks = document.querySelectorAll('[data-auth-only]');
+    authOnlyBlocks.forEach((block) => {
+        block.style.display = authenticated ? '' : 'none';
+    });
 
-function bindMiniAvatars() {
-    const avatarElements = document.querySelectorAll('.header-mini-avatar');
-    if (!avatarElements.length) {
+    if (!menus.length) {
         return;
     }
 
     const user = getStoredUser();
-    const avatarSrc = typeof user.avatar === 'string' ? user.avatar.trim() : '';
 
-    avatarElements.forEach((avatarElement) => {
-        if (avatarSrc) {
-            avatarElement.src = avatarSrc;
-        }
-
-        if (avatarElement.dataset.clickBound === 'true') {
+    menus.forEach((menu) => {
+        menu.style.display = authenticated ? '' : 'none';
+        if (!authenticated) {
+            menu.classList.remove('is-open');
             return;
         }
 
-        avatarElement.style.cursor = 'pointer';
-        avatarElement.title = 'Открыть профиль';
-        avatarElement.addEventListener('click', () => {
-            window.location.href = 'profile.html';
+        if (menu.dataset.menuBound === 'true') {
+            return;
+        }
+
+        const toggle = menu.querySelector('[data-menu-toggle]');
+        const avatar = menu.querySelector('[data-menu-avatar]');
+        const profileAction = menu.querySelector('[data-menu-action="profile"]');
+        const settingsAction = menu.querySelector('[data-menu-action="settings"]');
+        const logoutAction = menu.querySelector('[data-menu-action="logout"]');
+
+        if (avatar && typeof user.avatar === 'string' && user.avatar.trim()) {
+            avatar.src = user.avatar.trim();
+        }
+
+        const setOpen = (isOpen) => {
+            menu.classList.toggle('is-open', isOpen);
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            }
+        };
+
+        toggle?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const isOpen = menu.classList.contains('is-open');
+            setOpen(!isOpen);
         });
-        avatarElement.dataset.clickBound = 'true';
+
+        document.addEventListener('click', (event) => {
+            if (!menu.contains(event.target)) {
+                setOpen(false);
+            }
+        });
+
+        profileAction?.addEventListener('click', () => {
+            window.location.href = isAuthenticated() ? 'profile.html' : getAuthGatewayHref('profile.html');
+        });
+
+        settingsAction?.addEventListener('click', () => {
+            sessionStorage.setItem('settingsEntryAllowedAt', Date.now().toString());
+            window.location.href = isAuthenticated() ? 'settings.html' : getAuthGatewayHref('settings.html');
+        });
+
+        logoutAction?.addEventListener('click', () => {
+            if (window.CSAuth) {
+                window.CSAuth.clearAuthSession();
+            }
+            window.location.href = 'index.html';
+        });
+
+        menu.dataset.menuBound = 'true';
     });
+
+    if (document.body?.dataset.quickMenuEscBound !== 'true') {
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') {
+                return;
+            }
+
+            document.querySelectorAll('[data-quick-profile-menu].is-open').forEach((menu) => {
+                menu.classList.remove('is-open');
+                const toggle = menu.querySelector('[data-menu-toggle]');
+                toggle?.setAttribute('aria-expanded', 'false');
+            });
+        });
+        document.body.dataset.quickMenuEscBound = 'true';
+    }
+}
+
+function bindProtectedRouteGuard() {
+    if (document.body?.dataset.protectedGuardBound === 'true') {
+        return;
+    }
+
+    document.addEventListener('click', (event) => {
+        if (isAuthenticated()) {
+            return;
+        }
+
+        const link = event.target?.closest?.('a[href]');
+        if (!link) {
+            return;
+        }
+
+        if (
+            event.defaultPrevented
+            || event.button !== 0
+            || event.metaKey
+            || event.ctrlKey
+            || event.shiftKey
+            || event.altKey
+        ) {
+            return;
+        }
+
+        const href = link.getAttribute('href') || '';
+        if (!href || href.startsWith('http') || href.startsWith('#')) {
+            return;
+        }
+
+        const page = href.split('?')[0].split('#')[0];
+        if (!protectedPages.has(page)) {
+            return;
+        }
+
+        event.preventDefault();
+        window.location.href = getAuthGatewayHref(page);
+    }, true);
+
+    document.body.dataset.protectedGuardBound = 'true';
+}
+
+function initializeSharedUi() {
+    renderSharedNavigation();
+    bindQuickProfileMenus();
+    bindProtectedRouteGuard();
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        renderSharedNavigation();
-        bindMiniAvatars();
-    });
+    document.addEventListener('DOMContentLoaded', initializeSharedUi);
 } else {
-    renderSharedNavigation();
-    bindMiniAvatars();
+    initializeSharedUi();
 }
 
 const authStorageKeys = [
@@ -130,6 +275,8 @@ function setAuthSession(user, token = null, refreshToken = null) {
     if (refreshToken) {
         localStorage.setItem('refreshToken', refreshToken);
     }
+    renderSharedNavigation(true);
+    bindQuickProfileMenus();
 }
 
 function clearAuthSession() {
@@ -137,12 +284,8 @@ function clearAuthSession() {
         localStorage.removeItem(key);
         sessionStorage.removeItem(key);
     });
-}
-
-function isAuthenticated() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
-    const hasToken = Boolean(localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
-    return isLoggedIn || hasToken;
+    renderSharedNavigation(true);
+    bindQuickProfileMenus();
 }
 
 function loginWithSteam() {
@@ -229,6 +372,7 @@ async function refreshAccessToken() {
         refreshRequestPromise = null;
     }
 }
+
 async function loginWithPassword(email, password) {
     const data = await apiRequest('/auth/login', {
         method: 'POST',
@@ -253,6 +397,7 @@ window.CSAuth = {
     setAuthSession,
     clearAuthSession,
     isAuthenticated,
+    isAdminUser,
     loginWithSteam,
     loginWithPassword,
     registerWithPassword,

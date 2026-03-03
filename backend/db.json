@@ -1,142 +1,275 @@
-﻿{
-    "users":  [
-                  {
-                      "id":  1772238877210,
-                      "nickname":  "РїРѕРїР°",
-                      "email":  "steam_76561198305045257@csfamily.local",
-                      "steamId":  "76561198305045257",
-                      "provider":  "steam",
-                      "avatar":  "https://avatars.steamstatic.com/43030ce494e604e7fa4cf087593a8db176938d57_full.jpg",
-                      "createdAt":  "2026-02-28T00:34:37.210Z",
-                      "tokenVersion":  2,
-                      "bio":  "РђР»РµРєСЃРµР№ РРІР°РЅРѕРІ",
-                      "country":  "РЈРєСЂР°РёРЅР°",
-                      "stats":  {
-                                    "kdRatio":  1.44,
-                                    "rating":  1.42,
-                                    "winRate":  79,
-                                    "matchesPlayed":  729,
-                                    "matchesWon":  576,
-                                    "matchesLost":  153,
-                                    "accuracy":  70.8,
-                                    "hsPercent":  58.3,
-                                    "kills":  12885,
-                                    "deaths":  8965,
-                                    "headshots":  7513,
-                                    "hsRatio":  58.3,
-                                    "adr":  119,
-                                    "damageDealt":  1694084,
-                                    "roundsPlayed":  14236,
-                                    "bombsPlanted":  3163,
-                                    "playTimeHours":  454,
-                                    "playTimeMinutes":  10,
-                                    "recentMatches":  [
-                                                          {
-                                                              "map":  "Ancient",
-                                                              "kd":  "14/8/9",
-                                                              "score":  "13:16",
-                                                              "result":  "loss",
-                                                              "resultLabel":  "РџРѕСЂР°Р¶РµРЅРёРµ",
-                                                              "dateLabel":  "27 С„РµРІСЂ"
-                                                          },
-                                                          {
-                                                              "map":  "Mirage",
-                                                              "kd":  "15/10/3",
-                                                              "score":  "16:2",
-                                                              "result":  "win",
-                                                              "resultLabel":  "РџРѕР±РµРґР°",
-                                                              "dateLabel":  "26 С„РµРІСЂ"
-                                                          },
-                                                          {
-                                                              "map":  "Train",
-                                                              "kd":  "24/15/8",
-                                                              "score":  "16:6",
-                                                              "result":  "win",
-                                                              "resultLabel":  "РџРѕР±РµРґР°",
-                                                              "dateLabel":  "25 С„РµРІСЂ"
-                                                          }
-                                                      ],
-                                    "generatedAtDay":  "2026-02-28"
-                                }
-                  }
-              ],
-    "news":  [
-                 {
-                     "slug":  "winter-cup-2023",
-                     "title":  "РђРЅРѕРЅСЃ С‚СѓСЂРЅРёСЂР° CSFamily Winter Cup 2023",
-                     "category":  "РўСѓСЂРЅРёСЂ",
-                     "date":  "15 РґРµРєР°Р±СЂСЏ 2023",
-                     "views":  1245,
-                     "excerpt":  "РџСЂРёРіР»Р°С€Р°РµРј РІСЃРµС… СѓС‡Р°СЃС‚РЅРёРєРѕРІ РЅР° Р·РёРјРЅРёР№ РєСѓР±РѕРє CSFamily СЃ РїСЂРёР·РѕРІС‹Рј С„РѕРЅРґРѕРј $10,000. Р РµРіРёСЃС‚СЂР°С†РёСЏ РѕС‚РєСЂС‹С‚Р° РґРѕ 25 РґРµРєР°Р±СЂСЏ.",
-                     "image":  "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format\u0026fit=crop\u0026w=1170\u0026q=80"
-                 },
-                 {
-                     "slug":  "vac-plus-2",
-                     "title":  "РћР±РЅРѕРІР»РµРЅРёРµ Р°РЅС‚РёС‡РёС‚Р° VAC+ 2.0",
-                     "category":  "РћР±РЅРѕРІР»РµРЅРёРµ",
-                     "date":  "10 РґРµРєР°Р±СЂСЏ 2023",
-                     "views":  2187,
-                     "excerpt":  "РњС‹ Р·Р°РїСѓСЃС‚РёР»Рё РѕР±РЅРѕРІР»С‘РЅРЅСѓСЋ СЃРёСЃС‚РµРјСѓ Р°РЅС‚РёС‡РёС‚Р° VAC+ 2.0, РєРѕС‚РѕСЂР°СЏ СѓР»СѓС‡С€Р°РµС‚ РѕР±РЅР°СЂСѓР¶РµРЅРёРµ С‡РёС‚РµСЂРѕРІ РЅР° 40% РїРѕ СЃСЂР°РІРЅРµРЅРёСЋ СЃ РїСЂРµРґС‹РґСѓС‰РµР№ РІРµСЂСЃРёРµР№.",
-                     "image":  "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format\u0026fit=crop\u0026w=1170\u0026q=80"
-                 },
-                 {
-                     "slug":  "elo-2",
-                     "title":  "РќРѕРІР°СЏ СЃРёСЃС‚РµРјР° СЂР°РЅРіРѕРІ ELO 2.0",
-                     "category":  "РћР±РЅРѕРІР»РµРЅРёРµ",
-                     "date":  "5 РґРµРєР°Р±СЂСЏ 2023",
-                     "views":  3042,
-                     "excerpt":  "Р’РІРµРґРµРЅР° СѓР»СѓС‡С€РµРЅРЅР°СЏ СЃРёСЃС‚РµРјР° СЂР°РЅРіРѕРІ, РєРѕС‚РѕСЂР°СЏ С‚РѕС‡РЅРµРµ РѕРїСЂРµРґРµР»СЏРµС‚ СѓСЂРѕРІРµРЅСЊ РёРіСЂРѕРєРѕРІ Рё РїРѕРґР±РёСЂР°РµС‚ Р±РѕР»РµРµ СЂР°РІРЅС‹Рµ РјР°С‚С‡Рё.",
-                     "image":  "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format\u0026fit=crop\u0026w=1171\u0026q=80"
-                 },
-                 {
-                     "slug":  "dreamhack-2023",
-                     "title":  "CSFamily РЅР° DreamHack Winter 2023",
-                     "category":  "РЎРѕР±С‹С‚РёРµ",
-                     "date":  "30 РЅРѕСЏР±СЂСЏ 2023",
-                     "views":  1876,
-                     "excerpt":  "РќР°С€Р° РєРѕРјР°РЅРґР° РїСЂРёРЅСЏР»Р° СѓС‡Р°СЃС‚РёРµ РІ РєСЂСѓРїРЅРµР№С€РµРј РєРёР±РµСЂСЃРїРѕСЂС‚РёРІРЅРѕРј С„РµСЃС‚РёРІР°Р»Рµ Р•РІСЂРѕРїС‹. Р¤РѕС‚РѕРѕС‚С‡С‘С‚ Рё РІРїРµС‡Р°С‚Р»РµРЅРёСЏ РІРЅСѓС‚СЂРё.",
-                     "image":  "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format\u0026fit=crop\u0026w=1265\u0026q=80"
-                 },
-                 {
-                     "slug":  "map-pool-update",
-                     "title":  "Р”РѕР±Р°РІР»РµРЅС‹ РЅРѕРІС‹Рµ РєР°СЂС‚С‹ РІ РїСѓР» РјР°С‚С‡РјРµР№РєРёРЅРіР°",
-                     "category":  "РћР±РЅРѕРІР»РµРЅРёРµ",
-                     "date":  "25 РЅРѕСЏР±СЂСЏ 2023",
-                     "views":  2543,
-                     "excerpt":  "Р’ СЂРѕС‚Р°С†РёСЋ РјР°С‚С‡РјРµР№РєРёРЅРіР° РґРѕР±Р°РІР»РµРЅС‹ РєР°СЂС‚С‹ de_inferno_remake, de_mirage_ce Рё cs_office_2023 СЃ СѓР»СѓС‡С€РµРЅРЅРѕР№ РіСЂР°С„РёРєРѕР№.",
-                     "image":  "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format\u0026fit=crop\u0026w=1170\u0026q=80"
-                 },
-                 {
-                     "slug":  "razer-steelseries",
-                     "title":  "РџР°СЂС‚РЅС‘СЂСЃС‚РІРѕ СЃ Razer Рё SteelSeries",
-                     "category":  "РЎРѕР±С‹С‚РёРµ",
-                     "date":  "20 РЅРѕСЏР±СЂСЏ 2023",
-                     "views":  1987,
-                     "excerpt":  "Р—Р°РєР»СЋС‡РµРЅС‹ РїР°СЂС‚РЅС‘СЂСЃРєРёРµ СЃРѕРіР»Р°С€РµРЅРёСЏ СЃ РІРµРґСѓС‰РёРјРё РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЏРјРё РіРµР№РјРµСЂСЃРєРѕРіРѕ РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ РґР»СЏ С‚СѓСЂРЅРёСЂРѕРІ CSFamily.",
-                     "image":  "https://images.unsplash.com/photo-1600861194947-f8830c2bed49?auto=format\u0026fit=crop\u0026w=1169\u0026q=80"
-                 }
-             ],
-    "topPlayers":  [
-                       {
-                           "id":  784512,
-                           "nickname":  "BRRR^",
-                           "rating":  3190,
-                           "kd":  1.78,
-                           "winrate":  74
-                       },
-                       {
-                           "id":  892345,
-                           "nickname":  "AWP_Queen",
-                           "rating":  3015,
-                           "kd":  1.62,
-                           "winrate":  71
-                       },
-                       {
-                           "id":  671239,
-                           "nickname":  "SniperPro",
-                           "rating":  2958,
-                           "kd":  1.54,
-                           "winrate":  69
-                       }
-                   ]
+{
+  "users": [
+    {
+      "id": 1772238877210,
+      "nickname": "РїРѕРїР°",
+      "email": "steam_76561198305045257@csfamily.local",
+      "steamId": "76561198305045257",
+      "provider": "steam",
+      "avatar": "https://avatars.steamstatic.com/43030ce494e604e7fa4cf087593a8db176938d57_full.jpg",
+      "createdAt": "2026-02-28T00:34:37.210Z",
+      "tokenVersion": 2,
+      "bio": "РђР»РµРєСЃРµР№ РРІР°РЅРѕРІ",
+      "country": "РЈРєСЂР°РёРЅР°",
+      "stats": {
+        "kdRatio": 1.81,
+        "rating": 1.7,
+        "winRate": 66,
+        "matchesPlayed": 746,
+        "matchesWon": 492,
+        "matchesLost": 254,
+        "accuracy": 65.6,
+        "hsPercent": 63,
+        "kills": 12478,
+        "deaths": 6904,
+        "headshots": 7857,
+        "hsRatio": 63,
+        "adr": 120,
+        "damageDealt": 1300080,
+        "roundsPlayed": 10834,
+        "bombsPlanted": 2047,
+        "playTimeHours": 842,
+        "playTimeMinutes": 17,
+        "recentMatches": [
+          {
+            "map": "Inferno",
+            "kd": "24/20/5",
+            "score": "16:0",
+            "result": "win",
+            "resultLabel": "Победа",
+            "dateLabel": "2 март"
+          },
+          {
+            "map": "Inferno",
+            "kd": "26/17/8",
+            "score": "12:16",
+            "result": "loss",
+            "resultLabel": "Поражение",
+            "dateLabel": "1 март"
+          },
+          {
+            "map": "Tuscan",
+            "kd": "21/8/4",
+            "score": "16:11",
+            "result": "win",
+            "resultLabel": "Победа",
+            "dateLabel": "28 февр"
+          }
+        ],
+        "generatedAtDay": "2026-03-03"
+      },
+      "role": "admin"
+    },
+    {
+      "id": 1772565997135,
+      "nickname": "nik.marinkin",
+      "email": "nik.marinkin.04@mail.ru",
+      "provider": "password",
+      "passwordHash": "$2a$10$N.s.JAa5QTJBKUY4Ibpig.Q77hlGNb4l0PyP5SvrgD/Kme8/MwMPu",
+      "role": "admin",
+      "blocked": false,
+      "createdAt": "2026-03-03T19:26:37.135Z",
+      "tokenVersion": 0,
+      "refreshTokens": [
+        {
+          "tokenId": "89c9756c-2045-4bb9-ba22-fe321df76edd",
+          "tokenHash": "4724c13cdaf9cf8573e50e32d276f7389a28e7a0083d7a356808ba80dc13e334",
+          "createdAt": "2026-03-03T19:27:50.801Z",
+          "expiresAt": "2026-04-02T19:27:50.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; ru-RU) WindowsPowerShell/5.1.26100.7705"
+        },
+        {
+          "tokenId": "4c0bafa2-d135-4e15-99a9-9f91f78a1d13",
+          "tokenHash": "00ebb98297ede6d692f592055f455ba060f6cfce912953cc017cac6230ebcedb",
+          "createdAt": "2026-03-03T19:28:21.835Z",
+          "expiresAt": "2026-04-02T19:28:21.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 YaBrowser/25.12.0.0 Safari/537.36"
+        },
+        {
+          "tokenId": "d21e8fcc-ecd7-4c26-927b-7d49c4db346f",
+          "tokenHash": "ff904c7f03c748469eafe8f48c80266e2799f40e4a2764bff1707b983c6ebdc5",
+          "createdAt": "2026-03-03T19:31:42.103Z",
+          "expiresAt": "2026-04-02T19:31:42.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; ru-RU) WindowsPowerShell/5.1.26100.7705"
+        },
+        {
+          "tokenId": "add8c251-26cc-4e26-9456-a7fbeaf765ae",
+          "tokenHash": "82ee7886974ee4dae0a9f88596a3c639dd0adb72ac02a505e26a12c02351df5f",
+          "createdAt": "2026-03-03T19:39:05.971Z",
+          "expiresAt": "2026-04-02T19:39:05.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; ru-RU) WindowsPowerShell/5.1.26100.7705"
+        },
+        {
+          "tokenId": "b4a88b67-514d-420a-a1fa-1ae06a75f6ec",
+          "tokenHash": "301e043681ea4a5b057dfd3b63f2ff4c5e33c7306eb14c323c1051c516539bd5",
+          "createdAt": "2026-03-03T19:39:26.391Z",
+          "expiresAt": "2026-04-02T19:39:26.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; ru-RU) WindowsPowerShell/5.1.26100.7705"
+        },
+        {
+          "tokenId": "d5637ff9-b2c9-4576-b52f-c44d12bda609",
+          "tokenHash": "e9eba695ba98676802b73e4791c409c105f7d94325e13b13ba4b048e45f3f264",
+          "createdAt": "2026-03-03T19:39:41.020Z",
+          "expiresAt": "2026-04-02T19:39:41.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; ru-RU) WindowsPowerShell/5.1.26100.7705"
+        },
+        {
+          "tokenId": "b24ae7ac-55dd-4fa3-81ac-c841e0456c53",
+          "tokenHash": "b8950d5cc8f1c3d9ab0ccfaecc0052c0f878a2bd4fc49874c07c44a3badd4e46",
+          "createdAt": "2026-03-03T19:48:55.539Z",
+          "expiresAt": "2026-04-02T19:48:55.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 YaBrowser/25.12.0.0 Safari/537.36"
+        },
+        {
+          "tokenId": "da5cf30e-7c1c-4867-bc31-1320e8f4a16d",
+          "tokenHash": "e28b1c68dbed273bcb7b84c93115d7b08f6eea8c1b248e253685494a4b92ab03",
+          "createdAt": "2026-03-03T19:51:10.341Z",
+          "expiresAt": "2026-04-02T19:51:10.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 YaBrowser/25.12.0.0 Safari/537.36"
+        },
+        {
+          "tokenId": "aa8bb050-46c7-4768-884b-f8a021c98449",
+          "tokenHash": "7360564b89e1f7267fee0da72087af451cbb2a88566b6e46c9677ecdba7671ea",
+          "createdAt": "2026-03-03T20:05:28.778Z",
+          "expiresAt": "2026-04-02T20:05:28.000Z",
+          "ip": "::1",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 YaBrowser/25.12.0.0 Safari/537.36"
+        }
+      ],
+      "stats": {
+        "kdRatio": 1.26,
+        "rating": 1.83,
+        "winRate": 74,
+        "matchesPlayed": 734,
+        "matchesWon": 543,
+        "matchesLost": 191,
+        "accuracy": 60.4,
+        "hsPercent": 68.2,
+        "kills": 12084,
+        "deaths": 9555,
+        "headshots": 8245,
+        "hsRatio": 68.2,
+        "adr": 96,
+        "damageDealt": 1530048,
+        "roundsPlayed": 15938,
+        "bombsPlanted": 2482,
+        "playTimeHours": 746,
+        "playTimeMinutes": 6,
+        "recentMatches": [
+          {
+            "map": "Overpass",
+            "kd": "27/9/9",
+            "score": "11:16",
+            "result": "loss",
+            "resultLabel": "Поражение",
+            "dateLabel": "3 март"
+          },
+          {
+            "map": "Tuscan",
+            "kd": "19/16/4",
+            "score": "13:16",
+            "result": "loss",
+            "resultLabel": "Поражение",
+            "dateLabel": "2 март"
+          },
+          {
+            "map": "Inferno",
+            "kd": "25/19/8",
+            "score": "16:13",
+            "result": "win",
+            "resultLabel": "Победа",
+            "dateLabel": "1 март"
+          }
+        ],
+        "generatedAtDay": "2026-03-03"
+      }
+    }
+  ],
+  "news": [
+    {
+      "slug": "winter-cup-2023",
+      "title": "РђРЅРѕРЅСЃ С‚СѓСЂРЅРёСЂР° CSFamily Winter Cup 2023",
+      "category": "РўСѓСЂРЅРёСЂ",
+      "date": "15 РґРµРєР°Р±СЂСЏ 2023",
+      "views": 1245,
+      "excerpt": "РџСЂРёРіР»Р°С€Р°РµРј РІСЃРµС… СѓС‡Р°СЃС‚РЅРёРєРѕРІ РЅР° Р·РёРјРЅРёР№ РєСѓР±РѕРє CSFamily СЃ РїСЂРёР·РѕРІС‹Рј С„РѕРЅРґРѕРј $10,000. Р РµРіРёСЃС‚СЂР°С†РёСЏ РѕС‚РєСЂС‹С‚Р° РґРѕ 25 РґРµРєР°Р±СЂСЏ.",
+      "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "slug": "vac-plus-2",
+      "title": "РћР±РЅРѕРІР»РµРЅРёРµ Р°РЅС‚РёС‡РёС‚Р° VAC+ 2.0",
+      "category": "РћР±РЅРѕРІР»РµРЅРёРµ",
+      "date": "10 РґРµРєР°Р±СЂСЏ 2023",
+      "views": 2187,
+      "excerpt": "РњС‹ Р·Р°РїСѓСЃС‚РёР»Рё РѕР±РЅРѕРІР»С‘РЅРЅСѓСЋ СЃРёСЃС‚РµРјСѓ Р°РЅС‚РёС‡РёС‚Р° VAC+ 2.0, РєРѕС‚РѕСЂР°СЏ СѓР»СѓС‡С€Р°РµС‚ РѕР±РЅР°СЂСѓР¶РµРЅРёРµ С‡РёС‚РµСЂРѕРІ РЅР° 40% РїРѕ СЃСЂР°РІРЅРµРЅРёСЋ СЃ РїСЂРµРґС‹РґСѓС‰РµР№ РІРµСЂСЃРёРµР№.",
+      "image": "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "slug": "elo-2",
+      "title": "РќРѕРІР°СЏ СЃРёСЃС‚РµРјР° СЂР°РЅРіРѕРІ ELO 2.0",
+      "category": "РћР±РЅРѕРІР»РµРЅРёРµ",
+      "date": "5 РґРµРєР°Р±СЂСЏ 2023",
+      "views": 3042,
+      "excerpt": "Р’РІРµРґРµРЅР° СѓР»СѓС‡С€РµРЅРЅР°СЏ СЃРёСЃС‚РµРјР° СЂР°РЅРіРѕРІ, РєРѕС‚РѕСЂР°СЏ С‚РѕС‡РЅРµРµ РѕРїСЂРµРґРµР»СЏРµС‚ СѓСЂРѕРІРµРЅСЊ РёРіСЂРѕРєРѕРІ Рё РїРѕРґР±РёСЂР°РµС‚ Р±РѕР»РµРµ СЂР°РІРЅС‹Рµ РјР°С‚С‡Рё.",
+      "image": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1171&q=80"
+    },
+    {
+      "slug": "dreamhack-2023",
+      "title": "CSFamily РЅР° DreamHack Winter 2023",
+      "category": "РЎРѕР±С‹С‚РёРµ",
+      "date": "30 РЅРѕСЏР±СЂСЏ 2023",
+      "views": 1876,
+      "excerpt": "РќР°С€Р° РєРѕРјР°РЅРґР° РїСЂРёРЅСЏР»Р° СѓС‡Р°СЃС‚РёРµ РІ РєСЂСѓРїРЅРµР№С€РµРј РєРёР±РµСЂСЃРїРѕСЂС‚РёРІРЅРѕРј С„РµСЃС‚РёРІР°Р»Рµ Р•РІСЂРѕРїС‹. Р¤РѕС‚РѕРѕС‚С‡С‘С‚ Рё РІРїРµС‡Р°С‚Р»РµРЅРёСЏ РІРЅСѓС‚СЂРё.",
+      "image": "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1265&q=80"
+    },
+    {
+      "slug": "map-pool-update",
+      "title": "Р”РѕР±Р°РІР»РµРЅС‹ РЅРѕРІС‹Рµ РєР°СЂС‚С‹ РІ РїСѓР» РјР°С‚С‡РјРµР№РєРёРЅРіР°",
+      "category": "РћР±РЅРѕРІР»РµРЅРёРµ",
+      "date": "25 РЅРѕСЏР±СЂСЏ 2023",
+      "views": 2543,
+      "excerpt": "Р’ СЂРѕС‚Р°С†РёСЋ РјР°С‚С‡РјРµР№РєРёРЅРіР° РґРѕР±Р°РІР»РµРЅС‹ РєР°СЂС‚С‹ de_inferno_remake, de_mirage_ce Рё cs_office_2023 СЃ СѓР»СѓС‡С€РµРЅРЅРѕР№ РіСЂР°С„РёРєРѕР№.",
+      "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "slug": "razer-steelseries",
+      "title": "РџР°СЂС‚РЅС‘СЂСЃС‚РІРѕ СЃ Razer Рё SteelSeries",
+      "category": "РЎРѕР±С‹С‚РёРµ",
+      "date": "20 РЅРѕСЏР±СЂСЏ 2023",
+      "views": 1987,
+      "excerpt": "Р—Р°РєР»СЋС‡РµРЅС‹ РїР°СЂС‚РЅС‘СЂСЃРєРёРµ СЃРѕРіР»Р°С€РµРЅРёСЏ СЃ РІРµРґСѓС‰РёРјРё РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЏРјРё РіРµР№РјРµСЂСЃРєРѕРіРѕ РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ РґР»СЏ С‚СѓСЂРЅРёСЂРѕРІ CSFamily.",
+      "image": "https://images.unsplash.com/photo-1600861194947-f8830c2bed49?auto=format&fit=crop&w=1169&q=80"
+    }
+  ],
+  "topPlayers": [
+    {
+      "id": 784512,
+      "nickname": "BRRR^",
+      "rating": 3190,
+      "kd": 1.78,
+      "winrate": 74
+    },
+    {
+      "id": 892345,
+      "nickname": "AWP_Queen",
+      "rating": 3015,
+      "kd": 1.62,
+      "winrate": 71
+    },
+    {
+      "id": 671239,
+      "nickname": "SniperPro",
+      "rating": 2958,
+      "kd": 1.54,
+      "winrate": 69
+    }
+  ]
 }
