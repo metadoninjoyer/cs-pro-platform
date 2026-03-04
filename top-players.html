@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Топ игроков | CSFamily</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css">
@@ -31,7 +30,7 @@
     --panel-glow:0 0 35px rgba(255,106,0,.15);
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Oxanium',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter, Segoe UI, Tahoma, sans-serif;}
 
 body{
     background:linear-gradient(160deg,#070a0f,#0c111a);
@@ -40,7 +39,7 @@ body{
     overflow-x:hidden;
 }
 
-.container{
+.container.page-content{
     max-width:1400px;
     margin:auto;
     padding:20px;
@@ -49,66 +48,16 @@ body{
 }
 
 /* ===== ШАПКА ===== */
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding-bottom:20px;
-    margin-bottom:30px;
-    border-bottom:1px solid rgba(255,106,0,0.2);
-    flex-wrap: wrap;
-    gap: 20px;
-}
 
-.logo{
-    color:var(--orange);
-    font-size:clamp(20px, 4vw, 28px);
-    font-weight:700;
-    letter-spacing:1.5px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    flex-shrink: 0;
-}
-
-.logo i {
-    font-size: clamp(18px, 3.5vw, 24px);
-}
-
-.header-main-nav {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 0 20px;
-}
-
-.header-main-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-    padding: 0;
-    margin: 0;
-    flex-wrap: wrap;
-}
-
-.header-main-nav a {
-    color: var(--light);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 16px;
-    transition: color 0.3s;
-}
-
-.header-main-nav a:hover,
-.header-main-nav a[aria-current="page"] {
-    color: var(--orange);
-}
 
 /* СТАТИСТИКА В ШАПКЕ */
 .stats-summary {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: clamp(15px, 2vw, 30px);
-    margin-top: 20px;
+    margin-top: 0;
+    margin-bottom: 20px;
     padding: 15px 0;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     flex-wrap: wrap;
@@ -118,7 +67,7 @@ body{
     display: flex;
     align-items: center;
     gap: 10px;
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     min-width: 180px;
 }
 
@@ -158,12 +107,6 @@ body{
 }
 
 /* Кнопки управления */
-.controls {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
 
 .control-btn {
     padding: 8px 16px;
@@ -720,7 +663,7 @@ body{
 
 /* Большие мониторы (более 1600px) */
 @media (min-width: 1600px) {
-    .container {
+    .container.page-content {
         max-width: 1500px;
     }
     
@@ -731,7 +674,7 @@ body{
 
 /* Планшеты (768px - 1024px) */
 @media (max-width: 1024px) {
-    .container {
+    .container.page-content {
         padding: 15px;
     }
     
@@ -763,20 +706,6 @@ body{
 
 /* Мобильные устройства (480px - 768px) */
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
-    }
-    
-    .logo {
-        justify-content: center;
-    }
-    
-    .controls {
-        justify-content: center;
-    }
-    
     .control-btn {
         min-width: 100px;
         flex: 0 1 auto;
@@ -844,7 +773,7 @@ body{
 
 /* Маленькие мобильные (до 480px) */
 @media (max-width: 480px) {
-    .container {
+    .container.page-content {
         padding: 10px;
     }
     
@@ -856,10 +785,6 @@ body{
     .stat-item {
         flex: 1 0 100%;
         min-width: 100%;
-    }
-    
-    .controls {
-        flex-direction: column;
     }
     
     .control-btn {
@@ -932,14 +857,6 @@ body{
 
 /* Очень маленькие устройства (до 360px) */
 @media (max-width: 360px) {
-    .logo {
-        font-size: 18px;
-    }
-    
-    .logo i {
-        font-size: 16px;
-    }
-    
     .stat-icon {
         width: 32px;
         height: 32px;
@@ -999,13 +916,8 @@ body{
 
 /* Портретная ориентация */
 @media (max-height: 600px) and (orientation: portrait) {
-    .container {
+    .container.page-content {
         padding: 10px;
-    }
-    
-    .header {
-        margin-bottom: 15px;
-        padding-bottom: 15px;
     }
     
     .top-players-section {
@@ -1072,38 +984,16 @@ body{
   </defs>
 </svg>
 
-<div class="container">
-    <!-- Шапка с лого и статистикой -->
-    <div class="header">
-        <div class="logo">
-            <i class="ri-trophy-line"></i>
-            CSFamily ТОП ИГРОКОВ
-        </div>
-        
-        <div class="stats-summary">
-            <div class="stat-item">
-                <div class="stat-icon">
-                    <i class="ri-user-line"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value-sm">10,284</div>
-                    <div class="stat-label-sm">Игроков онлайн</div>
-                </div>
-            </div>
-            
-            <div class="stat-item">
-                <div class="stat-icon">
-                    <i class="ri-sword-line"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value-sm">2,847</div>
-                    <div class="stat-label-sm">Матчей сегодня</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="controls" data-auth-only>
-            <div class="quick-profile-menu" data-quick-profile-menu>
+<header>
+    <div class="container header-content">
+        <a href="index.html" class="logo">
+            <i class="fas fa-crosshairs"></i>
+            CS<span>Family</span>
+        </a>
+        <nav data-shared-nav="list"></nav>
+
+        <div class="header-buttons">
+            <div class="quick-profile-menu" data-quick-profile-menu data-auth-only>
                 <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
                     <img
                         class="quick-menu-avatar"
@@ -1118,9 +1008,36 @@ body{
                     <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="ri-logout-box-line"></i> Выйти</button>
                 </div>
             </div>
+            <div class="guest-auth-actions" data-guest-only>
+                <a class="btn btn-outline" href="index.html?authMode=login#formsSection">Войти</a>
+                <a class="btn btn-primary" href="index.html?authMode=register#formsSection">Регистрация</a>
+            </div>
         </div>
     </div>
-    <nav class="header-main-nav" data-shared-nav="list"></nav>
+</header>
+
+<div class="container page-content">
+    <div class="stats-summary">
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="ri-user-line"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value-sm">10,284</div>
+                <div class="stat-label-sm">Игроков онлайн</div>
+            </div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="ri-sword-line"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value-sm">2,847</div>
+                <div class="stat-label-sm">Матчей сегодня</div>
+            </div>
+        </div>
+    </div>
 
     <!-- ОСНОВНАЯ ТАБЛИЦА ТОП ИГРОКОВ -->
     <div class="top-players-section">

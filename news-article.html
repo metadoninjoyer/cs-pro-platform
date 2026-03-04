@@ -85,6 +85,45 @@
             color: var(--secondary);
         }
 
+        .header-user-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+
+        .guest-auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .guest-auth-btn {
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 15px;
+            border: 1px solid rgba(255,255,255,0.16);
+            color: var(--light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .guest-auth-btn:hover {
+            transform: translateY(-2px);
+            filter: saturate(1.1);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.32);
+        }
+
+        .guest-auth-btn-outline {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .guest-auth-btn-primary {
+            background: linear-gradient(135deg, #2b6ee8, #53a1ff);
+            border-color: transparent;
+        }
+
         .article-wrap {
             padding: 50px 0 70px;
         }
@@ -149,6 +188,17 @@
                 align-items: flex-start;
             }
 
+            .header-user-actions {
+                width: 100%;
+                justify-content: center;
+                margin-left: 0;
+            }
+
+            .guest-auth-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
             nav ul {
                 flex-wrap: wrap;
                 gap: 12px 18px;
@@ -173,6 +223,29 @@
                 CS<span>Family</span>
             </a>
             <nav data-shared-nav="list"></nav>
+
+            <div class="header-user-actions">
+                <div class="quick-profile-menu" data-quick-profile-menu data-auth-only>
+                    <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
+                        <img
+                            class="quick-menu-avatar"
+                            data-menu-avatar
+                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"
+                            alt="Мини-аватар"
+                        >
+                    </button>
+                    <div class="quick-menu-dropdown" role="menu" aria-label="Меню профиля">
+                        <button class="quick-menu-item" type="button" data-menu-action="profile"><i class="fas fa-user"></i> Профиль</button>
+                        <button class="quick-menu-item" type="button" data-menu-action="settings"><i class="fas fa-sliders-h"></i> Настройки</button>
+                        <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                    </div>
+                </div>
+
+                <div class="guest-auth-actions" data-guest-only>
+                    <a class="guest-auth-btn guest-auth-btn-outline" href="index.html?authMode=login#formsSection">Войти</a>
+                    <a class="guest-auth-btn guest-auth-btn-primary" href="index.html?authMode=register#formsSection">Регистрация</a>
+                </div>
+            </div>
         </div>
     </header>
 

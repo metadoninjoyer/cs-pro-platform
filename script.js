@@ -2,8 +2,8 @@
 
 const sharedNavItems = [
     { href: 'index.html', label: 'Главная' },
-    { href: 'news.html', label: 'Новости' },
     { href: 'top-players.html', label: 'Топ игроки' },
+    { href: 'news.html', label: 'Новости' },
     { href: 'profile.html', label: 'Профиль', requiresAuth: true }
 ];
 
@@ -114,8 +114,12 @@ function bindQuickProfileMenus() {
     const menus = document.querySelectorAll('[data-quick-profile-menu]');
     const authenticated = isAuthenticated();
     const authOnlyBlocks = document.querySelectorAll('[data-auth-only]');
+    const guestOnlyBlocks = document.querySelectorAll('[data-guest-only]');
     authOnlyBlocks.forEach((block) => {
         block.style.display = authenticated ? '' : 'none';
+    });
+    guestOnlyBlocks.forEach((block) => {
+        block.style.display = authenticated ? 'none' : '';
     });
 
     if (!menus.length) {

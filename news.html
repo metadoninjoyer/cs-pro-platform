@@ -98,9 +98,41 @@
             gap: 12px;
         }
 
+        .guest-auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .guest-auth-btn {
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 15px;
+            border: 1px solid rgba(255,255,255,0.16);
+            color: var(--light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .guest-auth-btn:hover {
+            transform: translateY(-2px);
+            filter: saturate(1.1);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.32);
+        }
+
+        .guest-auth-btn-outline {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .guest-auth-btn-primary {
+            background: linear-gradient(135deg, #2b6ee8, #53a1ff);
+            border-color: transparent;
+        }
+
         /* Основной контент */
         .news-content {
-            padding: 180px 0 80px;
+            padding: 135px 0 100px;
             background: radial-gradient(circle at top right, rgba(26, 115, 232, 0.15), transparent 50%),
                         radial-gradient(circle at bottom left, rgba(255, 107, 0, 0.1), transparent 50%);
         }
@@ -400,7 +432,7 @@
         /* Адаптивность */
         @media (max-width: 768px) {
             .news-content {
-                padding: 150px 0 60px;
+                padding: 110px 0 80px;
             }
             
             .section-title {
@@ -420,6 +452,11 @@
             .header-content {
                 flex-direction: column;
                 gap: 15px;
+            }
+
+            .guest-auth-actions {
+                width: 100%;
+                justify-content: center;
             }
             
             nav ul {
@@ -471,7 +508,7 @@
             <nav data-shared-nav="list"></nav>
             
             <div class="header-user-actions">
-                <div class="quick-profile-menu" data-quick-profile-menu>
+                <div class="quick-profile-menu" data-quick-profile-menu data-auth-only>
                     <button class="quick-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-haspopup="true" aria-label="Открыть меню профиля">
                         <img
                             class="quick-menu-avatar"
@@ -485,6 +522,11 @@
                         <button class="quick-menu-item" type="button" data-menu-action="settings"><i class="fas fa-sliders-h"></i> Настройки</button>
                         <button class="quick-menu-item" type="button" data-menu-action="logout"><i class="fas fa-sign-out-alt"></i> Выйти</button>
                     </div>
+                </div>
+
+                <div class="guest-auth-actions" data-guest-only>
+                    <a class="guest-auth-btn guest-auth-btn-outline" href="index.html?authMode=login#formsSection">Войти</a>
+                    <a class="guest-auth-btn guest-auth-btn-primary" href="index.html?authMode=register#formsSection">Регистрация</a>
                 </div>
             </div>
         </div>

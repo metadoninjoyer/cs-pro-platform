@@ -99,6 +99,8 @@
         .header-buttons {
             display: flex;
             gap: 15px;
+            margin-left: auto;
+            justify-content: flex-end;
         }
 
         .btn {
@@ -141,7 +143,7 @@
 
         /* Герой секция */
         .hero {
-            padding: 180px 0 100px;
+            padding: 135px 0 100px;
             background: radial-gradient(circle at top right, rgba(26, 115, 232, 0.15), transparent 50%),
                         radial-gradient(circle at bottom left, rgba(255, 107, 0, 0.1), transparent 50%);
             position: relative;
@@ -371,9 +373,20 @@
         }
 
         .feature-icon {
-            font-size: 40px;
             color: var(--secondary);
+            display: flex;
+            justify-content: center;
             margin-bottom: 20px;
+        }
+
+        .feature-icon svg {
+            width: 44px;
+            height: 44px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .feature-card h3 {
@@ -456,7 +469,7 @@
 
         @media (max-width: 768px) {
             .hero {
-                padding: 150px 0 80px;
+                padding: 110px 0 80px;
             }
             
             .hero h1 {
@@ -479,7 +492,7 @@
             
             .header-buttons {
                 width: 100%;
-                justify-content: center;
+                justify-content: flex-end;
             }
             
             nav ul {
@@ -647,7 +660,10 @@
             <div class="features-grid">
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M12 3l7 3v6c0 5-3.2 8-7 9-3.8-1-7-4-7-9V6l7-3z"></path>
+                            <path d="M9 12l2 2 4-4"></path>
+                        </svg>
                     </div>
                     <h3>Честные матчи</h3>
                     <p>Продвинутая античит система и система репутации обеспечивают максимально честную игру без читеров и нарушителей.</p>
@@ -655,7 +671,11 @@
                 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M4 19h16"></path>
+                            <path d="M6 15l4-4 3 3 5-6"></path>
+                            <path d="M18 8h0"></path>
+                        </svg>
                     </div>
                     <h3>Система рейтинга</h3>
                     <p>Уникальная система ELO-рейтинга позволяет отслеживать ваш прогресс и подбирать соперников вашего уровня.</p>
@@ -663,7 +683,13 @@
                 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
-                        <i class="fas fa-trophy"></i>
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M8 4h8v4a4 4 0 0 1-8 0V4z"></path>
+                            <path d="M16 6h2a2 2 0 0 1 0 4h-2"></path>
+                            <path d="M8 6H6a2 2 0 0 0 0 4h2"></path>
+                            <path d="M12 12v4"></path>
+                            <path d="M9 20h6"></path>
+                        </svg>
                     </div>
                     <h3>Турниры и призы</h3>
                     <p>Регулярные турниры с денежными призами, киберспортивными девайсами и другими наградами для лучших игроков.</p>
@@ -757,6 +783,19 @@
 
             setAuthFeedback(`Чтобы открыть ${nextPageLabel}, войдите или зарегистрируйтесь.`, 'error');
             showAuthForm('register');
+            document.getElementById('formsSection')?.scrollIntoView({ behavior: 'smooth' });
+            window.history.replaceState({}, document.title, 'index.html#formsSection');
+        }
+
+        function handleDirectAuthEntry() {
+            const params = new URLSearchParams(window.location.search);
+            const mode = (params.get('authMode') || '').toLowerCase();
+            if (mode !== 'login' && mode !== 'register') {
+                return;
+            }
+
+            showAuthForm(mode);
+            setAuthFeedback();
             document.getElementById('formsSection')?.scrollIntoView({ behavior: 'smooth' });
             window.history.replaceState({}, document.title, 'index.html#formsSection');
         }
@@ -857,6 +896,7 @@
             });
         }
 
+        handleDirectAuthEntry();
         handleAuthRequiredEntry();
         syncHeaderAuthButtons();
 
